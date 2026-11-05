@@ -47,35 +47,46 @@ export function glow(ctx: C2D, x: number, y: number, r: number, color: string, a
 }
 
 export interface BulbOpts { size: number; on: number; color: string; angle?: number; glowR?: number; glowA?: number; flick?: number; core?: number; }
+// ---- bulb sprite cache: drawn once per colour/state, then blitted (fast) ----
+const bulbCache = new Map<string, HTMLCanvasElement>();
+const BS = 64; // sprite px for a bulb of size 1 unit = BS/2.2
+function bulbSprite(color: string, on: boolean): HTMLCanvasElement {
+  const key = color + (on ? '1' : '0');
+  let cv = bulbCache.get(key);
+  if (cv) return cv;
+  cv = document.createElement('canvas'); cv.width = BS; cv.height = Math.round(BS * 1.3);
+  const x = cv.getContext('2d')!;
+  const s = BS / 2.2;
+  x.translate(BS / 2, BS * 0.45);
+  x.fillStyle = '#1d2a24'; x.fillRect(-s * 0.28, -s * 0.55, s * 0.56, s * 0.42);
+  x.beginPath();
+  x.moveTo(-s * 0.36, -s * 0.2);
+  x.bezierCurveTo(-s * 0.55, s * 0.35, -s * 0.18, s * 0.95, 0, s * 1.05);
+  x.bezierCurveTo(s * 0.18, s * 0.95, s * 0.55, s * 0.35, s * 0.36, -s * 0.2);
+  x.closePath();
+  if (!on) {
+    x.fillStyle = OFF[color] || '#444'; x.fill();
+    x.fillStyle = 'rgba(200,215,255,0.18)';
+    x.beginPath(); x.ellipse(-s * 0.12, s * 0.2, s * 0.08, s * 0.2, 0.3, 0, TAU); x.fill();
+  } else {
+    const gr = x.createRadialGradient(0, s * 0.35, 0, 0, s * 0.35, s * 0.8);
+    gr.addColorStop(0, '#fffbea'); gr.addColorStop(0.35, color); gr.addColorStop(1, color);
+    x.fillStyle = gr; x.fill();
+  }
+  bulbCache.set(key, cv);
+  return cv;
+}
+
 /** One old-fashioned bulb: teardrop glass on a small dark cap. `on` 0..1. */
 export function bulb(f: F, x: number, y: number, o: BulbOpts) {
   const { ctx, glow: g } = f;
   const s = o.size, on = clamp(o.on);
+  const k = (s * 2.2) / BS;
   ctx.save();
-  ctx.translate(x, y); ctx.rotate(o.angle || 0);
-  // cap
-  ctx.fillStyle = '#1d2a24';
-  ctx.fillRect(-s * 0.28, -s * 0.55, s * 0.56, s * 0.42);
-  // glass (teardrop pointing down/out)
-  ctx.beginPath();
-  ctx.moveTo(-s * 0.36, -s * 0.2);
-  ctx.bezierCurveTo(-s * 0.55, s * 0.35, -s * 0.18, s * 0.95, 0, s * 1.05);
-  ctx.bezierCurveTo(s * 0.18, s * 0.95, s * 0.55, s * 0.35, s * 0.36, -s * 0.2);
-  ctx.closePath();
-  const off = OFF[o.color] || '#444';
-  if (on <= 0.001) {
-    ctx.fillStyle = off; ctx.fill();
-    ctx.fillStyle = 'rgba(200,215,255,0.18)';
-    ctx.beginPath(); ctx.ellipse(-s * 0.12, s * 0.2, s * 0.08, s * 0.2, 0.3, 0, TAU); ctx.fill();
-  } else {
-    const gr = ctx.createRadialGradient(0, s * 0.35, 0, 0, s * 0.35, s * 0.8);
-    gr.addColorStop(0, '#fffbea');
-    gr.addColorStop(0.35, o.color);
-    gr.addColorStop(1, o.color);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = off; ctx.fill();
-    ctx.globalAlpha = on; ctx.fillStyle = gr; ctx.fill();
-  }
+  ctx.translate(x, y); ctx.rotate(o.angle || 0); ctx.scale(k, k);
+  const off = bulbSprite(o.color, false);
+  if (on < 0.999) ctx.drawImage(off, -BS / 2, -BS * 0.45);
+  if (on > 0.001) { ctx.globalAlpha *= on; ctx.drawImage(bulbSprite(o.color, true), -BS / 2, -BS * 0.45); }
   ctx.restore();
   if (on > 0.001) {
     const fl = 1 + (o.flick || 0);
@@ -166,7 +177,7 @@ export function dotLights(f: F, pts: V2[], size: number, on: number | ((i: numbe
   }
 }
 
-/** A cone of light (torch beam / window shaft) drawn into the glow layer. */
+/** A cone of light (torch beam / window shaft) drawn into the glow layer. Soft edges via stacked layers (no blur filter). */
 export function beam(ctx: C2D, from: V2, dir: number, len: number, spread: number, color: string, a: number, w0 = 4) {
   if (a <= 0.002) return;
   const ex = from.x + Math.cos(dir) * len, ey = from.y + Math.sin(dir) * len;
@@ -176,35 +187,37 @@ export function beam(ctx: C2D, from: V2, dir: number, len: number, spread: numbe
   g.addColorStop(0, color);
   g.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.save();
-  ctx.globalAlpha *= a;
   ctx.fillStyle = g;
-  ctx.filter = `blur(${Math.max(2, w1 * 0.08)}px)`;
-  ctx.beginPath();
-  ctx.moveTo(from.x + nx * w0, from.y + ny * w0);
-  ctx.lineTo(ex + nx * w1, ey + ny * w1);
-  ctx.lineTo(ex - nx * w1, ey - ny * w1);
-  ctx.lineTo(from.x - nx * w0, from.y - ny * w0);
-  ctx.closePath(); ctx.fill();
-  // brighter core
-  ctx.globalAlpha *= 0.6;
-  ctx.beginPath();
-  ctx.moveTo(from.x + nx * w0 * 0.5, from.y + ny * w0 * 0.5);
-  ctx.lineTo(ex + nx * w1 * 0.4, ey + ny * w1 * 0.4);
-  ctx.lineTo(ex - nx * w1 * 0.4, ey - ny * w1 * 0.4);
-  ctx.lineTo(from.x - nx * w0 * 0.5, from.y - ny * w0 * 0.5);
-  ctx.closePath(); ctx.fill();
+  const layers = [1.15, 0.85, 0.55, 0.3];
+  const alphas = [0.22, 0.28, 0.3, 0.35];
+  for (let i = 0; i < layers.length; i++) {
+    const k = layers[i];
+    ctx.globalAlpha = a * alphas[i];
+    ctx.beginPath();
+    ctx.moveTo(from.x + nx * w0 * k, from.y + ny * w0 * k);
+    ctx.lineTo(ex + nx * w1 * k, ey + ny * w1 * k);
+    ctx.lineTo(ex - nx * w1 * k, ey - ny * w1 * k);
+    ctx.lineTo(from.x - nx * w0 * k, from.y - ny * w0 * k);
+    ctx.closePath(); ctx.fill();
+  }
   ctx.restore();
 }
 
-/** Parallelogram light shaft (window light falling into a room). */
+/** Parallelogram light shaft (window light falling into a room). Soft edges via shrinking layers. */
 export function shaft(ctx: C2D, quad: V2[], color: string, a: number, blur = 18) {
   ctx.save();
-  ctx.globalAlpha *= a;
-  ctx.filter = `blur(${blur}px)`;
   const g = ctx.createLinearGradient(quad[0].x, quad[0].y, quad[3].x, quad[3].y);
   g.addColorStop(0, color); g.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = g;
-  ctx.beginPath(); ctx.moveTo(quad[0].x, quad[0].y); for (let i = 1; i < quad.length; i++) ctx.lineTo(quad[i].x, quad[i].y); ctx.closePath(); ctx.fill();
+  const cx = quad.reduce((s2, q) => s2 + q.x, 0) / quad.length, cy = quad.reduce((s2, q) => s2 + q.y, 0) / quad.length;
+  const steps = 4;
+  for (let i = 0; i < steps; i++) {
+    const k = 1 + (blur / 300) * (1.5 - i);
+    ctx.globalAlpha = a * 0.3;
+    ctx.beginPath();
+    quad.forEach((q, j) => { const px = cx + (q.x - cx) * k, py = cy + (q.y - cy) * k; if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); });
+    ctx.closePath(); ctx.fill();
+  }
   ctx.restore();
 }
 

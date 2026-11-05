@@ -279,7 +279,7 @@ def wind_bed():
     w /= np.max(np.abs(w)) + 1e-9
     # level automation: exterior full, interior muffled/quiet, coda/end quiet
     pts = [  # (time, gain_exterior_level)
-        (0.0, 0.0), (0.6, 0.55), (8.3, 0.55), (8.7, 0.12), (27.3, 0.12), (27.6, 0.6), (38.8, 0.5),
+        (0.0, 0.0), (0.6, 0.55), (8.3, 0.55), (8.7, 0.16), (27.3, 0.16), (27.6, 0.6), (38.8, 0.5),
         (39.2, 0.06), (75.8, 0.06), (76.1, 0.55), (80.8, 0.5), (81.05, 0.15), (82.9, 0.15), (83.1, 0.55),
         (93.0, 0.5), (109.0, 0.55), (112.0, 0.5), (115.5, 0.42), (122.5, 0.42), (122.75, 0.62), (127.5, 0.7),
         (128.5, 0.5), (136.4, 0.45), (136.8, 0.32), (147.5, 0.35), (150.0, 0.55), (155.0, 0.45), (157.3, 0.06),
@@ -296,14 +296,14 @@ def wind_bed():
 # ------------------------------------------------------------------ the spotting session
 def spot():
     # Grandad's clock: A3 → B4 (8.5–27.5), and the coda K1
-    def clock(t0, t1, gain=0.22, pan=-0.35):
+    def clock(t0, t1, gain=0.42, pan=-0.35):
         t = t0; k = 0
         while t < t1:
             place(INT, t, clock_tick(tock=k % 2 == 1), gain * (0.92 if k % 2 else 1.0), pan)
             t += 1.0; k += 1
         EVENTS.append((round(t0, 3), 'clock ticking (1 Hz) until %.1f' % t1, 'interior'))
     clock(st('A3', 0.35), st('B4', 1.9))
-    clock(st('K1', 0.2), st('K1', 5.3), gain=0.16)
+    clock(st('K1', 0.2), st('K1', 5.3), gain=0.3)
 
     # B4: the key off its hook
     place(INT, st('B4', 0.5), key_jingle(), 0.5, 0.2, 'key jingle (shed key off hook)')

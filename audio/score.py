@@ -214,10 +214,10 @@ pad.chord(st('C2', 0.1), ['G2', 'D3', 'B3'], 1.9, 40); pad.expr(st('C2', 0), st(
 tiptoe(st('C3', 0.0), st('C4', 3.0), beat=0.6, vel=58)
 motif(cel, st('C3', 0.6), 0.6, vel=60, legato=0.45, label='C3 celesta tiptoe (staccato)')
 # C4: the last three notes again and stop on the gap at the end of C4
-for p, dt in [('D5', 1.6), ('C#5', 2.05), ('E5', 2.3)]:
+for p, dt in [('A4', 1.6), ('C#5', 2.05), ('E5', 2.3)]:
     cel.note(st('C4', dt), p, 0.35, 58)
 glk.note(st('C4', 2.3), 'E6', 0.4, 38)
-STATEMENTS.append(('C4 celesta tail (D5 C#5 E5, stops on gap at end of C4)', st('C4', 1.6), st('C4', 2.9), False))
+STATEMENTS.append(('C4 celesta tail (A4 C#5 E5, stops on gap at end of C4)', st('C4', 1.6), st('C4', 2.9), False))
 
 # =============================================================== D: THE OPERATION (39–64.5) 120 bpm
 B = 0.5
@@ -261,10 +261,10 @@ caper_bar(48.0, CAPER_BASS_A, ACH, vel=58, stabs=True)
 for k in range(4):
     pz.note(48.25 + k * 0.5, 'A4', 0.1, 40)  # off-beat ticks between plinks
 # D5 (50–52.5): phrase 2, sequenced up (D5 B4 C#5 D5 | G5 F#5 A5) then gap
-caper_bar(50.0, CAPER_BASS, DCH)
+caper_bar(50.0, CAPER_BASS_G, GCH)
 P2 = [(0, 'D5', .5), (0.5, 'B4', .5), (1, 'C#5', .5), (1.5, 'D5', .5), (2, 'G5', 1.5), (3.5, 'F#5', .5)]
 caper_melody(cel, 50.0, P2, vel=66); caper_melody(glk, 50.0, P2, vel=40, legato=0.3)
-caper_bar(52.0, CAPER_BASS_G, GCH, vel=66)
+caper_bar(52.0, CAPER_BASS, DCH, vel=66)
 caper_melody(cel, 52.0, [(0, 'A5', 1)], vel=66); caper_melody(glk, 52.0, [(0, 'A5', 1)], vel=42)
 # D6 (52.5–56): the wall: strings take the motif broad, bass drives, tally ticks
 caper_bar(54.0, CAPER_BASS_A, ACH, vel=70)
@@ -286,8 +286,7 @@ caper_melody(cel, 58.5, P3, vel=60)
 STATEMENTS.append(('D8 celesta high motif, gap at 61.25', 58.75, 61.25, False))
 # D9 (61.5–64.5): climax: the motif twice, fast, then one stab on E/A and silence (the gap)
 caper_bar(61.5, CAPER_BASS, DCH, vel=72)
-P4 = [(0, 'A4', .5), (.5, 'F#4', .5), (1, 'G4', .5), (1.5, 'A4', .5), (2, 'D5', .5), (2.5, 'C#5', .5), (3, 'E5', .5),
-      (4, 'D5', .5), (4.5, 'B4', .5), (5, 'C#5', .5), (5.5, 'D5', .5), (6, 'G5', .5), (6.5, 'F#5', .5)]
+P4 = [(0, 'A4', .5), (.5, 'F#4', .5), (1, 'G4', .5), (1.5, 'A4', .5), (2, 'D5', .75), (2.75, 'C#5', .25), (3, 'E5', .5)]  # then the stab at 63.5: never the D
 caper_melody(strg, 61.5, P4, vel=80, legato=0.8)
 caper_melody(cel, 61.5, P4, vel=68)
 caper_melody(glk, 61.5, P4[::2], vel=44, legato=0.3)
@@ -352,7 +351,7 @@ strg.chord(84.0, ['G3', 'B3', 'D4'], 2.0, 56)
 for (dt, p) in [(0.45, 'A6'), (0.6, 'F#6'), (0.7, 'G6'), (0.8, 'A6')]:
     cel.note(st('F5', dt), p, 0.3, 50)
 for k in range(6):
-    cel.note(st('F5', 1.1 + k * 0.06), 'E7' if k % 2 else 'D7', 0.06, 40 - k * 2)
+    cel.note(st('F5', 1.1 + k * 0.06), 'E7' if k % 2 else 'C#7', 0.06, 40 - k * 2)
 march_bar(86.0, 'A2', 'E3', 64, ['A3', 'C#4'])
 strg.chord(86.0, ['A3', 'C#4', 'E4'], 1.2, 60)
 # F6 the ladder man: knock (87.15). Music thins to one held low string as he reads and looks across.
@@ -382,7 +381,7 @@ trm.expr(st('G1', 0.5), st('G1', 1.5), 0, 30); trm.expr(st('G1', 2.2), st('G1', 
 # G2–G5: glock ostinato + building strings, stopping dead at the end of G5 (109.0)
 G0 = st('G2', 0.0)  # 97.0
 prog = [('D', 97.0), ('Bm', 99.0), ('G', 101.0), ('A', 103.0), ('D', 105.0), ('Bm', 106.0), ('G', 107.0), ('A', 108.0)]
-CH = {'D': (['D3', 'A3', 'F#4'], 'D2', ['D6', 'A5', 'F#6', 'A5']),
+CH = {'D': (['D3', 'A3', 'F#4'], 'D2', ['F#6', 'A5', 'D6', 'A5']),
       'Bm': (['B2', 'F#3', 'D4'], 'B1', ['D6', 'B5', 'F#6', 'B5']),
       'G': (['G2', 'D3', 'B3'], 'G1', ['D6', 'B5', 'G6', 'B5']),
       'A': (['A2', 'E3', 'C#4'], 'A1', ['E6', 'C#6', 'A6', 'C#6'])}
@@ -443,19 +442,21 @@ pad.chord(st('I3', 0.7), ['A3', 'E4', 'A4'], BLAZE - st('I3', 0.7) - 0.02, 50)
 pad.set_expr(st('I3', 0.6), 0); pad.expr(st('I3', 0.7), BLAZE - 0.05, 0, 40)
 pno.cc.append((BLAZE - 0.3, 64, 0))
 # I4: THE MISSING NOTE LANDS on the blaze frame (136.5 s, frame 3276). Exact, no humanising.
-for s, v in ((cel, 96), (pno, 92), (glk, 90)):
+for s, v in ((cel, 124), (pno, 118), (glk, 116)):
     s.note(BLAZE, 'D5', 3.5, v, human=0, vh=0)
-cel.note(BLAZE, 'D6', 3.0, 80, human=0, vh=0)
-glk.note(BLAZE, 'D6', 2.5, 76, human=0, vh=0)
-pno.chord(BLAZE, ['D2', 'D3', 'A3', 'F#4'], 3.6, 84, human=0)
+cel.note(BLAZE, 'D6', 3.0, 110, human=0, vh=0)
+glk.note(BLAZE, 'D6', 2.5, 100, human=0, vh=0)
+pno.chord(BLAZE, ['D2', 'D3', 'A3', 'F#4'], 3.6, 96, human=0)
 pno.cc.append((BLAZE, 64, 100)); pno.cc.append((st('I5', 0.0), 64, 0))
 # the bloom
-strg.set_expr(BLAZE - 0.01, 118); bas.set_expr(BLAZE - 0.01, 118); cho.set_expr(BLAZE - 0.01, 105); pad.set_expr(BLAZE - 0.01, 110)
-strg.chord(BLAZE, ['D3', 'A3', 'F#4', 'D5'], 2.0, 108, human=0)
-pad.chord(BLAZE, ['D3', 'A3', 'F#4', 'A4', 'D5'], 4.0, 100, human=0)
-bas.chord(BLAZE, ['D1', 'D2'], 4.0, 110, human=0)
+strg.set_expr(BLAZE - 0.01, 84); strg.expr(BLAZE + 0.05, BLAZE + 1.4, 84, 112)
+bas.set_expr(BLAZE - 0.01, 100); cho.set_expr(BLAZE - 0.01, 60); cho.expr(BLAZE + 0.1, BLAZE + 1.8, 60, 96)
+pad.set_expr(BLAZE - 0.01, 70); pad.expr(BLAZE + 0.1, BLAZE + 1.6, 70, 96)
+strg.chord(BLAZE, ['D3', 'A3', 'F#4', 'D5'], 2.0, 100, human=0)
+pad.chord(BLAZE, ['D3', 'A3', 'F#4', 'A4', 'D5'], 4.0, 84, human=0)
+bas.chord(BLAZE, ['D2'], 4.0, 100, human=0)
 cho.chord(BLAZE, ['D4', 'F#4', 'A4', 'D5'], 4.0, 92, human=0)
-tmp.note(BLAZE, 'D2', 1.2, 96, human=0)
+tmp.note(BLAZE, 'D2', 1.2, 84, human=0)
 for k, p in enumerate(['D3', 'F#3', 'A3', 'D4', 'F#4', 'A4', 'D5', 'F#5', 'A5', 'D6']):  # harp glissando up
     hrp.note(BLAZE + 0.03 + k * 0.045, p, 1.5, 70 + k)
 # soaring violins: D5 — E5 F#5 A5 over D – Bm – G – A

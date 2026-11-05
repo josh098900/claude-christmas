@@ -58,8 +58,10 @@ export interface Pose {
   behindHandF?: boolean;   // draw prop under the hand
   eyesClosed?: boolean;
   cheek?: number;
-  hidden?: { armB?: boolean; legs?: boolean };
+  hidden?: { armB?: boolean; legs?: boolean; armF?: boolean };
+  only?: 'armF';           // draw just the near arm (for hugs: arm drawn over another character)
   back?: boolean;          // seen from behind: no face
+  wink?: number;           // >0.5 closes the eye on the facing side
 }
 
 const DEF_LIMB: Limb = { a: 0.08, b: 0.12 };
@@ -332,7 +334,7 @@ export function drawPerson(f: F, sp: Spec, p: Pose, L: CharLight | null, opts: {
       const exx = fcx + side * gap * (side * ft * sx > 0 ? 1.0 : lerp(1, 0.75, aft));
       const er = sp.eyes.r * hr * 0.1;
       x.fillStyle = T(ec);
-      if (p.eyesClosed || blinkK < 0.2) {
+      if (p.eyesClosed || blinkK < 0.2 || ((p.wink ?? 0) > 0.5 && side * sx > 0)) {
         x.strokeStyle = T(ec); x.lineWidth = er * 0.55; x.lineCap = 'round';
         x.beginPath(); x.moveTo(exx - er * 1.1, eyeY + er * 0.2); x.quadraticCurveTo(exx, eyeY + er * (p.eyesClosed ? 1.0 : 0.6), exx + er * 1.1, eyeY + er * 0.2); x.stroke();
       } else {
@@ -526,7 +528,8 @@ export function drawPerson(f: F, sp: Spec, p: Pose, L: CharLight | null, opts: {
     paintBody(x);
   };
   const frontArm = (x: C2D) => paintArm(x, aF, true, p.holdF);
-  groups.push(back, body, paintHead, frontArm);
+  if (p.only === 'armF') groups.push(frontArm);
+  else { groups.push(back, body, paintHead); if (!p.hidden?.armF) groups.push(frontArm); }
   for (const g of groups) litGroup(f, bb, L, g, opts.target, { alpha: opts.alpha });
   return { hips: W(0, hipY), neck, head: headC, handF: aF[2], handB: aB[2], shoulderF: nearSh, shoulderB: farSh, top: v2(headC.x, headC.y - sp.head.r * s * 1.4) };
 }

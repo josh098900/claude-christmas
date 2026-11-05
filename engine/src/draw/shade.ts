@@ -47,6 +47,24 @@ function blit(dst: C2D, src: HTMLCanvasElement, d: { x: number; y: number; w: nu
   dst.drawImage(src, d.x, d.y, d.w, d.h, d.x + ox, d.y + oy, d.w, d.h);
 }
 
+
+// Fast soft blur: downsample then upsample with smoothing (software canvas blur filters are slow).
+let SMALL: HTMLCanvasElement | null = null;
+function softBlit(dst: C2D, src: HTMLCanvasElement, d: { x: number; y: number; w: number; h: number }, radius: number) {
+  const k = Math.max(1, Math.min(8, radius / 1.5));
+  if (k <= 1.05) { blit(dst, src, d); return; }
+  const sw = Math.max(1, Math.ceil(d.w / k)), sh = Math.max(1, Math.ceil(d.h / k));
+  if (!SMALL) SMALL = document.createElement('canvas');
+  if (SMALL.width < sw || SMALL.height < sh) { SMALL.width = Math.max(SMALL.width, sw); SMALL.height = Math.max(SMALL.height, sh); }
+  const sx = SMALL.getContext('2d')!;
+  sx.setTransform(1, 0, 0, 1, 0, 0); sx.globalCompositeOperation = 'source-over'; sx.globalAlpha = 1;
+  sx.clearRect(0, 0, sw + 2, sh + 2);
+  sx.imageSmoothingEnabled = true; sx.imageSmoothingQuality = 'low';
+  sx.drawImage(src, d.x, d.y, d.w, d.h, 0, 0, sw, sh);
+  dst.imageSmoothingEnabled = true; dst.imageSmoothingQuality = 'medium';
+  dst.drawImage(SMALL, 0, 0, sw, sh, d.x, d.y, d.w, d.h);
+}
+
 /**
  * Draw a group of shapes with lighting. `draw` receives a context in logical coordinates.
  * Result is composited onto `target` (defaults to f.ctx).
@@ -69,9 +87,7 @@ export function litGroup(f: F, bbox: BBox, L: CharLight | null, draw: (x: C2D) =
       blit(B.x, A.c, d, ox, oy);
       B.x.globalCompositeOperation = 'source-in';
       B.x.fillStyle = L.shadow; B.x.fillRect(d.x, d.y, d.w, d.h);
-      C.x.filter = `blur(${Math.max(0.5, L.shadowSoft * S)}px)`;
-      blit(C.x, B.c, d);
-      C.x.filter = 'none';
+      softBlit(C.x, B.c, d, L.shadowSoft * S);
       C.x.globalCompositeOperation = 'destination-in';
       blit(C.x, A.c, d);
       A.x.globalCompositeOperation = 'multiply';
@@ -110,9 +126,7 @@ export function litGroup(f: F, bbox: BBox, L: CharLight | null, draw: (x: C2D) =
       blit(B.x, A.c, d, ox, oy);
       B.x.globalCompositeOperation = 'source-in';
       B.x.fillStyle = L.rim; B.x.fillRect(d.x, d.y, d.w, d.h);
-      C.x.filter = `blur(${Math.max(0.6, L.rimW * 0.35 * S)}px)`;
-      blit(C.x, B.c, d);
-      C.x.filter = 'none';
+      softBlit(C.x, B.c, d, L.rimW * 0.35 * S);
       C.x.globalCompositeOperation = 'destination-in';
       blit(C.x, A.c, d);
       A.x.globalCompositeOperation = 'lighter';
