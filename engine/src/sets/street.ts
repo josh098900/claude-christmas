@@ -424,7 +424,7 @@ export function drawStreet(f: F, o: StreetOpts) {
   }
   if ((o.blaze ?? 0) > 0) {
     const g = vis.find((h) => h.grandad);
-    const on = o.blazeOn ?? 1;
+    const on = (o.blazeOn ?? 1) * clamp(1.4 / cam.z, 0.35, 1); // washes add up in close-ups: scale with zoom
     if (g && on > 0.01) {
       c.save(); c.globalCompositeOperation = 'lighter';
       const gr = c.createRadialGradient(g.x + g.w / 2, -WALL_H * 0.6, 50, g.x + g.w / 2, -WALL_H * 0.6, 700);

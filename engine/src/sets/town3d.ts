@@ -186,8 +186,8 @@ export function drawTown(f: F, cam: Cam3, o: TownOpts = {}) {
         win(hx + 0.8, 0.9, 2.2, 1.9, on && hash2(hx, 3) > 0.2);
         // eave lights
         if (!dark) {
-          const nb = blaze > 0 ? 14 : Math.max(3, Math.min(9, Math.round(hw / 6)));
-          const rows2 = blaze > 0 ? [[WALL, 0], [b.roofH, DEPTH / 2], [(WALL + b.roofH) / 2, DEPTH / 4], [3.0, 0]] : [[WALL, 0]];
+          const nb = blaze > 0 ? 18 : Math.max(3, Math.min(9, Math.round(hw / 6)));
+          const rows2 = blaze > 0 ? [[WALL, 0], [b.roofH, DEPTH / 2], [(WALL + b.roofH) / 2, DEPTH / 4], [WALL + (b.roofH - WALL) * 0.25, DEPTH / 8], [WALL + (b.roofH - WALL) * 0.75, DEPTH * 3 / 8], [b.roofH - 0.6, DEPTH * 0.62], [WALL + 0.8, DEPTH * 0.9], [3.0, 0], [1.5, 0], [4.6, 0]] : [[WALL, 0]];
           for (const [yy, zz] of rows2) for (let q = 0; q < nb; q++) {
             const u = (q + 0.5) / nb;
             const p = proj(cam, hx + u * HOUSE, yy - Math.sin(u * Math.PI) * 0.25, Z + zz - 0.2);
@@ -200,7 +200,9 @@ export function drawTown(f: F, cam: Cam3, o: TownOpts = {}) {
         }
         if (blaze > 0) {
           const p = proj(cam, hx + HOUSE / 2, WALL * 0.7, Z);
-          glow(g, p.sx, p.sy, 14 * k + 20, '#ffb070', 0.35 * blaze);
+          glow(g, p.sx, p.sy, 14 * k + 20, '#ffb070', 0.5 * blaze);
+          const pr = proj(cam, hx + HOUSE / 2, b.roofH, Z + DEPTH / 2);
+          glow(g, pr.sx, pr.sy, 10 * k + 16, '#ff7a90', 0.25 * blaze);
         }
       }
     }
