@@ -11,7 +11,7 @@ import { CharLight } from '../draw/shade';
 import { glow, bulb, BULB_SEQ, beam, shaft, motes } from '../draw/light';
 import { handText } from '../draw/letters';
 import { handRect, blobEllipse, smoothOpen, tube, vgrad } from '../draw/brush';
-import { topHand, topHandTip, NELL_HAND, coil, advent } from '../sets/props';
+import { topHand, topHandTip, NELL_HAND, coil, advent, softShadow } from '../sets/props';
 import { landing, hallway } from '../sets/hallway';
 
 export const Q1 = 'why does 1 bulb make them ALL go off';
@@ -95,7 +95,7 @@ export function tabletCU(f: F, st: TabletState, o: { zoom?: number; drift?: numb
   g.addColorStop(0, '#5a4a52'); g.addColorStop(1, '#141a33');
   c.fillStyle = g; c.fillRect(0, 0, W, H);
   // desk edge and a blurred tangle of wire behind the tablet
-  c.save(); c.filter = 'blur(6px)'; c.globalAlpha = 0.6;
+  c.save(); c.globalAlpha = 0.35;
   c.strokeStyle = '#1e3a2a'; c.lineWidth = 5;
   const r = new RNG(9);
   c.beginPath(); c.moveTo(80, 980);
@@ -115,8 +115,7 @@ export function tabletCU(f: F, st: TabletState, o: { zoom?: number; drift?: numb
 function tapHand(c: C2D, x: number, y: number, tap: number, s = 1) {
   const sk = '#e2ae8e';
   c.save(); c.translate(x, y + tap * 8 * s); c.scale(s, s);
-  c.globalAlpha = 0.35; c.fillStyle = '#05060f'; c.filter = 'blur(10px)';
-  c.beginPath(); c.ellipse(30, 40, 90, 60, -0.4, 0, TAU); c.fill(); c.filter = 'none'; c.globalAlpha = 1;
+  softShadow(c, 30, 40, 110, 70, -0.4, 0.35);
   tube(c, [v2(140, 260), v2(80, 140), v2(40, 60)], 92, 78, '#d8a24a'); // jumper sleeve
   c.fillStyle = '#c08b34'; c.beginPath(); blobEllipse(c, 40, 60, 46, 26, 3, 0.05, 8, -0.9); c.fill();
   c.fillStyle = sk; c.beginPath(); blobEllipse(c, 10, 10, 48, 40, 4, 0.05, 9, -0.6); c.fill();
@@ -209,7 +208,7 @@ shot('D2', (f) => {
   for (let i = 0; i < 26; i++) { c.beginPath(); const y0 = -100 + i * 52; c.moveTo(-200, y0); for (let x = -200; x < W + 200; x += 80) c.lineTo(x, y0 + noise1(x * 0.004 + i, 5) * 18); c.stroke(); }
   // tablet (screen up), lower right, warm
   c.save(); c.translate(1650, 860); c.rotate(-0.35);
-  drawTablet(f, c, -230, -165, 460, 330, { msgs: [{ who: 'me', text: Q1 }, { who: 'reply', text: R1, blur: 7 }], font: 40 }, { glowAmt: 0 });
+  drawTablet(f, c, -230, -165, 460, 330, { msgs: [{ who: 'me', text: Q1 }], typing: '', font: 40 }, { glowAmt: 0 }); // no blur filter on a rotated tablet (Skia layer bug)
   c.restore();
   glow(f.glow, 1600, 840, 520, '#ffc98e', 0.28);
   // jar (top view) and tester
@@ -243,7 +242,7 @@ shot('D2', (f) => {
   const anchor = pts[Math.max(0, bi - 2)], anchor2 = pts[Math.min(pts.length - 1, bi + 2)];
   const loop = [anchor, v2(lerp(anchor.x, tip.x, 0.5) + 24, lerp(anchor.y, tip.y, 0.5) - 26), tip, v2(lerp(anchor2.x, tip.x, 0.5) - 14, lerp(anchor2.y, tip.y, 0.5) + 22), anchor2];
   // wire shadow then wire
-  c.save(); c.translate(6, 8); c.strokeStyle = 'rgba(5,6,18,0.5)'; c.lineWidth = 7; c.filter = 'blur(3px)';
+  c.save(); c.translate(6, 8); c.strokeStyle = 'rgba(5,6,18,0.3)'; c.lineWidth = 10;
   c.beginPath(); smoothOpen(c, pts, 1); c.stroke(); c.restore();
   c.strokeStyle = '#1b3527'; c.lineWidth = 6; c.lineJoin = 'round';
   c.beginPath(); smoothOpen(c, pts, 1); c.stroke();
@@ -281,8 +280,7 @@ shot('D5', (f) => {
 // ---------------------------------------------------------------- D4: testing bulbs, plink
 function handFromAbove(f: F, c: C2D, x: number, y: number, col: string, hold: boolean) {
   // forearm hanging down from the top edge, wrist at (x, y); bulb pinched below the fingers
-  c.save(); c.globalAlpha = 0.28; c.filter = 'blur(16px)'; c.fillStyle = '#05060f';
-  c.beginPath(); c.ellipse(x + 40, y + 60, 70, 110, 0.1, 0, TAU); c.fill(); c.restore();
+  softShadow(c, x + 40, y + 60, 120, 80, 1.6, 0.28);
   tube(c, [v2(x + 70, -80), v2(x + 30, y - 160), v2(x, y - 20)], 104, 92, '#d8a24a');
   c.fillStyle = '#c08b34'; c.beginPath(); blobEllipse(c, x, y - 22, 54, 26, 2, 0.05, 8); c.fill();
   const sk = '#e2ae8e';
@@ -299,7 +297,7 @@ shot('D4', (f) => {
   // background: dark wall with the window glow far behind (soft)
   vgrad(c, 0, 0, W, H, [[0, '#1b2550'], [1, '#27346a']]);
   glow(f.glow, 320, 160, 520, '#6f8fe0', 0.2);
-  c.save(); c.filter = 'blur(8px)';
+  c.save(); c.globalAlpha = 0.6;
   c.fillStyle = '#d6d2c8'; c.fillRect(120, -40, 18, 420); c.fillRect(120, 360, 520, 16);
   for (let i = 0; i < 4; i++) { c.fillStyle = '#dfe5f3'; c.beginPath(); c.arc(220 + i * 110, 120 + (i % 2) * 120, 40, 0, TAU); c.fill(); }
   c.restore();

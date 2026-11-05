@@ -125,7 +125,7 @@ shot('F2', (f) => {
 // ---------------------------------------------------------------- F3: corner shop
 shot('F3', (f) => {
   const t = f.t;
-  const cam: DCam = { x: -40, y: -120, z: 3.25 };
+  const cam: DCam = { x: -70, y: -150, z: 3.7 };
   drawShop(f, cam);
   const c = f.ctx;
   // shopkeeper behind the counter
@@ -135,12 +135,12 @@ shot('F3', (f) => {
     soften: [[0, 0], [0.6, 0], [1.0, 1]],
   };
   const lift = track(t, [[0, 0], [1.2, 0], [1.42, 1, ease.outQuad], [1.5, 0.92, ease.inQuad]]);
-  const sp = dScreen(cam, v2(20, -6));
+  const sp = dScreen(cam, v2(30, 0));
   const pose = neighbourPose(t, beat, { flip: -1 });
   // looking across: out of the shop window (to the right): flip the look direction
   const lk = track(t, beat.look);
   drawPerson(f, C.SHOPKEEPER, {
-    x: sp.x, y: sp.y, s: 0.43 * cam.z * 1.08, ...pose, turn: lerp(0.5, 0.35, lk), flip: lk > 0.5 ? 1 : -1,
+    x: sp.x, y: sp.y, s: 0.43 * cam.z * 1.15, ...pose, turn: lerp(0.5, 0.35, lk), flip: lk > 0.5 ? 1 : -1,
     look: { x: lerp(1, 1, lk), y: lerp(0.9, -0.1, lk) },
     armF: { a: lerp(0.6, 1.4, lift), b: lerp(1.0, 0.6, lift) }, armB: { a: lerp(0.5, 1.3, lift), b: 0.7 },
   } as Pose, {
@@ -151,7 +151,7 @@ shot('F3', (f) => {
   drawShop(f, cam, true);
   // the box of bulbs: lifted from under the counter and THUMPED down
   const land = 1.5;
-  const bx = dScreen(cam, v2(-70, -100));
+  const bx = dScreen(cam, v2(-62, -100));
   const sq = f.tc >= land ? Math.max(0, 1 - (f.tc - land) * 6) * (f.tc < land + 0.08 ? 1 : 0.4) : 0;
   if (lift > 0.02) {
     const yOff = f.tc < land ? (1 - lift) * 60 * cam.z : 0;
@@ -162,14 +162,14 @@ shot('F3', (f) => {
     }
   }
   // Nell on tiptoe at the counter, drawing laid up on it
-  const np = dScreen(cam, v2(-200, 52));
+  const np = dScreen(cam, v2(-215, 52));
   const s = 0.43 * cam.z * 1.32;
   const jump = f.tc >= land && f.tc < land + 0.25 ? Math.sin((f.tc - land) / 0.25 * Math.PI) * 10 : 0;
   const R = drawPerson(f, C.NELL, {
     x: np.x, y: np.y - 8 * s - jump, s, flip: 1, turn: 0.75, armF: { a: 2.0, b: 0.2 }, armB: { a: 1.9, b: 0.3 },
     look: { x: 1, y: -0.4 }, headTilt: -0.1, browUp: f.tc > land ? 1 : 0.3, mouth: { open: f.tc > land ? 0.4 : 0, smile: f.tc > land ? 0.9 : 0.3 },
   } as Pose, { key: -1.57, shadow: '#4b4f88', shadowAmt: 0.55, shadowOff: 12, shadowSoft: 5, rim: '#ffe0b0', rimAmt: 0.5, rimW: 4, rimDir: -1.2, ambient: '#e9d6c0', ambientAmt: 0.3 });
-  heldDrawing(f, c, R.handF.x + 50 * s, R.handF.y - 10 * s, 132 * s, 100 * s, -0.08, 0.3);
+  heldDrawing(f, c, R.handF.x + 50 * s, R.handF.y - 10 * s, 132 * s, 100 * s, -0.08, 0.3, true);
   mitten(c, R.handF.x + 6 * s, R.handF.y, 11.5 * s, 0, '#d8a24a');
   f.grade.vignette = 0.45; f.grade.bloom = 0.7;
 });

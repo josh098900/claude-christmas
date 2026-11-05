@@ -9,7 +9,7 @@ import { CharLight } from '../draw/shade';
 import { glow, beam, motes } from '../draw/light';
 import { blobEllipse, tube, handRect } from '../draw/brush';
 import { shedInterior, boxStack, backGarden } from '../sets/shed';
-import { labelledBox, dustOver, sledge, breath, GRANDMA_HAND } from '../sets/props';
+import { labelledBox, dustOver, sledge, breath, GRANDMA_HAND, softShadow } from '../sets/props';
 import { drawStreet, snowfall, makeTerrace, toScreen } from '../sets/street';
 import { STREET_S } from './common';
 
@@ -113,7 +113,7 @@ shot('C2', (f) => {
   if (t > 0.1 && t < 1.15) {
     const my = 560 + Math.sin(t * 9) * 26;
     c.save(); c.translate(wx + 40, my); c.rotate(0.25);
-    c.fillStyle = 'rgba(5,6,14,0.35)'; c.filter = 'blur(18px)'; c.beginPath(); c.ellipse(30, 40, 200, 260, 0, 0, TAU); c.fill(); c.filter = 'none';
+    softShadow(c, 30, 40, 260, 200, 1.57, 0.35);
     tube(c, [v2(-40, 700), v2(-20, 380), v2(0, 220)], 300, 260, '#c23f36');
     c.fillStyle = '#a8342e'; c.beginPath(); blobEllipse(c, 0, 210, 160, 70, 3, 0.05, 9); c.fill();
     c.fillStyle = '#e3a53a'; c.beginPath(); blobEllipse(c, 0, 20, 170, 210, 4, 0.04, 11); c.fill();

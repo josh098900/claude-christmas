@@ -30,7 +30,8 @@ shot('E1', (f) => {
   const ta = 1.25;
   const ty = t < T0 + ta ? typed(a, t, T0, typeDur(a, 1, 5) / ta, 5) : t < T0 + ta + 0.35 ? a : a + typed(b, t, T0 + ta + 0.35, typeDur(b, 1, 7) / (TS - T0 - ta - 0.4), 7);
   const sent = t >= TS + 0.1;
-  const msgs: Msg[] = [...HISTORY];
+  // only what is on screen (older messages are scrolled out of frame; saves blurring them)
+  const msgs: Msg[] = [{ who: 'me', text: Q3 }, { who: 'reply', text: R3, blur: 7 }];
   if (sent) msgs.push({ who: 'me', text: Q4, reveal: prog(t, TS + 0.1, TS + 0.25, ease.outCubic) });
   const z = lerp(1.24, 1.3, prog(f.tc, 0, f.dur, ease.inOutSine));
   tabletCU(f, { msgs, typing: sent ? '' : ty, caret: !sent, font: 44 }, { zoom: z, oy: -150, ox: 40 });
@@ -40,7 +41,7 @@ shot('E1', (f) => {
 // E2: the first readable reply. Plain and short. (piano enters at E2+0.30)
 shot('E2', (f) => {
   const t = f.t, tc = f.tc;
-  const msgs: Msg[] = [...HISTORY, { who: 'me', text: Q4 }];
+  const msgs: Msg[] = [{ who: 'reply', text: R3, blur: 7 }, { who: 'me', text: Q4 }];
   const TR = 0.3, TD = 2.1;
   if (t >= TR) msgs.push({ who: 'reply', text: R4, reveal: prog(t, TR, TD, ease.linear), blur: 0 });
   const push = prog(tc, 1.6, f.dur, ease.inOutSine);

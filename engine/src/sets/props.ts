@@ -16,10 +16,9 @@ export function topHand(c: C2D, from: V2, wrist: V2, size: number, o: { sleeve?:
   const ang = Math.atan2(wrist.y - from.y, wrist.x - from.x);
   const fl = o.flip ?? 1;
   if (o.shadow !== false) {
-    c.save(); c.globalAlpha = 0.35; c.filter = `blur(${size * 0.25}px)`;
-    tube(c, [v2(from.x + size * 0.3, from.y + size * 0.35), v2(wrist.x + size * 0.3, wrist.y + size * 0.35)], size * 0.95, size * 0.8, '#0a0c1e');
-    c.beginPath(); c.arc(wrist.x + Math.cos(ang) * size * 0.6 + size * 0.3, wrist.y + Math.sin(ang) * size * 0.6 + size * 0.35, size * 0.6, 0, TAU); c.fillStyle = '#0a0c1e'; c.fill();
-    c.restore();
+    const sx = (from.x + wrist.x) / 2 + size * 0.3, sy = (from.y + wrist.y) / 2 + size * 0.35;
+    softShadow(c, sx, sy, Math.hypot(wrist.x - from.x, wrist.y - from.y) * 0.6, size * 0.7, ang, 0.35);
+    softShadow(c, wrist.x + Math.cos(ang) * size * 0.6 + size * 0.3, wrist.y + Math.sin(ang) * size * 0.6 + size * 0.35, size * 0.8, size * 0.7, ang, 0.35);
   }
   tube(c, [from, v2(lerp(from.x, wrist.x, 0.5), lerp(from.y, wrist.y, 0.5) + size * 0.06), wrist], size * 0.95, size * 0.82, sl);
   // ribbed cuff
@@ -149,4 +148,13 @@ export function breath(c: C2D, x: number, y: number, age: number, dir = 1, s = 1
   const a = (1 - age) * 0.45;
   c.fillStyle = `rgba(220,230,250,${a})`;
   for (let k = 0; k < 3; k++) { c.beginPath(); c.arc(x + dir * (age * 26 + k * 6) * s, y - age * 10 * s - k * 2 * s, (4 + age * 10 + k * 2) * s, 0, TAU); c.fill(); }
+}
+
+/** Soft elliptical shadow without canvas filters (radial gradient, scaled). */
+export function softShadow(c: C2D, x: number, y: number, rx: number, ry: number, rot: number, a: number, col = '5,6,15') {
+  c.save(); c.translate(x, y); c.rotate(rot); c.scale(1, ry / Math.max(1, rx));
+  const g = c.createRadialGradient(0, 0, 0, 0, 0, rx);
+  g.addColorStop(0, `rgba(${col},${a})`); g.addColorStop(0.6, `rgba(${col},${a * 0.5})`); g.addColorStop(1, `rgba(${col},0)`);
+  c.fillStyle = g; c.beginPath(); c.arc(0, 0, rx, 0, TAU); c.fill();
+  c.restore();
 }

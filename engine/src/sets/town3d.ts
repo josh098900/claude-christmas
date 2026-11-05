@@ -93,6 +93,8 @@ export function drawTown(f: F, cam: Cam3, o: TownOpts = {}) {
       const x0 = b.x0, x1 = b.x0 + b.n * HOUSE;
       const pa = proj(cam, x0, 0, Z), pb = proj(cam, x1, 0, Z);
       if ((pa.sx > W + 40 && pb.sx > W + 40) || (pa.sx < -40 && pb.sx < -40)) continue;
+      if (pa.sy < -60 && proj(cam, x0, 0, Z + DEPTH).sy < -60) continue;
+      if (proj(cam, x0, b.roofH, Z + DEPTH / 2).sy > H + 60) continue;
       const k = cam.f / pa.d; // px per metre at this depth
       const hw = HOUSE * k;
       const tiny = hw < 2.5;
@@ -106,9 +108,12 @@ export function drawTown(f: F, cam: Cam3, o: TownOpts = {}) {
       c.fillStyle = nightCol(b.brick, 0.62, haze);
       quad(c, [proj(cam, x0, 0, Z), proj(cam, x1, 0, Z), proj(cam, x1, WALL, Z), proj(cam, x0, WALL, Z)]);
       // roof front slope (snow) + back slope if camera is high
-      const rf = c.createLinearGradient(0, proj(cam, x0, b.roofH, Z + DEPTH / 2).sy, 0, proj(cam, x0, WALL, Z).sy);
-      rf.addColorStop(0, nightCol('#c8d4f0', 0.0, haze)); rf.addColorStop(1, nightCol('#8292c6', 0.0, haze));
-      c.fillStyle = rf;
+      if (tiny) c.fillStyle = nightCol('#a6b4dc', 0.0, haze);
+      else {
+        const rf = c.createLinearGradient(0, proj(cam, x0, b.roofH, Z + DEPTH / 2).sy, 0, proj(cam, x0, WALL, Z).sy);
+        rf.addColorStop(0, nightCol('#c8d4f0', 0.0, haze)); rf.addColorStop(1, nightCol('#8292c6', 0.0, haze));
+        c.fillStyle = rf;
+      }
       quad(c, [proj(cam, x0 - 0.2, WALL, Z - 0.3), proj(cam, x1 + 0.2, WALL, Z - 0.3), proj(cam, x1 + 0.2, b.roofH, Z + DEPTH / 2), proj(cam, x0 - 0.2, b.roofH, Z + DEPTH / 2)]);
       if (cam.y > b.roofH + 2) {
         c.fillStyle = nightCol('#9aa8d4', 0.0, haze);

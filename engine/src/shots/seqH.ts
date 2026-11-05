@@ -21,16 +21,24 @@ const OPPOSITE = makeTerrace(-7, 7, 500);
 
 const DARK = { lit: () => 0, windows: () => 0, blaze: 1, blazeOn: 0, lampsOn: 1, farLights: 0.35, bellFrost: 1 } as const;
 
-/** Depth of field: blur everything drawn so far (base + glow). */
+/** Depth of field: blur everything drawn so far (base + glow) by down/up-sampling (cheap in software). */
 export function blurSoFar(f: F, px: number) {
   const st = f.stage;
-  const A = st.scratch();
-  A.x.filter = `blur(${px * f.S}px)`; A.x.drawImage(st.base, 0, 0); A.x.filter = 'none';
-  f.ctx.save(); f.ctx.setTransform(1, 0, 0, 1, 0, 0); f.ctx.globalCompositeOperation = 'copy'; f.ctx.drawImage(A.c, 0, 0); f.ctx.restore();
-  A.x.clearRect(0, 0, A.c.width, A.c.height);
-  A.x.filter = `blur(${px * f.S}px)`; A.x.drawImage(st.glowC, 0, 0); A.x.filter = 'none';
-  f.glow.save(); f.glow.setTransform(1, 0, 0, 1, 0, 0); f.glow.globalCompositeOperation = 'copy'; f.glow.drawImage(A.c, 0, 0); f.glow.restore();
-  st.release(1);
+  const A = st.scratch(), B = st.scratch();
+  const k = Math.max(2, px * f.S * 1.6);
+  const w1 = Math.max(2, Math.round(st.pw / (k * 0.5))), h1 = Math.max(2, Math.round(st.ph / (k * 0.5)));
+  const w2 = Math.max(2, Math.round(st.pw / k)), h2 = Math.max(2, Math.round(st.ph / k));
+  for (const [src, dst] of [[st.base, f.ctx], [st.glowC, f.glow]] as [HTMLCanvasElement, C2D][]) {
+    A.x.clearRect(0, 0, A.c.width, A.c.height); B.x.clearRect(0, 0, B.c.width, B.c.height);
+    A.x.imageSmoothingQuality = 'high'; B.x.imageSmoothingQuality = 'high';
+    A.x.drawImage(src, 0, 0, w1, h1);
+    B.x.drawImage(A.c, 0, 0, w1, h1, 0, 0, w2, h2);
+    A.x.clearRect(0, 0, A.c.width, A.c.height);
+    A.x.drawImage(B.c, 0, 0, w2, h2, 0, 0, w1, h1);
+    dst.save(); dst.setTransform(1, 0, 0, 1, 0, 0); dst.globalCompositeOperation = 'copy'; dst.imageSmoothingQuality = 'high';
+    dst.drawImage(A.c, 0, 0, w1, h1, 0, 0, st.pw, st.ph); dst.restore();
+  }
+  st.release(2);
 }
 
 const L_COLD = (spots: { x: number; y: number; r: number; color: string; a: number }[] = []): CharLight => ({ ...L_DARK_STREET, spots });
