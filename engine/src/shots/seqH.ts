@@ -18,6 +18,8 @@ const TERRACE = makeTerrace(-7, 7);
 const GH = TERRACE.find((h) => h.grandad)!;
 const GDR = doorRect(GH);
 const OPPOSITE = makeTerrace(-7, 7, 500);
+// brows sit a touch lower in his close-up so they stay visible under the cap brim when they lift
+const GRANDAD_CU: Spec = { ...C.GRANDAD_OUT, brows: { ...C.GRANDAD_OUT.brows, gap: 0.17, w: 9, color: '#bdb6aa' } };
 
 const DARK = { lit: () => 0, windows: () => 0, blaze: 1, blazeOn: 0, lampsOn: 1, farLights: 0.35, bellFrost: 1 } as const;
 
@@ -96,7 +98,7 @@ export function idle(t: number, ph: number, look = 0): Partial<Pose> {
   };
 }
 
-function crowd(f: F, cam: Cam, L: CharLight, t: number, faceRight = true, skip?: string, o: { torchDrop?: number; glanceAt?: number } = {}) {
+function crowd(f: F, cam: Cam, L: CharLight, t: number, faceRight = true, skip?: string, o: { torchDrop?: number; glanceAt?: number; aim?: { amt: number; names: string[] } } = {}) {
   const order = [...CROWD].sort((a, b) => a.y - b.y);
   const rig: Record<string, Rigged> = {};
   for (const e of order) {
@@ -105,14 +107,40 @@ function crowd(f: F, cam: Cam, L: CharLight, t: number, faceRight = true, skip?:
     const depth = 1 + (e.y - 170) / 650;
     const sc = STREET_S * cam.z * depth;
     const id = idle(t, e.ph, e.look ?? 0);
-    const torchA = e.torch ? ((o.torchDrop ?? -1) >= 0 ? lerp(2.5, 0.35, clamp(o.torchDrop ?? 0)) : 0.2) : 0;
+    const fl = faceRight ? 1 : e.fl;
+    const aimer = !!o.aim && o.aim.names.includes(e.sp.name);
+    const hasTorch = e.torch || aimer;
+    let torchA = e.torch ? ((o.torchDrop ?? -1) >= 0 ? lerp(2.5, 0.35, clamp(o.torchDrop ?? 0)) : 0.2) : 0;
+    const k = o.aim ? o.aim.names.indexOf(e.sp.name) : -1;
+    const tgt = toScreen(cam, v2(-150 + k * 95, -600 - (k % 2) * 40));
+    if (aimer) {
+      const sh = v2(p.x, p.y - (e.sp.legLen + e.sp.torso - 10) * sc);
+      const aUp = Math.atan2((tgt.x - sh.x) * fl, tgt.y - sh.y);
+      torchA = lerp(0.3, aUp, clamp(o.aim!.amt));
+    }
     const R = drawPerson(f, e.sp, {
-      x: p.x, y: p.y, s: sc, flip: faceRight ? 1 : e.fl, turn: 0.45,
-      armF: e.torch ? { a: torchA, b: 0.2 } : { a: 0.15, b: 0.6 }, armB: { a: 0.1, b: 0.5 },
+      x: p.x, y: p.y, s: sc, flip: fl, turn: 0.45,
+      armF: hasTorch ? { a: torchA, b: 0.1 } : { a: 0.15, b: 0.6 }, armB: { a: 0.1, b: 0.5 },
       browUp: 0.2, browIn: 0.3, mouth: { smile: 0.05 }, ...id, ...(e.pose || {}),
-      holdF: e.torch ? (x: C2D, h: V2, ang: number) => { x.save(); x.translate(h.x, h.y); x.rotate(ang); x.fillStyle = '#c8402e'; x.beginPath(); x.roundRect(-3 * sc, -6 * sc, 26 * sc, 12 * sc, 3 * sc); x.fill(); x.restore(); } : undefined,
+      holdF: hasTorch ? (x: C2D, h: V2, ang: number) => { x.save(); x.translate(h.x, h.y); x.rotate(ang); x.fillStyle = '#c8402e'; x.beginPath(); x.roundRect(-3 * sc, -6 * sc, 26 * sc, 12 * sc, 3 * sc); x.fill(); x.restore(); } : undefined,
     } as Pose, L);
-    if (e.torch && (o.torchDrop ?? -1) >= 0) {
+    if (aimer) {
+      const ang = Math.atan2(R.handF.y - R.shoulderF.y, R.handF.x - R.shoulderF.x);
+      const from = v2(R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc);
+      const amt = clamp(o.aim!.amt);
+      glow(f.glow, from.x, from.y, 14 * sc, '#fff4d8', 0.75);
+      beam(f.glow, from, ang, Math.hypot(tgt.x - from.x, tgt.y - from.y) + 60, 0.11, 'rgba(255,240,205,0.9)', 0.5, 4);
+      if (amt > 0.2) {
+        // the beam lands on the dead roof net: a pool of torchlight that shows the unlit bulbs
+        const pool = Math.min(1, (amt - 0.2) / 0.5);
+        const c = f.ctx; c.save(); c.globalCompositeOperation = 'lighter';
+        const g = c.createRadialGradient(tgt.x, tgt.y, 4, tgt.x, tgt.y, 120 * cam.z);
+        g.addColorStop(0, `rgba(255,236,200,${0.33 * pool})`); g.addColorStop(1, 'rgba(255,236,200,0)');
+        c.fillStyle = g; c.fillRect(tgt.x - 130 * cam.z, tgt.y - 130 * cam.z, 260 * cam.z, 260 * cam.z); c.restore();
+        glow(f.glow, tgt.x, tgt.y, 70 * cam.z, '#fff0d0', 0.12 * pool);
+      }
+    }
+    if (e.torch && !aimer && (o.torchDrop ?? -1) >= 0) {
       const ang = Math.atan2(R.handF.y - R.shoulderF.y, R.handF.x - R.shoulderF.x);
       glow(f.glow, R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc, 14 * sc, '#fff4d8', 0.7);
       beam(f.glow, v2(R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc), ang, 900 * sc, 0.16, 'rgba(255,240,205,0.9)', 0.6, 4);
@@ -253,11 +281,12 @@ shot('H3b', (f) => {
   const cam: Cam = { x: 420, y: -150, z: 1.8 };
   drawStreet(f, { mood: 'eve', cam, houses: OPPOSITE, ...DARK });
   blurSoFar(f, 7);
-  const struck = track(t, [[0, 0], [0.45, 0], [0.7, 1, ease.outBack], [1.5, 1]]);
+  const struck = track(t, [[0, 0], [0.5, 0], [0.75, 1, ease.outBack], [1.5, 1]]);
+  const upLook = track(tc, [[0, 0], [0.62, 0], [0.85, 1, ease.outCubic], [1.5, 1]]);
   const lampSpot = { x: W * 0.95, y: -100, r: 1300, color: '#ffcf8a', a: 0.25 };
-  drawPerson(f, C.GRANDAD_OUT, { x: W * 0.52, y: H + 610 + lerp(0, -6, struck), s: 3.2, flip: -1, turn: 0.3, headTurn: -0.1,
-    browUp: struck * 0.85, browIn: 0.15 + struck * 0.6, nod: lerp(0.15, -0.05, struck), look: { x: 0.6, y: 0.5 }, headTilt: struck * -0.04,
-    mouth: { smile: lerp(-0.1, -0.3, struck), open: struck * 0.12 }, blink: blink(t, [1.25]), armF: { a: 0.1, b: 0.3 } } as Pose,
+  drawPerson(f, GRANDAD_CU, { x: W * 0.52, y: H + 610 + lerp(0, -6, struck), s: 3.2, flip: -1, turn: 0.3, headTurn: -0.1,
+    browUp: struck * 0.9, browIn: 0.15 + struck * 0.55, nod: lerp(0.15, -0.05, struck) - upLook * 0.25, look: { x: lerp(0.6, 0.3, upLook), y: lerp(0.5, -1, upLook) }, headTilt: struck * -0.04 - upLook * 0.05,
+    mouth: { smile: lerp(-0.1, -0.3, struck), open: struck * 0.12 }, blink: blink(tc, [0.56], 0.14), armF: { a: 0.1, b: 0.3 } } as Pose,
     { ...L_COLD([lampSpot]), key: -0.7, rimAmt: 0.55, ambientAmt: 0.62 });
   // glint on his glasses as the brows lift
   if (struck > 0.5) glow(f.glow, W * 0.52 - 80, H * 0.4, 30, '#dfe8ff', 0.4 * (struck - 0.5) * 2 * (1 - clamp((tc - 1.0) * 2)));
@@ -282,7 +311,9 @@ shot('H4', (f) => {
   c.save(); f.glow.save(); c.translate(-pan, 0); f.glow.translate(-pan, 0);
   // the string of dead bulbs trailing from the box across the snow and up the wall
   const anchors: V2[] = [v2(W * 0.56, H * 0.66), v2(W * 0.8, H * 0.74), v2(W * 1.05, H * 0.6), v2(W * 1.25, H * 0.2), v2(W * 1.4, -40)];
-  lightString(f, { anchors, spacing: 78, size: 30, sag: 30, on: 0, seed: 7 });
+  // hope, then nothing: one weak flicker on the click, a smaller second one, then dark
+  const flick = tc >= 0.25 && tc < 0.4 ? 0.38 : tc >= 0.5 && tc < 0.55 ? 0.16 : 0;
+  lightString(f, { anchors, spacing: 78, size: 30, sag: 30, on: flick, seed: 7, glowA: 0.35, core: 0.15 });
   // cables into the box
   c.strokeStyle = '#c8702a'; c.lineWidth = 12; c.lineCap = 'round';
   c.beginPath(); c.moveTo(W * 0.3, H * 0.66); c.bezierCurveTo(W * 0.15, H * 0.75, W * 0.05, H * 0.95, -60, H * 0.98); c.stroke();
@@ -339,7 +370,7 @@ shot('H5', (f) => {
     const cam: Cam = { x: 50, y: -250, z: 1.13 + tc * 0.012 };
     drawStreet(f, { mood: 'eve', cam, houses: TERRACE, ...DARK });
     const L = L_COLD();
-    crowd(f, cam, { ...L, ambientAmt: 0.86 }, t + 2.0, false, undefined, { torchDrop: prog(tc, 0.05, 1.1, ease.inOutSine) });
+    crowd(f, cam, { ...L, ambientAmt: 0.86 }, t + 2.0, false, undefined, { aim: { amt: track(tc, [[0, 0.1], [0.25, 1, ease.outCubic], [0.7, 1], [1.15, 0, ease.inOutSine]]), names: ['OldLady', 'LadderMan', 'Teen2', 'YoungDad'] } });
     // Nell at the front by the switch box, head already bowing
     const np = toScreen(cam, v2(140, 262));
     drawPerson(f, C.NELL, { x: np.x, y: np.y, s: STREET_S * cam.z * 1.25, flip: 1, turn: 0.3, nod: lerp(0.2, 0.5, tc / 1.2), browIn: 0.8, browUp: -0.1, mouth: { smile: -0.5 },

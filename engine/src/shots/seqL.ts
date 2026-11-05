@@ -6,7 +6,7 @@ import { ease, lerp, clamp, hash1 } from '../core/math';
 import { glow } from '../draw/light';
 import { vgrad } from '../draw/brush';
 
-export const TAGLINE = 'Think it through. Then knock on doors.';
+export const TAGLINE = 'Some problems need a whole street.';
 
 shot('L1', (f) => {
   const c = f.ctx, t = f.tc;
@@ -16,14 +16,14 @@ shot('L1', (f) => {
   const dotA = prog(t, 0.0, 1.2, ease.outCubic);
   glow(f.glow, W / 2, 330, 22, '#ffd08a', 0.9 * dotA);
   glow(f.glow, W / 2, 330, 6, '#fff6e6', dotA);
-  const a1 = prog(t, 0.5, 1.6, ease.outCubic), a2 = prog(t, 1.3, 2.4, ease.outCubic), a3 = prog(t, 2.0, 3.0);
+  const a1 = prog(t, 0.15, 1.0, ease.outCubic), a2 = prog(t, 0.9, 1.8, ease.outCubic), a3 = prog(t, 1.6, 2.4);
   c.textAlign = 'center'; c.textBaseline = 'alphabetic';
   c.fillStyle = `rgba(244,236,222,${a1})`;
-  c.font = '400 54px Inter';
+  c.font = '400 72px Inter';
   c.fillText(TAGLINE, W / 2, 560 + (1 - a1) * 12);
   c.fillStyle = `rgba(244,236,222,${a2})`;
-  c.font = '600 76px Inter';
-  c.fillText('Claude', W / 2, 700 + (1 - a2) * 10);
+  c.font = '600 92px Inter';
+  c.fillText('Claude', W / 2, 720 + (1 - a2) * 10);
   c.fillStyle = `rgba(200,196,214,${0.75 * a3})`;
   c.font = '400 22px Inter';
   c.fillText('Fan-made. Not affiliated with or endorsed by Anthropic.', W / 2, 1010);

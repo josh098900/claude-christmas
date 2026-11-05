@@ -8,8 +8,8 @@ import { drawTown } from '../sets/town3d';
 import { glow } from '../draw/light';
 
 
-const T3D = 3.6;    // 3D town until here
-const EARTH = 3.4;  // earth view from here (hidden in cloud)
+const T3D = 3.0;    // 3D town until here
+const EARTH = 2.75; // earth view from here (hidden in cloud)
 
 shot('J1', (f) => {
   const t = f.tc;
@@ -17,7 +17,7 @@ shot('J1', (f) => {
   if (t < T3D) {
     const u = clamp(t / T3D);
     const e = u * u * (3 - 2 * u);
-    const h = Math.exp(lerp(Math.log(20), Math.log(900), e));
+    const h = Math.exp(lerp(Math.log(20), Math.log(700), e));
     const pitch = lerp(0.62, 1.5, smoothstep(0, 0.7, u));
     const tgt = { x: 0, y: 4, z: 3 };
     const cam = { x: tgt.x, y: h, z: tgt.z - (h - tgt.y) / Math.tan(pitch), pitch, f: 1100 };
@@ -26,7 +26,7 @@ shot('J1', (f) => {
     glow(f.glow, W / 2, H / 2, 6, '#fff6e6', 0.9);
   }
   if (t >= EARTH) {
-    const u = prog(t, EARTH, f.dur, ease.outCubic);
+    const u = 1 - Math.pow(1 - clamp((t - EARTH) / (f.dur - EARTH)), 1.5);
     if (t < T3D) {
       // crossfade inside the cloud
       const st = f.stage, S = f.S, A = st.scratch(), B = st.scratch();
@@ -38,11 +38,11 @@ shot('J1', (f) => {
     } else earthView(f, u, u);
   }
   // rising through cloud: soft puffs swell past, a brief white-out
-  const ca = smoothstep(2.6, 3.3, t) * (1 - smoothstep(3.6, 4.4, t));
+  const ca = smoothstep(2.0, 2.7, t) * (1 - smoothstep(3.0, 3.8, t));
   if (ca > 0.01) {
     for (let i = 0; i < 22; i++) {
       const a = hash1(i * 2.7) * TAU, r0 = 40 + hash1(i * 5.1) * 420;
-      const grow = Math.exp((t - 3.2) * 1.8 * (0.6 + hash1(i)));
+      const grow = Math.exp((t - 2.7) * 1.8 * (0.6 + hash1(i)));
       const x = W / 2 + Math.cos(a) * r0 * grow, y = H / 2 + Math.sin(a) * r0 * grow * 0.7;
       const rr = (260 + hash1(i * 3.3) * 360) * grow;
       const gr = c.createRadialGradient(x, y, 0, x, y, rr);

@@ -41,7 +41,7 @@ shot('B2', (f) => {
   drawLivingRoom(f, cam, { outsideOn: 1 });
   drawArmchair(f, cam, LR.chair.x, { cardigan: true });
   const gp = rToScreen(cam, v2(760, 10));
-  drawPerson(f, C.GRANDAD, { x: gp.x, y: gp.y, s: cam.z, flip: 1, turn: 0.2, back: true, armF: { a: 0.25, b: 1.9 }, holdF: mug, behindHandF: true, headTilt: 0.06 }, L_GRANDAD_WINDOW);
+  drawPerson(f, C.GRANDAD, { x: gp.x, y: gp.y, s: cam.z, flip: -1, turn: 0.95, armF: { a: 0.3, b: 1.95 }, holdF: mug, nod: 0.35, browIn: 0.5, mouth: { smile: -0.25 }, look: { x: 1, y: 0.2 }, blink: blink(t, [1.5]) }, L_GRANDAD_WINDOW);
   // Nell big in the foreground left, from behind
   const turnHead = track(t, [[0, 0], [1.0, 0], [1.4, 1]]);
   drawPerson(f, C.NELL_HOME, { x: 300, y: 1560, s: 3.0, flip: 1, turn: 0.2 + turnHead * 0.3, back: true, headTilt: -0.05 + turnHead * 0.06, armF: { a: 0.2, b: 0.3 } }, { ...L_NELL_ROOM, ambientAmt: 0.7, rimAmt: 1.0, rimW: 7, rimDir: -0.6 });
@@ -60,7 +60,7 @@ shot('B3', (f) => {
   const set = track(t, [[0, 0], [1.1, 0], [1.5, 1, ease.outBack], [2.5, 1]]);
   const browIn = lerp(sad, -0.55, set);
   drawPerson(f, C.NELL_HOME, {
-    x: 960, y: 1610, s: 5.2, flip: 1, turn: 0.25, look: { x: lerp(-0.6, 0.6, set), y: lerp(-0.5, -0.3, set) }, browIn, browUp: lerp(0.15, 0.25, set),
+    x: 960, y: 1610, s: 5.2, flip: 1, turn: 0.25, look: { x: lerp(-0.6, -0.9, set), y: lerp(-0.5, -1.0, set) }, browIn, browUp: lerp(0.15, 0.25, set),
     mouth: { smile: lerp(-0.4, 0.3, set), w: lerp(1, 0.8, set) }, nod: lerp(0.15, -0.12, set), blink: blink(t, [0.9]), headTilt: lerp(0.06, -0.06, set),
   }, { ...L_NELL_ROOM, spots: [{ x: 1300, y: 300, r: 700, color: '#8fa8ff', a: 0.25 }] });
   f.grade.vignette = 0.6;

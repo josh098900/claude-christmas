@@ -18,6 +18,26 @@ const GH = TERRACE.find((h) => h.grandad)!;
 
 export const LADDER_MAN_HAT: Spec = { ...C.LADDER_MAN, hat: { style: 'woolly', color: '#3d5a6a', color2: '#2e4654' } };
 
+/** Mum's teal scarf, drawn over the collar so it always reads (her bob would otherwise hide it). */
+export function mumScarf(f: F, R: Rigged, sc: number, dir: number) {
+  const c = f.ctx, col = '#2f7a78', dk = '#235e5c';
+  const n = R.neck;
+  tube(c, [v2(n.x - 32 * sc, n.y + 2 * sc), v2(n.x, n.y + 11 * sc), v2(n.x + 32 * sc, n.y + 2 * sc)], 19 * sc, 19 * sc, col);
+  tube(c, [v2(n.x + dir * 14 * sc, n.y + 8 * sc), v2(n.x + dir * 21 * sc, n.y + 42 * sc), v2(n.x + dir * 17 * sc, n.y + 70 * sc)], 16 * sc, 13 * sc, dk);
+  c.strokeStyle = 'rgba(240,230,200,0.35)'; c.lineWidth = 2 * sc;
+  for (const yy of [54, 62]) { c.beginPath(); c.moveTo(n.x + dir * 10 * sc, n.y + yy * sc); c.lineTo(n.x + dir * 24 * sc, n.y + yy * sc); c.stroke(); }
+}
+
+/** Mum keeping an eye on Nell from the pavement: a soft, cropped foreground figure (doorstep shots). */
+function mumWatching(f: F, cam: DCam, t: number) {
+  const p = dScreen(cam, v2(-292, 178));
+  const sc = 0.43 * cam.z * 1.32;
+  const R = drawPerson(f, C.MUM, { x: p.x, y: p.y + Math.sin(t * 1.6) * 2, s: sc, flip: 1, turn: 0.55, armF: { a: 0.25, b: 0.9 }, armB: { a: 0.2, b: 0.8 },
+    look: { x: 1, y: -0.2 }, mouth: { smile: 0.35 }, browUp: 0.15, blink: blink(t, [1.3]), lean: Math.sin(t * 0.5) * 0.02 } as Pose,
+    { ...L_NIGHT_STREET, key: -0.4, rimDir: -2.6, rim: '#9fb6ff', ambient: '#5f6aa0', ambientAmt: 0.72, spots: [] });
+  mumScarf(f, R, sc, 1);
+}
+
 /** Grandad, dim, standing in his dark bay window (seen through the glass). */
 export function grandadInWindow(f: F, cam: Cam, alpha = 0.5, L?: CharLight) {
   const wx = GH.x + GH.w * 0.32; // bay centre
@@ -47,6 +67,15 @@ shot('F1', (f) => {
   const cam: Cam = { x: lerp(-250, 40, ease.inOutSine(tc / f.dur)), y: -210, z: 1.32 };
   drawStreet(f, { mood: 'blue', cam, houses: TERRACE, lit: (h) => (h.grandad ? 0 : 0.85), windows: (h) => (h.grandad ? 0 : 1), lampsOn: 1 });
   grandadInWindow(f, cam, 0.55);
+  // Mum at the gate watching her set off, then following at a distance
+  const mFollow = clamp((tc - 0.9) / 1.6);
+  const mx = -470 + mFollow * 1.6 * 80;
+  const mp = toScreen(cam, v2(mx, 150));
+  const mw = walk(t * 0.95, 0.35 * (mFollow > 0 ? 1 : 0), 0.15);
+  const RM = drawPerson(f, C.MUM, { x: mp.x, y: mp.y, s: STREET_S * cam.z * 0.98, flip: 1, turn: 0.6, ...(mFollow > 0 ? mw : { bob: Math.sin(t * 1.6) * 1.5 }),
+    armF: { a: 0.25, b: 0.9 }, armB: mFollow > 0 ? mw.armB : { a: 0.2, b: 0.7 }, look: { x: 1, y: 0 }, mouth: { smile: 0.35 }, browUp: 0.2 } as Pose,
+    { ...L_NIGHT_STREET, key: -1.3, rimDir: -2.8 });
+  mumScarf(f, RM, STREET_S * cam.z * 0.98, 1);
   const w = walk(t * 1.25, 0.5, 0.0);
   const p = toScreen(cam, v2(nx, 172));
   drawPerson(f, C.NELL, {
@@ -117,6 +146,7 @@ shot('F2', (f) => {
   const dp = dScreen(cam, v2(30, 4));
   const wag = clamp((f.tc - 1.6) * 4);
   if (open2 > 0.3) drawDog(f.ctx, dp.x, dp.y, 0.43 * cam.z * 1.15, -1, f.t, 0.25 + wag, 0.85);
+  mumWatching(f, cam, t);
   nellAtDoor(f, cam, open2, { browUp: lerp(0.3, 0.7, prog(t, 1.6, 2.0)), mouth: { smile: lerp(0.2, 0.7, prog(t, 1.6, 2.0)) } });
   snowfall(f, 0.45, 0.2, 21);
   f.grade.vignette = 0.5; f.grade.bloom = 0.85;
@@ -246,6 +276,7 @@ shot('F5', (f) => {
   c.fillStyle = '#1a1414'; c.beginPath(); c.arc(bh.x - 9 * s, bh.y + 4 * s, 2.2 * s, 0, TAU); c.arc(bh.x - 1 * s, bh.y + 4 * s, 2.2 * s, 0, TAU); c.fill();
   c.strokeStyle = '#3a1a18'; c.lineWidth = 1.6 * s; c.beginPath(); c.arc(bh.x - 5 * s, bh.y + 10 * s, 3.5 * s, 0.2, Math.PI - 0.2); c.stroke();
   // Nell with the drawing; the baby grabs the corner
+  mumWatching(f, cam, t);
   PAPER_DY = -40;
   nellAtDoor(f, cam, open5, { browUp: 0.4 + grab * 0.3, mouth: { smile: 0.3 + grab * 0.3, open: grab * 0.2 }, armF: { a: 2.45, b: 0.15 }, armB: { a: 2.35, b: 0.25 }, look: { x: 1, y: -1 } }, true, -0.08, grab * 0.5 + track(t, [[0, 0], [0.8, 0], [1.0, 0.5], [1.2, 0.2], [1.4, 0.5], [2.0, 0.4]]), -60);
   PAPER_DY = 0;

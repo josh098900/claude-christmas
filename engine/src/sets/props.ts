@@ -159,15 +159,67 @@ export function softShadow(c: C2D, x: number, y: number, rx: number, ry: number,
   c.restore();
 }
 
-// ---------------------------------------------------------------- the Santa-trap misdirect papers
-/** Extra papers on Nell's wall that sell a Santa trap (sleigh → chimney, 8 reindeer, a net, a box trap). Plan-wall space. */
-export function santaPapers(f: F, c: C2D) {
+// ---------------------------------------------------------------- the misdirect: a Santa landing runway
+/** One idea on Nell's wall: lights so Santa's sleigh can see her roof (from the sky, from space) and land. */
+export function santaSketch(c: C2D, kind: string, w: number, h: number) {
   const ink = '#2b2b4a', red = '#c4302c';
+  const L = (pts: [number, number][], col = ink, wd = 3) => pencilLineLocal(c, pts.map(([x, y]) => v2(x * w, y * h)), wd, col);
+  const T = (s: string, x: number, y: number, sz: number, col = ink) => handText(c, s, x * w, y * h, sz, { ...NELL_HAND, color: col, seed: (x * 97 + y * 31) | 0, weight: 1.1 });
+  const dots = (pts: [number, number][], r = 4) => pts.forEach(([x, y], i) => { c.fillStyle = BULB_SEQ[i % 5]; c.beginPath(); c.arc(x * w, y * h, r, 0, TAU); c.fill(); });
+  const sleigh = (x: number, y: number, k: number) => {
+    L([[x - 0.12 * k, y], [x + 0.06 * k, y], [x + 0.09 * k, y - 0.1 * k]]); L([[x - 0.13 * k, y + 0.05 * k], [x + 0.08 * k, y + 0.05 * k], [x + 0.11 * k, y]]);
+    L([[x - 0.11 * k, y], [x - 0.11 * k, y - 0.09 * k], [x + 0.02 * k, y - 0.09 * k]]);
+    c.fillStyle = red; c.beginPath(); c.arc((x - 0.05 * k) * w, (y - 0.13 * k) * h, 7 * k, 0, TAU); c.fill();
+    for (const rx of [0.2, 0.36]) {
+      const X = x + rx * k, Y = y - 0.12 * k * (rx / 0.2);
+      L([[X - 0.05 * k, Y], [X + 0.05 * k, Y]]); L([[X - 0.04 * k, Y], [X - 0.05 * k, Y + 0.08 * k]], ink, 2); L([[X + 0.04 * k, Y], [X + 0.05 * k, Y + 0.08 * k]], ink, 2);
+      L([[X + 0.05 * k, Y - 0.02 * k], [X + 0.07 * k, Y - 0.1 * k]], ink, 2); L([[X + 0.07 * k, Y - 0.1 * k], [X + 0.04 * k, Y - 0.15 * k]], ink, 1.6); L([[X + 0.07 * k, Y - 0.1 * k], [X + 0.1 * k, Y - 0.15 * k]], ink, 1.6);
+    }
+    L([[x + 0.08 * k, y - 0.05 * k], [x + 0.15 * k, y - 0.1 * k]], ink, 1.6);
+  };
+  if (kind === 'runway') {
+    // the sleigh coming in from the top left, a dashed glide path down to a roof outlined in lights, an X on it
+    sleigh(-0.28, -0.26, 0.9);
+    for (let k = 0; k < 6; k++) { const u = k / 6, u2 = (k + 0.5) / 6; L([[lerp(-0.05, 0.22, u), lerp(-0.18, 0.18, u * u)], [lerp(-0.05, 0.22, u2), lerp(-0.18, 0.18, u2 * u2)]], red, 3); }
+    L([[0.16, 0.12], [0.23, 0.2], [0.28, 0.1]], red, 3);
+    L([[-0.02, 0.44], [0.24, 0.24], [0.46, 0.44]], ink, 3); L([[0.34, 0.33], [0.34, 0.25], [0.4, 0.25], [0.4, 0.38]], ink, 2);
+    const pts: [number, number][] = []; for (let k = 0; k <= 8; k++) { const u = k / 8; pts.push([lerp(-0.02, 0.24, u), lerp(0.42, 0.22, u)]); pts.push([lerp(0.24, 0.46, u), lerp(0.22, 0.42, u)]); }
+    dots(pts, 3.5);
+    T('SANTA?', -0.46, 0.18, 28, red);
+  } else if (kind === 'reindeer') {
+    T('8 REINDEER', -0.44, -0.4, 26);
+    for (let k = 0; k < 8; k++) {
+      const x = -0.38 + (k % 4) * 0.22, y = -0.05 + Math.floor(k / 4) * 0.28;
+      L([[x - 0.05, y], [x + 0.05, y]]); L([[x - 0.04, y], [x - 0.05, y + 0.1]], ink, 2); L([[x + 0.04, y], [x + 0.05, y + 0.1]], ink, 2);
+      L([[x + 0.05, y - 0.02], [x + 0.07, y - 0.1]], ink, 2); L([[x + 0.07, y - 0.1], [x + 0.04, y - 0.15]], ink, 1.6); L([[x + 0.07, y - 0.1], [x + 0.1, y - 0.15]], ink, 1.6);
+      if (k === 0) { c.fillStyle = red; c.beginPath(); c.arc((x + 0.085) * w, (y - 0.07) * h, 4, 0, TAU); c.fill(); }
+    }
+  } else if (kind === 'space') {
+    // the Earth from far away, one bright dot, and the sleigh spotting it
+    T('SEEN FROM', -0.44, -0.44, 22, red); T('SPACE?', -0.44, -0.22, 22, red);
+    c.strokeStyle = ink; c.lineWidth = 3; c.beginPath(); c.arc(0.12 * w, 0.22 * h, 0.26 * h, Math.PI * 1.05, Math.PI * 1.95); c.stroke();
+    c.fillStyle = '#ffae2b'; c.beginPath(); c.arc(0.12 * w, -0.03 * h, 6, 0, TAU); c.fill();
+    for (let k = 0; k < 6; k++) { const a = (k / 6) * TAU; L([[0.12 + Math.cos(a) * 0.05, -0.03 + Math.sin(a) * 0.07], [0.12 + Math.cos(a) * 0.09, -0.03 + Math.sin(a) * 0.12]], '#d89a20', 2); }
+    sleigh(0.18, -0.32, 0.55);
+    for (let k = 0; k < 3; k++) L([[0.24 - k * 0.03, -0.25 + k * 0.06], [0.22 - k * 0.03, -0.22 + k * 0.06]], red, 2);
+  } else if (kind === 'lights') {
+    // "LIGHTS = RUNWAY": two rows of landing lights leading to a roof
+    T('LIGHTS =', -0.44, -0.44, 22); T('RUNWAY', -0.44, -0.2, 22, red);
+    const pts: [number, number][] = [];
+    for (let k = 0; k < 6; k++) { pts.push([-0.4 + k * 0.1, 0.3 - k * 0.02]); pts.push([-0.4 + k * 0.1, 0.42 - k * 0.04]); }
+    dots(pts, 4);
+    L([[0.24, 0.42], [0.34, 0.26], [0.44, 0.42]]);
+    L([[0.1, 0.12], [0.3, 0.12]], red, 3); L([[0.24, 0.07], [0.3, 0.12], [0.24, 0.17]], red, 3);
+  }
+}
+
+export function santaPapers(f: F, c: C2D) {
+  const red = '#c4302c';
   const papers: { x: number; y: number; w: number; h: number; r: number; kind: string; ex: number; ey: number }[] = [
-    { x: -860, y: -230, w: 310, h: 220, r: -0.04, kind: 'sleigh', ex: -190, ey: -60 },
-    { x: -900, y: 130, w: 230, h: 160, r: 0.05, kind: 'trap', ex: -190, ey: 60 },
+    { x: -860, y: -230, w: 330, h: 230, r: -0.04, kind: 'runway', ex: -190, ey: -60 },
+    { x: -900, y: 130, w: 250, h: 180, r: 0.05, kind: 'space', ex: -190, ey: 60 },
     { x: 880, y: -140, w: 270, h: 190, r: 0.04, kind: 'reindeer', ex: 190, ey: -40 },
-    { x: 880, y: 120, w: 210, h: 150, r: -0.05, kind: 'net', ex: 190, ey: 70 },
+    { x: 880, y: 120, w: 230, h: 160, r: -0.05, kind: 'lights', ex: 190, ey: 70 },
   ];
   c.strokeStyle = red; c.lineWidth = 3;
   for (const p of papers) {
@@ -178,49 +230,11 @@ export function santaPapers(f: F, c: C2D) {
   for (const p of papers) {
     c.save(); c.translate(p.x, p.y); c.rotate(p.r);
     c.fillStyle = '#ece6d6'; c.beginPath(); handRect(c, -p.w / 2, -p.h / 2, p.w, p.h, p.x | 0, 1.2); c.fill();
-    const w = p.w, h = p.h;
-    const L = (pts: [number, number][], col = ink, wd = 3) => pencilLineLocal(c, pts.map(([x, y]) => v2(x * w, y * h)), wd, col);
-    const T = (s: string, x: number, y: number, sz: number, col = ink) => handText(c, s, x * w, y * h, sz, { ...NELL_HAND, color: col, seed: (x * 97 + y * 31) | 0, weight: 1.1 });
-    if (p.kind === 'sleigh') {
-      // sleigh with a big curly runner, two reindeer ahead, an arrow swooping down to a chimney
-      L([[-0.38, -0.12], [-0.12, -0.12], [-0.08, -0.26]]); L([[-0.4, -0.06], [-0.1, -0.06], [-0.05, -0.12]]);
-      L([[-0.36, -0.12], [-0.36, -0.24], [-0.16, -0.24]]);
-      c.fillStyle = red; c.beginPath(); c.arc(-0.27 * w, -0.3 * h, 8, 0, TAU); c.fill(); // a red blob of Santa
-      for (const rx of [0.05, 0.22]) {
-        L([[rx - 0.06, -0.18], [rx + 0.06, -0.18]]); L([[rx - 0.05, -0.18], [rx - 0.06, -0.1]]); L([[rx + 0.05, -0.18], [rx + 0.06, -0.1]]);
-        L([[rx + 0.06, -0.2], [rx + 0.08, -0.28]]); L([[rx + 0.08, -0.28], [rx + 0.05, -0.34]], ink, 2); L([[rx + 0.08, -0.28], [rx + 0.12, -0.34]], ink, 2);
-      }
-      L([[-0.04, -0.18], [-0.08, -0.16]], ink, 2);
-      // arrow down to a roof + chimney
-      L([[0.3, -0.16], [0.36, 0.0], [0.3, 0.16]], red, 4); L([[0.22, 0.1], [0.3, 0.18], [0.37, 0.1]], red, 4);
-      L([[0.08, 0.44], [0.26, 0.28], [0.44, 0.44]]); L([[0.32, 0.36], [0.32, 0.26], [0.38, 0.26], [0.38, 0.4]]);
-      L([[0.26, 0.22], [0.42, 0.2]], ink, 2);
-      T('SANTA?', -0.46, 0.18, 30, red);
-    } else if (p.kind === 'reindeer') {
-      T('8 REINDEER', -0.44, -0.4, 26);
-      for (let k = 0; k < 8; k++) {
-        const x = -0.38 + (k % 4) * 0.22, y = -0.05 + Math.floor(k / 4) * 0.28;
-        L([[x - 0.05, y], [x + 0.05, y]]); L([[x - 0.04, y], [x - 0.05, y + 0.1]], ink, 2); L([[x + 0.04, y], [x + 0.05, y + 0.1]], ink, 2);
-        L([[x + 0.05, y - 0.02], [x + 0.07, y - 0.1]], ink, 2); L([[x + 0.07, y - 0.1], [x + 0.04, y - 0.15]], ink, 1.6); L([[x + 0.07, y - 0.1], [x + 0.1, y - 0.15]], ink, 1.6);
-        if (k === 0) { c.fillStyle = red; c.beginPath(); c.arc((x + 0.085) * w, (y - 0.07) * h, 4, 0, TAU); c.fill(); }
-      }
-    } else if (p.kind === 'net') {
-      // a chimney with a net over the top
-      L([[-0.15, 0.4], [-0.15, -0.05], [0.15, -0.05], [0.15, 0.4]]);
-      for (let k = -3; k <= 3; k++) { L([[k * 0.07 - 0.12, -0.32], [k * 0.07 + 0.12, -0.05]], ink, 1.6); L([[k * 0.07 + 0.12, -0.32], [k * 0.07 - 0.12, -0.05]], ink, 1.6); }
-      L([[-0.3, -0.32], [0.3, -0.32]], ink, 2);
-      T('NET', 0.2, 0.1, 26, red);
-    } else if (p.kind === 'trap') {
-      // a box propped on a stick, a string, and the bait
-      L([[-0.32, 0.25], [-0.32, -0.12], [0.08, -0.22], [0.08, 0.12]]); L([[-0.32, -0.12], [-0.18, -0.2], [0.18, -0.3], [0.08, -0.22]]);
-      L([[0.06, 0.12], [0.1, 0.3]], ink, 3); // stick
-      L([[0.1, 0.24], [0.44, 0.3]], red, 2); // string
-      c.fillStyle = '#b8743a'; for (const bx of [-0.14, -0.04]) { c.beginPath(); c.ellipse(bx * w, 0.32 * h, 13, 7, 0, 0, TAU); c.fill(); }
-      T('BAIT: MINCE PIES', -0.45, -0.46, 17, red);
-    }
+    santaSketch(c, p.kind, p.w, p.h);
     c.fillStyle = '#d23a32'; c.beginPath(); c.arc(0, -p.h / 2 + 10, 6, 0, TAU); c.fill();
     c.restore();
   }
+  void f;
 }
 
 function pencilLineLocal(c: C2D, pts: V2[], wd: number, col: string) {

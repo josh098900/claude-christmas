@@ -23,12 +23,12 @@ const HISTORY: Msg[] = [
   { who: 'me', text: Q3 }, { who: 'reply', text: R3, blur: 7 },
 ];
 
-/** Over-the-shoulder foreground: Nell (left) and Mum (right) reading the screen together, rim-lit by it. */
+/** Over-the-shoulder foreground: the backs of Nell's and Mum's heads side by side, rim-lit by the screen. */
 function readingTogether(f: F, t: number, mumLean = 0, mumNod = 0) {
   const L: CharLight = { key: -1.57, shadow: '#1e1a30', shadowAmt: 0.7, shadowOff: 26, shadowSoft: 8, rim: '#ffd29a', rimAmt: 1.0, rimW: 8, rimDir: -1.45, ambient: '#3a3050', ambientAmt: 0.8, spots: [{ x: 960, y: 520, r: 900, color: '#ffc98e', a: 0.18 }] };
-  drawPerson(f, C.NELL_HOME, { x: 300, y: 1640, s: 2.9, back: true, turn: 0.1, flip: 1, headTilt: 0.06, lean: 0.05, armF: { a: 0.6, b: 0.6 }, armB: { a: 0.4, b: 0.6 } }, L);
-  // Mum: three-quarter from behind, her face turned to the screen, lit warm by it
-  drawPerson(f, MUM_HOME, { x: 1690 - mumLean * 50, y: 1560, s: 2.45, flip: -1, turn: 0.97, headTilt: 0.05 + mumNod * 0.08, nod: -0.25 + mumNod * 0.5, lean: 0.14 + mumLean * 0.1, look: { x: 1, y: -0.5 }, browUp: 0.25, mouth: { smile: 0.2 + 0.4 * mumNod }, armF: { a: 0.2, b: 0.3 }, armB: { a: 0.1, b: 0.3 } }, { ...L, key: -2.6, rimDir: -2.2, ambientAmt: 0.55, spots: [{ x: 1500, y: 650, r: 520, color: '#ffc98e', a: 0.5 }] });
+  // Mum first (slightly behind), taller, leaning in over Nell's shoulder: bob + teal scarf from behind
+  drawPerson(f, MUM_HOME, { x: 820 - mumLean * 40, y: 1770, s: 2.6, back: true, turn: 0.1, flip: -1, headTilt: 0.12 + mumNod * 0.12, lean: 0.1 + mumLean * 0.12, armF: { a: 0.3, b: 0.4 }, armB: { a: 0.2, b: 0.4 } }, { ...L, rimDir: -1.7 });
+  drawPerson(f, C.NELL_HOME, { x: 400, y: 1660, s: 2.9, back: true, turn: 0.1, flip: 1, headTilt: 0.06, lean: 0.05, armF: { a: 0.6, b: 0.6 }, armB: { a: 0.4, b: 0.6 } }, L);
   void t;
 }
 
@@ -44,8 +44,22 @@ shot('E1', (f) => {
   // only what is on screen (older messages are scrolled out of frame; saves blurring them)
   const msgs: Msg[] = [{ who: 'me', text: Q3 }, { who: 'reply', text: R3, blur: 7 }];
   if (sent) msgs.push({ who: 'me', text: Q4, reveal: prog(t, TS + 0.1, TS + 0.25, ease.outCubic) });
+  if (f.tc < 1.0) {
+    // side two-shot: Nell typing, Mum leaning over her shoulder, both faces lit warm by the screen
+    const cam = { x: 10, y: -318, z: 2.95 };
+    const tap = ty.length % 2;
+    deskScene(f, cam, { look: { x: 1, y: 0.35 }, browIn: -0.15, browUp: 0.15, mouth: { smile: 0.05, w: 0.6 }, armF: { a: 1.2 + tap * 0.06, b: 0.35 - tap * 0.1 }, blink: blink(t, [0.7]) }, { msgs: [] }, {
+      jar: 0.95, tangles: 0, coils: 5,
+      beforeNell: (tabS) => {
+        const p = rToScreen(cam, v2(-130, -10));
+        drawPerson(f, MUM_HOME, { x: p.x, y: p.y, s: cam.z * 0.92, flip: 1, turn: 0.85, hipDrop: -30, legF: { a: 1.4, b: -1.4 }, legB: { a: 1.3, b: -1.4 }, lean: 0.28,
+          look: { x: 1, y: 0.4 }, nod: 0.25, browUp: 0.2, mouth: { smile: 0.25 }, armF: { a: 0.9, b: 0.9 }, armB: { a: 0.7, b: 1.0 } } as Pose, nellDeskLight(tabS, 0.9));
+      },
+    });
+    return;
+  }
   const z = lerp(1.24, 1.3, prog(f.tc, 0, f.dur, ease.inOutSine));
-  tabletCU(f, { msgs, typing: sent ? '' : ty, caret: !sent, font: 44 }, { zoom: z, oy: -300, ox: 60 });
+  tabletCU(f, { msgs, typing: sent ? '' : ty, caret: !sent, font: 44 }, { zoom: z, oy: -370, ox: 60 });
   readingTogether(f, t, prog(t, 1.2, 1.8, ease.inOutCubic));
   f.grade.vignette = 0.68;
 });
@@ -58,7 +72,7 @@ shot('E2', (f) => {
   if (t >= TR) msgs.push({ who: 'reply', text: R4, reveal: prog(t, TR, TD, ease.linear), blur: 0 });
   const push = prog(tc, 1.6, f.dur, ease.inOutSine);
   const z = lerp(1.28, 1.5, push);
-  tabletCU(f, { msgs, typing: '', caret: false, thinking: t < TR ? 1 : 0, font: 46 }, { zoom: z, oy: lerp(-300, -330, push), ox: lerp(60, 190, push) });
+  tabletCU(f, { msgs, typing: '', caret: false, thinking: t < TR ? 1 : 0, font: 46 }, { zoom: z, oy: lerp(-370, -390, push), ox: lerp(60, 190, push) });
   // Mum reads it too; a small nod as the last line lands
   readingTogether(f, t, 1, Math.sin(clamp((t - 2.3) / 0.6) * Math.PI) * 1.0);
   f.grade.vignette = lerp(0.65, 0.78, push);
@@ -121,11 +135,11 @@ shot('E3', (f) => {
     };
     drawPerson(f, hatOn ? NELL_HAT : C.NELL_HOME, pose, L);
     // Mum, left foreground: watches the wall, then turns to Nell with a small knowing smile and nod
-    const mt = prog(t, 3.1, 3.4, ease.inOutCubic);
-    const nodM = Math.sin(clamp((t - 3.4) / 0.45) * Math.PI) * 0.5;
+    const mt = prog(t, 2.85, 3.1, ease.inOutCubic);
+    const nodM = Math.abs(Math.sin(clamp((t - 3.1) / 0.8) * Math.PI * 2)) * 0.6;
     drawPerson(f, MUM_HOME, {
       x: lerp(-260, 330, inN), y: 1330, s: 2.2, flip: mt < 0.5 ? 1 : 1, turn: mt < 0.5 ? 0.5 : lerp(0.4, 0.75, mt), back: mt < 0.5,
-      look: { x: 1, y: 0.1 }, nod: nodM, browUp: 0.45 * mt, browIn: 0.1, mouth: { smile: 0.75 * mt, w: 0.9 }, cheek: mt,
+      look: { x: 1, y: 0.1 }, nod: nodM, headTilt: 0.12 * mt, browUp: 0.7 * mt, browIn: -0.15 * mt, mouth: { smile: 1.0 * mt, open: 0.28 * mt, w: 1.05 }, cheek: 1.4 * mt, eyesClosed: mt > 0.5 && nodM > 0.25,
       armF: { a: 0.3, b: 1.2 }, armB: { a: 0.1, b: 0.3 }, lean: 0.04,
     }, { ...L, rimDir: -0.4, key: -0.3, spots: [{ x: 700, y: 600, r: 520, color: '#ffc58a', a: 0.22 * mt }] });
   }

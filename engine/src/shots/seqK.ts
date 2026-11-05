@@ -17,7 +17,7 @@ const L_CODA: CharLight = {
 };
 /** K1: this time he drinks (it's warm now). */
 function drink(t: number) { return track(t, [[0, 0], [3.2, 0], [3.8, 1, ease.inOutSine], [4.6, 1], [5.2, 0.2, ease.inOutSine]]); }
-export const CODA_MSG = 'it worked. the whole street came.';
+export const CODA_MSG = 'it worked. everyone helped.';
 
 export const CODA_REPLY = 'You knocked on the doors. Happy Christmas, Nell.';
 export const CODA_WITH_REPLY = false; // decided in DECISIONS.md after testing both

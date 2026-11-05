@@ -63,13 +63,13 @@ export const GRANDAD_OUT: Spec = {
 
 export const GRANDMA_PHOTO: Spec = {
   name: 'Grandma',
-  legLen: 120, hipW: 46, legW: 24, legColor: '#3d3a4a',
+  legLen: 150, hipW: 46, legW: 24, legColor: '#3d3a4a',
   boot: { color: '#3a2a26', h: 18, len: 18 },
-  torso: 120, shoulderW: 86, hemW: 120, hemY: 70,
+  torso: 142, shoulderW: 90, hemW: 124, hemY: 78,
   coat: { color: '#c97c86', trim: '#a8606c', style: 'cardigan', buttons: '#f2e3c8', inner: '#f0e2c4' },
-  arm: { upper: 54, lower: 50, w: 22, color: '#c97c86' },
+  arm: { upper: 62, lower: 58, w: 22, color: '#c97c86' },
   hand: { r: 12, color: '#f0c7aa' },
-  head: { r: 46, w: 0.95, neck: 6, skin: '#f0c7aa', blush: '#e48f84' },
+  head: { r: 44, w: 0.92, neck: 8, skin: '#f0c7aa', blush: '#e48f84' },
   eyes: { r: 1.0, gap: 0.35, y: 0.06 },
   brows: { color: '#5a3424', w: 5.5, len: 0.34, gap: 0.24 },
   nose: { r: 1.0 },

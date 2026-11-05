@@ -267,8 +267,11 @@ export function softClouds(c: C2D, g: C2D, P: (x: number, y: number) => V2, a: n
 /** The Earth at night, oblique: the limb arcs across the top, city lights below, our dot the brightest. earthT 0..1 */
 export function earthView(f: F, earthT: number, zoom: number) {
   const c = f.ctx, g = f.glow;
+  // a slow drift so the view is never static
+  c.save(); g.save();
+  for (const x of [c, g]) { x.translate(W / 2, H * 0.6); x.rotate(lerp(-0.035, 0.03, zoom)); x.translate(-W / 2, -H * 0.6); }
   c.fillStyle = '#03050f'; c.fillRect(0, 0, W, H);
-  for (let i = 0; i < 180; i++) glow(g, hash1(i * 5.1) * W, hash1(i * 2.9) * H * 0.6, 1.6 + hash1(i) * 2.2, '#e6ecff', 0.35 * (0.4 + 0.6 * hash1(i * 9)));
+  for (let i = 0; i < 180; i++) glow(g, hash1(i * 5.1) * W * 1.1 - W * 0.05, hash1(i * 2.9) * H * 0.6 - 40, 1.6 + hash1(i) * 2.2, '#e6ecff', 0.35 * (0.4 + 0.6 * hash1(i * 9)) * (0.75 + 0.25 * Math.sin(f.tc * 3 + i)));
   const R = W * lerp(3.2, 0.95, zoom);
   const limbY = lerp(H * 0.12, H * 0.34, zoom);
   const ecx = W / 2, ecy = limbY + R;
@@ -306,5 +309,6 @@ export function earthView(f: F, earthT: number, zoom: number) {
   glow(g, dx, dy, 24 + 8 * pulse, '#ffd08a', 0.95);
   glow(g, dx, dy, 6, '#fff6e6', 1.0);
   glow(g, dx, dy, 80, '#ff9a50', 0.28 * pulse);
+  c.restore(); g.restore();
   void earthT;
 }

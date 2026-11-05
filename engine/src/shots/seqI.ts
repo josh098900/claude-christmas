@@ -21,7 +21,7 @@ shot('I4', (f) => {
   const cam = { x: lerp(10, 16, u), y: lerp(-330, -345, u), z: lerp(1.22, 1.3, u) };
   drawStreet(f, {
     mood: 'eve', cam, houses: TERRACE,
-    lit: () => 0, windows: (h) => (h.grandad ? 0.6 : 0),
+    lit: () => 0, windows: () => 0,
     blaze: 1, blazeOn: clamp(t * 12), lampsOn: 1, bellFrost: 0,
   });
   // Nell and Grandad at the door, small, lit full-on
@@ -38,7 +38,7 @@ shot('I4', (f) => {
   }
   snowfall(f, 0.7, 0.2, 7, '#ffd6a0');
   const g = f.grade;
-  g.saturation = 1.22; g.bloom = 0.95; g.bloomThreshold = 0.7; g.exposure = 1.0 + flash * 0.25; g.vignette = 0.42;
+  g.saturation = 1.3; g.bloom = 0.7; g.bloomThreshold = 0.8; g.exposure = 1.0 + flash * 0.25; g.vignette = 0.45;
   g.gain = [1.04, 1.0, 0.95];
 });
 
@@ -134,7 +134,7 @@ const BULB_T = [0.2, 0.63, 1.06, 1.49, 1.92, 2.35, 2.78];
 shot('I2', (f) => {
   const t = f.tc, c = f.ctx;
   // backdrop: snowy step + door frame in moonlight
-  vgrad(c, 0, 0, W, H, [[0, '#1b2350'], [1, '#2c3a6e']]);
+  brickBackdrop(c);
   c.fillStyle = '#3b3550'; c.beginPath(); handRect(c, 1580, -20, 360, 1120, 12, 2); c.fill(); // door frame
   c.fillStyle = '#2a3a4a'; c.fillRect(1650, -20, 300, 1120);                                  // dark green door
   c.fillStyle = '#8193c4'; c.fillRect(0, 900, W, 200);
@@ -177,7 +177,7 @@ shot('I2', (f) => {
 // I3: he puts her small hand on the bulb; she twists. (blaze lands on the first frame of I4)
 shot('I3', (f) => {
   const t = f.t, c = f.ctx;
-  vgrad(c, 0, 0, W, H, [[0, '#1b2350'], [1, '#2c3a6e']]);
+  brickBackdrop(c);
   c.fillStyle = '#3b3550'; c.beginPath(); handRect(c, 1240, -20, 360, 1120, 12, 2); c.fill();
   c.fillStyle = '#2a3a4a'; c.fillRect(1310, -20, 620, 1120);
   // the loose bulb, big, in its socket on the frame
@@ -188,24 +188,20 @@ shot('I3', (f) => {
   // twist lines on the glass
   c.strokeStyle = 'rgba(200,215,255,0.25)'; c.lineWidth = 3;
   c.beginPath(); c.arc(bx, by + 40, 70, -0.6 + twist * 1.5, 0.2 + twist * 1.5); c.stroke();
-  // Grandad's big hand underneath, guiding
-  const guide = prog(t, 0.0, 1.0, ease.outCubic);
-  litGroup(f, { x: 0, y: 0, w: W, h: H }, L_HANDS_DARK, (x) => bigHand(x, lerp(700, bx - 110, guide), lerp(1000, by + 230, guide), 1.5, -0.55, '#e6b496', '#2e384b', 0.8));
-  // Nell's mustard mitten arrives and closes on the bulb, then twists
-  const arrive = prog(t, 0.6, 1.4, ease.outBack);
+  // his big bare hand closes on the bulb and does the twist; her mitten comes to rest on top of his hand
+  const cover = prog(t, 0.5, 1.2, ease.outCubic);
+  litGroup(f, { x: 0, y: 0, w: W, h: H }, L_HANDS_DARK, (x) => bigHand(x, lerp(bx - 300, bx - 24, cover), lerp(by + 300, by - 60, cover), 1.35, -0.55 + twist * 0.8, '#e6b496', '#2e384b', 1.0));
+  const arrive = prog(t, 1.0, 1.6, ease.outBack);
   litGroup(f, { x: 0, y: 0, w: W, h: H }, L_HANDS_DARK, (x) => {
-    x.save(); x.translate(lerp(560, bx - 120, arrive), lerp(1250, by - 40, arrive)); x.rotate(-0.9 + twist * 0.7);
-    tube(x, [{ x: -260, y: 220 }, { x: -60, y: 60 }], 150, 130, '#c23f36');
-    x.fillStyle = '#a8342e'; x.beginPath(); blobEllipse(x, -60, 60, 80, 60, 4, 0.05, 9, -0.7); x.fill();
-    x.fillStyle = '#e3a53a'; x.beginPath(); blobEllipse(x, 10, 0, 110, 90, 7, 0.05, 12, -0.5); x.fill();
-    x.beginPath(); blobEllipse(x, -40, -80, 40, 32, 8, 0.06, 8, -1.2); x.fill();
+    x.save(); x.translate(lerp(520, bx - 150, arrive), lerp(1250, by + 80, arrive)); x.rotate(-0.7 + twist * 0.5);
+    tube(x, [{ x: -300, y: 260 }, { x: -70, y: 70 }], 150, 130, '#c23f36');
+    x.fillStyle = '#a8342e'; x.beginPath(); blobEllipse(x, -70, 70, 80, 60, 4, 0.05, 9, -0.7); x.fill();
+    x.fillStyle = '#e3a53a'; x.beginPath(); blobEllipse(x, 0, 0, 100, 80, 7, 0.05, 12, -0.5); x.fill();
+    x.beginPath(); blobEllipse(x, -40, -72, 36, 28, 8, 0.06, 8, -1.2); x.fill();
     x.strokeStyle = 'rgba(150,90,20,0.35)'; x.lineWidth = 4;
-    for (let k = 0; k < 5; k++) { x.beginPath(); x.moveTo(-60 + k * 20, 60); x.lineTo(-56 + k * 20, 90); x.stroke(); }
+    for (let k = 0; k < 5; k++) { x.beginPath(); x.moveTo(-60 + k * 20, 50); x.lineTo(-56 + k * 20, 80); x.stroke(); }
     x.restore();
   });
-  // his big hand closes over her mitten: they twist it together
-  const cover = prog(t, 1.15, 1.55, ease.outCubic);
-  if (cover > 0) litGroup(f, { x: 0, y: 0, w: W, h: H }, L_HANDS_DARK, (x) => bigHand(x, lerp(bx - 260, bx - 30, cover), lerp(by + 260, by - 70, cover), 1.35, -0.55 + twist * 0.7, '#e6b496', '#2e384b', 1.0));
   // held breath: the faintest flicker in the bulb on the last frames
   if (t > 2.38) glow(f.glow, bx, by + 40, 90, BULB_SEQ[0], 0.15);
   f.grade.vignette = 0.62; f.grade.saturation = 0.9;
@@ -216,7 +212,7 @@ const HOUSE_ON = (k: number) => 0.10 + (k - 1) * 0.30; // k = 1..9 (cue sheet)
 shot('I5', (f) => {
   const t = f.tc;
   const u = prog(t, 0, f.dur, ease.inOutSine);
-  const cam = { x: lerp(0, 420, u), y: lerp(-330, -360, u), z: lerp(0.78, 0.36, u) };
+  const cam = { x: 0, y: lerp(-330, -380, u), z: lerp(0.78, 0.33, u) };
   const lit = (h: { i: number; grandad?: boolean }) => {
     if (h.grandad) return 0;
     const k = Math.abs(h.i);
@@ -225,7 +221,18 @@ shot('I5', (f) => {
     const dt = f.t - t0;
     return dt < 0.09 ? 0.35 : 0.72; // a stutter as they catch; never as bright as his
   };
-  drawStreet(f, { mood: 'eve', cam, houses: TERRACE, lit, windows: (h) => (h.grandad ? 0.6 : Math.min(1, lit(h) * 1.0)), blaze: 1, blazeOn: 1, lampsOn: 1, bellFrost: 0 });
+  drawStreet(f, { mood: 'eve', cam, houses: TERRACE, lit, windows: (h) => (h.grandad ? 0 : Math.min(1, lit(h) * 1.3)), blaze: 1, blazeOn: 1, lampsOn: 1, bellFrost: 0 });
+  // each house pops on with its glock note: a brief bloom burst at the house
+  for (const h of TERRACE) {
+    if (h.grandad) continue;
+    const k = Math.min(9, Math.abs(h.i));
+    const dt = f.tc - HOUSE_ON(k);
+    if (dt < 0 || dt > 0.35) continue;
+    const p = toScreen(cam, v2(h.x + h.w / 2, -300));
+    const a = Math.exp(-dt * 9);
+    glow(f.glow, p.x, p.y, 420 * cam.z, '#ffd9a0', 0.55 * a);
+    glow(f.glow, p.x, p.y + 120 * cam.z, 260 * cam.z, '#ffffff', 0.35 * a);
+  }
   // the crowd in the street, small, turning to watch the fuse go by
   const look = Math.min(1, t / 2.5);
   const crowd: [typeof C.NELL, number, number][] = [[C.LADDER_MAN, -360, 330], [C.OLD_LADY, -200, 350], [C.SHOPKEEPER, 260, 340], [C.TEEN1, 420, 360], [C.TEEN2, 520, 330], [C.YOUNG_DAD, 700, 350], [C.MUM, -520, 340], [C.DAD, -640, 350]];
@@ -272,3 +279,23 @@ shot('I6', (f) => {
   snowfall(f, 0.5, 0.2, 11, '#ffd6a0');
   f.grade.saturation = 1.15; f.grade.bloom = 1.15; f.grade.vignette = 0.45; f.grade.gain = [1.05, 1.0, 0.95];
 });
+
+/** Close-up backdrop for the hand inserts: Grandad's brick front wall at night, by the door. */
+function brickBackdrop(c: C2D) {
+  vgrad(c, 0, 0, W, H, [[0, '#3a2c3c'], [1, '#2c2a48']]);
+  // brick courses, hand-hinted (not every brick)
+  for (let row = 0; row < 22; row++) {
+    const y = row * 52 - 20;
+    for (let k = 0; k < 18; k++) {
+      const x = k * 118 + (row % 2) * 59 - 40;
+      const h = hash1(row * 31 + k * 7);
+      if (h < 0.35) continue;
+      c.fillStyle = h > 0.8 ? 'rgba(90,60,80,0.55)' : 'rgba(70,46,66,0.45)';
+      c.fillRect(x + 4, y + 4, 108, 42);
+    }
+  }
+  // cold moonlight falling from the upper left
+  const g = c.createLinearGradient(0, 0, W, H);
+  g.addColorStop(0, 'rgba(120,150,230,0.18)'); g.addColorStop(1, 'rgba(20,24,60,0.25)');
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+}

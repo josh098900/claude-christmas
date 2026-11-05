@@ -293,8 +293,8 @@ function houseLights(f: F, h: House, on: number, density: number, o: StreetOpts)
   const size = 7;
   const dense = density > 1.2;
   const zm = clamp(1.6 / o.cam.z, 0.42, 1);  // close-ups: less glow per bulb so the strings don't merge into white
-  const GA = (dense ? 0.38 : 0.5) * zm, CORE = (dense ? 0.08 : 0.4) * zm;
-  const GR = dense ? size * 3.2 : undefined;
+  const GA = (dense ? 0.3 : 0.5) * zm, CORE = (dense ? 0.04 : 0.4) * zm;
+  const GR = dense ? size * 2.8 : undefined;
   const LS = (opts: Parameters<typeof lightString>[1]) => lightString(f, { glowA: GA, core: CORE, glowR: GR, ...opts });
   // gutter swags
   const sw: V2[] = [];
@@ -310,40 +310,40 @@ function houseLights(f: F, h: House, on: number, density: number, o: StreetOpts)
     const top = -WALL_H - ROOF_H;
     // upstairs windows, double-framed
     for (const wx of [x0 + w * 0.28 - uw / 2, x0 + w * 0.72 - uw / 2]) {
-      LS({ anchors: [v2(wx - 14, -WALL_H + 70 + uh + 18), v2(wx - 14, -WALL_H + 56), v2(wx + uw + 14, -WALL_H + 56), v2(wx + uw + 14, -WALL_H + 70 + uh + 18)], spacing: 15, size: 5.5, sag: 2, on, seed: seed + 5 });
-      LS({ anchors: [v2(wx - 26, -WALL_H + 42), v2(wx + uw / 2, -WALL_H + 30), v2(wx + uw + 26, -WALL_H + 42)], spacing: 15, size: 5, sag: 10, on, seed: seed + 15 });
+      LS({ anchors: [v2(wx - 14, -WALL_H + 70 + uh + 18), v2(wx - 14, -WALL_H + 56), v2(wx + uw + 14, -WALL_H + 56), v2(wx + uw + 14, -WALL_H + 70 + uh + 18)], spacing: 15, size: 6.6, sag: 2, on, seed: seed + 5 });
+      LS({ anchors: [v2(wx - 26, -WALL_H + 42), v2(wx + uw / 2, -WALL_H + 30), v2(wx + uw + 26, -WALL_H + 42)], spacing: 15, size: 6.0, sag: 10, on, seed: seed + 15 });
     }
     // string course: a double swag
-    LS({ anchors: [v2(x0, -WALL_H * 0.5 - 8), v2(x0 + w / 3, -WALL_H * 0.5 - 8), v2(x0 + (2 * w) / 3, -WALL_H * 0.5 - 8), v2(x0 + w, -WALL_H * 0.5 - 8)], spacing: 15, size: 5.5, sag: 22, on, seed: seed + 6 });
+    LS({ anchors: [v2(x0, -WALL_H * 0.5 - 8), v2(x0 + w / 3, -WALL_H * 0.5 - 8), v2(x0 + (2 * w) / 3, -WALL_H * 0.5 - 8), v2(x0 + w, -WALL_H * 0.5 - 8)], spacing: 15, size: 6.6, sag: 22, on, seed: seed + 6 });
     // roof: ridge + a net of rows
-    LS({ anchors: [v2(x0 - 34, top - 4), v2(x0 + w / 2, top - 6), v2(x0 + w + 34, top - 4)], spacing: 16, size: 6.5, sag: 4, on, seed: seed + 7 });
+    LS({ anchors: [v2(x0 - 34, top - 4), v2(x0 + w / 2, top - 6), v2(x0 + w + 34, top - 4)], spacing: 16, size: 7.8, sag: 4, on, seed: seed + 7 });
     for (let k = 0; k < 6; k++) {
       const yy = lerp(top + 22, -WALL_H - 18, k / 5);
-      LS({ anchors: [v2(x0 - 16, yy), v2(x0 + w / 3, yy + 6), v2(x0 + (2 * w) / 3, yy + 6), v2(x0 + w + 16, yy)], spacing: 17, size: 5.5, sag: 9, on, seed: seed + 8 + k });
+      LS({ anchors: [v2(x0 - 16, yy), v2(x0 + w / 3, yy + 6), v2(x0 + (2 * w) / 3, yy + 6), v2(x0 + w + 16, yy)], spacing: 17, size: 6.6, sag: 9, on, seed: seed + 8 + k });
     }
     // chimney outline (both chimneys of this house)
     for (const cx of [x0, x0 + w]) {
       const cw = 78, ch = 110, cy = top - ch + 30;
-      LS({ anchors: [v2(cx - cw / 2 - 4, cy + ch - 30), v2(cx - cw / 2 - 4, cy - 6), v2(cx + cw / 2 + 4, cy - 6), v2(cx + cw / 2 + 4, cy + ch - 30)], spacing: 14, size: 5, sag: 1, on, seed: seed + 30 });
+      LS({ anchors: [v2(cx - cw / 2 - 4, cy + ch - 30), v2(cx - cw / 2 - 4, cy - 6), v2(cx + cw / 2 + 4, cy - 6), v2(cx + cw / 2 + 4, cy + ch - 30)], spacing: 14, size: 6.0, sag: 1, on, seed: seed + 30 });
     }
     // ground floor bay + its roof
     if (h.bay) {
-      LS({ anchors: [v2(x0 + w * 0.32 - 116, -8), v2(x0 + w * 0.32 - 116, -262), v2(x0 + w * 0.32 + 116, -262), v2(x0 + w * 0.32 + 116, -8)], spacing: 14, size: 5.5, sag: 2, on, seed: seed + 11 });
-      LS({ anchors: [v2(x0 + w * 0.32 - 104, -292), v2(x0 + w * 0.32, -300), v2(x0 + w * 0.32 + 104, -292)], spacing: 14, size: 5, sag: 6, on, seed: seed + 12 });
+      LS({ anchors: [v2(x0 + w * 0.32 - 116, -8), v2(x0 + w * 0.32 - 116, -262), v2(x0 + w * 0.32 + 116, -262), v2(x0 + w * 0.32 + 116, -8)], spacing: 14, size: 6.6, sag: 2, on, seed: seed + 11 });
+      LS({ anchors: [v2(x0 + w * 0.32 - 104, -292), v2(x0 + w * 0.32, -300), v2(x0 + w * 0.32 + 104, -292)], spacing: 14, size: 6.0, sag: 6, on, seed: seed + 12 });
     }
     // door: double frame
     const dr = doorRect(h);
-    LS({ anchors: [v2(dr.x - 30, -6), v2(dr.x - 30, dr.y - 74), v2(dr.x + dr.w + 30, dr.y - 74), v2(dr.x + dr.w + 30, -6)], spacing: 15, size: 5.5, sag: 3, on, seed: seed + 13 });
+    LS({ anchors: [v2(dr.x - 30, -6), v2(dr.x - 30, dr.y - 74), v2(dr.x + dr.w + 30, dr.y - 74), v2(dr.x + dr.w + 30, -6)], spacing: 15, size: 6.6, sag: 3, on, seed: seed + 13 });
     // icicle drops all along the gutter
     for (let k = 0; k < 16; k++) {
       const xx = x0 + 12 + k * (w - 24) / 15;
-      LS({ anchors: [v2(xx, -WALL_H + 8), v2(xx + 2, -WALL_H + 44 + (k % 4) * 18)], spacing: 13, size: 4.2, sag: 0, on, seed: seed + 20 + k, colors: ['#fff1cf', '#ffae2b', '#fff1cf', '#fff1cf'] });
+      LS({ anchors: [v2(xx, -WALL_H + 8), v2(xx + 2, -WALL_H + 44 + (k % 4) * 18)], spacing: 13, size: 5.0, sag: 0, on, seed: seed + 20 + k, colors: ['#fff1cf', '#ffae2b', '#fff1cf', '#fff1cf'] });
     }
     // garden wall, gate posts and the path edges
-    LS({ anchors: [v2(x0 + 4, 64), v2(dr.x - 22, 64)], spacing: 14, size: 5, sag: 5, on, seed: seed + 40 });
-    LS({ anchors: [v2(dr.x + dr.w + 22, 64), v2(x0 + w - 4, 64)], spacing: 14, size: 5, sag: 5, on, seed: seed + 41 });
-    LS({ anchors: [v2(dr.x - 20, 2), v2(dr.x - 20, 112)], spacing: 14, size: 4.5, sag: 0, on, seed: seed + 42 });
-    LS({ anchors: [v2(dr.x + dr.w + 20, 2), v2(dr.x + dr.w + 20, 112)], spacing: 14, size: 4.5, sag: 0, on, seed: seed + 43 });
+    LS({ anchors: [v2(x0 + 4, 64), v2(dr.x - 22, 64)], spacing: 14, size: 6.0, sag: 5, on, seed: seed + 40 });
+    LS({ anchors: [v2(dr.x + dr.w + 22, 64), v2(x0 + w - 4, 64)], spacing: 14, size: 6.0, sag: 5, on, seed: seed + 41 });
+    LS({ anchors: [v2(dr.x - 20, 2), v2(dr.x - 20, 112)], spacing: 14, size: 5.4, sag: 0, on, seed: seed + 42 });
+    LS({ anchors: [v2(dr.x + dr.w + 20, 2), v2(dr.x + dr.w + 20, 112)], spacing: 14, size: 5.4, sag: 0, on, seed: seed + 43 });
   }
 }
 
@@ -428,14 +428,14 @@ export function drawStreet(f: F, o: StreetOpts) {
     if (g && on > 0.01) {
       c.save(); c.globalCompositeOperation = 'lighter';
       const gr = c.createRadialGradient(g.x + g.w / 2, -WALL_H * 0.6, 50, g.x + g.w / 2, -WALL_H * 0.6, 700);
-      gr.addColorStop(0, `rgba(255,170,110,${0.14 * on})`); gr.addColorStop(1, 'rgba(255,170,110,0)');
+      gr.addColorStop(0, `rgba(255,150,90,${0.16 * on})`); gr.addColorStop(1, 'rgba(255,150,90,0)');
       c.fillStyle = gr; c.fillRect(g.x - 700, -WALL_H - 900, g.w + 1400, 1800);
       c.restore();
       glow(f.glow, g.x + g.w / 2, -WALL_H * 0.55, 900, '#ff9a60', 0.05 * on);
       // coloured wash: the walls and snow catch every colour of the string
       c.save(); c.globalCompositeOperation = 'lighter';
       // coloured pools on the snow in front: each colour of the string, reflected
-      const pools: [string, number][] = [['255,70,60', -0.35], ['70,220,120', -0.1], ['255,175,50', 0.15], ['80,130,255', 0.4], ['255,240,210', 0.0]];
+      const pools: [string, number][] = [['255,70,60', -0.4], ['70,220,120', -0.12], ['255,175,50', 0.15], ['80,130,255', 0.42]];
       for (const [rgb, fx] of pools) {
         const px = g.x + g.w / 2 + fx * g.w, py = 150;
         const pg2 = c.createRadialGradient(px, py, 5, px, py, 260);
@@ -446,7 +446,7 @@ export function drawStreet(f: F, o: StreetOpts) {
       for (const [rgb, fx, fy] of washes) {
         const wx = g.x + g.w / 2 + fx * g.w, wy = fy * WALL_H;
         const gg = c.createRadialGradient(wx, wy, 10, wx, wy, 460);
-        gg.addColorStop(0, `rgba(${rgb},${0.13 * on})`); gg.addColorStop(1, `rgba(${rgb},0)`);
+        gg.addColorStop(0, `rgba(${rgb},${0.17 * on})`); gg.addColorStop(1, `rgba(${rgb},0)`);
         c.fillStyle = gg; c.fillRect(wx - 460, wy - 460, 920, 920);
       }
       c.restore();

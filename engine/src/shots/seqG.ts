@@ -12,23 +12,13 @@ import { blobEllipse, handRect, vgrad, tube } from '../draw/brush';
 import { handText } from '../draw/letters';
 import { STREET_S, L_NIGHT_STREET } from './common';
 import { drawLadder, bulbBox, mitten } from '../sets/doorstep';
-import { LADDER_MAN_HAT } from './seqF';
+import { LADDER_MAN_HAT, mumScarf } from './seqF';
 import { idle, breath } from './seqH';
 import { Rigged } from '../chars/rig';
 
 const TERRACE = makeTerrace(-7, 7);
 const GH = TERRACE.find((h) => h.grandad)!;
 const GDR = doorRect(GH);
-
-/** Mum's teal scarf, drawn over the collar so it always reads (her bob would otherwise hide it). */
-function mumScarf(f: F, R: Rigged, sc: number, dir: number) {
-  const c = f.ctx, col = '#2f7a78', dk = '#235e5c';
-  const n = R.neck;
-  tube(c, [v2(n.x - 30 * sc, n.y + 2 * sc), v2(n.x, n.y + 10 * sc), v2(n.x + 30 * sc, n.y + 2 * sc)], 17 * sc, 17 * sc, col);
-  tube(c, [v2(n.x + dir * 14 * sc, n.y + 8 * sc), v2(n.x + dir * 20 * sc, n.y + 40 * sc), v2(n.x + dir * 16 * sc, n.y + 66 * sc)], 15 * sc, 12 * sc, dk);
-  c.strokeStyle = 'rgba(240,230,200,0.35)'; c.lineWidth = 2 * sc;
-  for (const yy of [52, 60]) { c.beginPath(); c.moveTo(n.x + dir * 10 * sc, n.y + yy * sc); c.lineTo(n.x + dir * 23 * sc, n.y + yy * sc); c.stroke(); }
-}
 
 /** A church spire on the far skyline, lit warm (drawn in screen space above the roofline). */
 function spire(f: F, x: number, baseY: number, h: number, glowAmt = 1) {
@@ -79,10 +69,10 @@ shot('G1', (f) => {
   const t = f.t, tc = f.tc;
   const walkX = (tt: number) => 60 + tt * 62;
   if (tc < 1.5) {
-    const cam: Cam = { x: 260 + tc * 30, y: -300, z: 0.95 };
+    const cam: Cam = { x: 230 + tc * 40, y: -170, z: 1.25 };
     drawStreet(f, { mood: 'eve', cam, houses: TERRACE, lit: (h) => (h.grandad ? 0 : 1), windows: (h) => (h.grandad ? 0 : 1), lampsOn: 1, bellFrost: 1 });
     const roof = toScreen(cam, v2(0, -805));
-    spire(f, (900 - cam.x * 0.35) * cam.z + W / 2, roof.y + 40, 280);
+    spire(f, (900 - cam.x * 0.35) * cam.z + W / 2, Math.max(roof.y + 40, 120), 260);
     const gx = walkX(tc);
     const wg = walk(t * 0.9, 0.3, 0.1), wm = walk(t * 0.9 + 0.5, 0.36, 0.1);
     const L = lightAt(cam);

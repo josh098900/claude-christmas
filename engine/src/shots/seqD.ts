@@ -11,7 +11,7 @@ import { CharLight } from '../draw/shade';
 import { glow, bulb, BULB_SEQ, beam, shaft, motes } from '../draw/light';
 import { handText } from '../draw/letters';
 import { handRect, blobEllipse, smoothOpen, tube, vgrad } from '../draw/brush';
-import { topHand, topHandTip, NELL_HAND, coil, advent, softShadow, santaPapers } from '../sets/props';
+import { topHand, topHandTip, NELL_HAND, coil, advent, softShadow, santaPapers, santaSketch } from '../sets/props';
 import { landing, hallway } from '../sets/hallway';
 
 export const Q1 = 'why does 1 bulb make them ALL go off';
@@ -484,6 +484,15 @@ shot('D9', (f) => {
   const pose = mumNight ? { ...NIGHT_POSES[k], look: { x: 0.9, y: -0.8 * mumIn }, browUp: 0.4 * mumIn, browIn: -0.3, mouth: { smile: 0.5 * mumIn } } : NIGHT_POSES[k];
   deskScene(f, cam, pose, { msgs: [] }, {
     jar: 0.3 + 0.6 * (k / (nights - 1)), tangles: Math.max(0, 3 - Math.floor(k / 3)), coils: Math.min(6, Math.floor(k * 0.8)), glowAmt: flick, moon, shaftAmt: 0.7, mug: mumNight && t > NT,
+    beforeNell: () => {
+      // the runway plan pinned up beside the Advent calendar
+      const c2 = f.ctx; c2.save(); rcamApply(c2, cam);
+      c2.translate(300, -470); c2.rotate(0.04);
+      c2.fillStyle = '#ece6d6'; c2.beginPath(); handRect(c2, -95, -66, 190, 132, 5, 1); c2.fill();
+      santaSketch(c2, 'runway', 190, 132);
+      c2.fillStyle = '#d23a32'; c2.beginPath(); c2.arc(0, -56, 4, 0, TAU); c2.fill();
+      c2.restore();
+    },
     afterNell: mumNight ? (tabS) => {
       const p = rToScreen(cam, v2(lerp(430, 330, mumIn), 0));
       drawPerson(f, MUM_HOME, {

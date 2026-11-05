@@ -61,3 +61,16 @@ The critic scored misdirect 3, brand 3, blaze 4 and Grandad's arc 5, with severa
 39. **A2 is tighter**, so the one dark house can't be missed. In **B2** Grandad no longer gestures (it read as "waving her away"). In **B3** her decision reads as resolve and a small smile rather than anger at Grandad.
 40. **J1:** the cloud pass is darker and shorter (the lilac haze read as a render fault), and the town rows now curve and skew instead of forming a grid.
 41. **Tagline changed to "Think it through. Then knock on doors."** The critic pointed out that "Some problems need a whole street" repeats the tablet's "the whole street came" three seconds earlier. The new line names both halves of the film and exactly what Claude did: helped her think it through, then sent her to people.
+
+## Phase 6, pass 2 (a second blind critic)
+
+Scores: reads 7, misdirect 4, switch/blaze 6, Grandad 6, Claude 8, handmade 6, animation 5, blaze 3, sync 9, pacing 6, homages 8, brand 4. Fixes:
+42. **The blaze is saturated, not bloomed.** Bulbs are 20% bigger with tighter, dimmer halos and almost no white core. Grandad's windows stay dark inside their frames of lights, so the panes read, and the colour comes from a coloured wash and pools on the snow. Bloom is down to 0.7. Both critics had called it a "pink-white bloom".
+43. **Grandad does the twist.** His bare hand closes on the loose bulb and turns it, and her mitten rests on top of his. He re-engages and finishes the job himself, and she's there with him. This departs slightly from the brief's "lets her be the one to twist it": two blind critics in a row read the earlier version as *her* fix, and the rubric line ("he finishes the job himself") takes precedence.
+44. **The dead switch gives hope, then nothing:** the string flickers weakly on the click and dies, and in the H5 wide the crowd's torches swing up to the dead roof, then drop (forks).
+45. **The coda line is "it worked. everyone helped."** It credits the people, not the tablet, and it frees the end card.
+46. **The tagline goes back to "Some problems need a whole street."**, set larger and appearing faster. Critic 2 noted that "knock on doors", after a child door-knocking, carries a stranger-danger and canvasser tone, and preferred this line as "warm, true to the film, modest about Claude". With the coda line changed there's no longer an echo.
+47. **Child safety, continued:** Mum is now at the gate when Nell sets off door-knocking (at blue hour, not night), and she's clearly on Nell's side of the tablet in E1.
+48. **Misdirect:** the wall is now one consistent idea, a Santa landing runway. In B3 the idea arrives with a glance up toward the chimney, not at Grandad.
+49. **Grandma in the photo** has adult proportions. She had read as "child-sized".
+50. **I5:** each house now pops on with a bloom burst on its glockenspiel note. **J1** spends less time on the top-down town grid, and the Earth drifts and rotates slowly instead of holding still. **A1** gains firs and bare winter trees in the back gardens, so it's less grid-like.

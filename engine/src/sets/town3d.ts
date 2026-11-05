@@ -91,6 +91,32 @@ export function drawTown(f: F, cam: Cam3, o: TownOpts = {}) {
       glow(g, p.sx, p.sy, Math.max(2, 8 * k), '#ffcf8a', 0.3 * (1 - haze));
       if (k > 2) glow(g, p.sx, proj(cam, lx, 0.1, Z - 12).sy, 14 * k, '#ffb070', 0.12 * (1 - haze));
     }
+    // back-garden trees behind this row (drawn before it: they're further away)
+    {
+      const kk = cam.f / Math.max(1, dRow);
+      if (kk > 0.35) for (let q = 0; q < 70; q++) {
+        const tx = -1100 + q * 32 + (hash1(row * 13 + q) - 0.5) * 24;
+        if (hash1(row * 7 + q * 3) < 0.45) continue;
+        const tz = Z + DEPTH + 6 + hash1(q * 5 + row) * 14;
+        const base = proj(cam, tx, 0, tz), top = proj(cam, tx, 6 + hash1(q + row) * 5, tz);
+        if (base.d < 2 || top.sx < -60 || top.sx > W + 60 || top.sy > H + 40 || base.sy < -40) continue;
+        const hgt = base.sy - top.sy, wdt = hgt * 0.55;
+        if (hgt < 3) continue;
+        const th = clamp((base.d - 60) / fogD) * 0.85;
+        if (hash1(q * 9 + row) > 0.5) {
+          // fir with snow on its tiers
+          c.fillStyle = `rgba(${lerp(30, 40, th) | 0},${lerp(52, 52, th) | 0},${lerp(56, 100, th) | 0},1)`;
+          c.beginPath(); c.moveTo(top.sx, top.sy); c.lineTo(top.sx + wdt / 2, base.sy); c.lineTo(top.sx - wdt / 2, base.sy); c.closePath(); c.fill();
+          c.fillStyle = nightCol('#c8d4f0', 0, th);
+          for (let tier = 1; tier <= 3; tier++) { const yy = top.sy + hgt * tier * 0.24, ww = wdt * tier * 0.24; c.fillRect(top.sx - ww / 2, yy, ww, Math.max(1, hgt * 0.04)); }
+        } else {
+          // bare winter tree: a soft dark crown
+          c.fillStyle = `rgba(${lerp(46, 40, th) | 0},${lerp(40, 52, th) | 0},${lerp(64, 100, th) | 0},0.85)`;
+          c.beginPath(); c.ellipse(top.sx, top.sy + hgt * 0.35, wdt * 0.55, hgt * 0.4, 0, 0, TAU); c.fill();
+          c.fillRect(top.sx - Math.max(1, wdt * 0.05), top.sy + hgt * 0.5, Math.max(2, wdt * 0.1), hgt * 0.5);
+        }
+      }
+    }
     for (const b of rows.get(row)!) {
       const x0 = b.x0, x1 = b.x0 + b.n * HOUSE;
       const pa = proj(cam, x0, 0, Z), pb = proj(cam, x1, 0, Z);
