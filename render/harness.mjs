@@ -33,7 +33,7 @@ export async function launchWorker(scale) {
   const page = await browser.newPage({ viewport: { width: 400, height: 300 } });
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') console.log('[page]', m.text()); });
   page.on('pageerror', (e) => console.log('[pageerror]', e.message));
-  await page.goto('file://' + path.join(ROOT, 'render/page.html'));
+  await page.goto('file://' + path.join(ROOT, 'render/page.html') + '?b=' + (process.env.SFS_BUNDLE || 'engine.js'));
   await page.evaluate(() => document.fonts.load('36px Inter'));
   const info = await page.evaluate((s) => window.SFS.init(s), scale);
   return { browser, page, info };

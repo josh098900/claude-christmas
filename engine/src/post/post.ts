@@ -99,7 +99,7 @@ void main(){
   float midW = 1.0 - abs(L - 0.45)*1.35;           // texture strongest in mid tones
   float darkW = smoothstep(0.35, 0.05, L);           // cross-hatch in darks
   float g = (h1 - 0.5)*1.0*uHatchAmt + (h2-0.5)*0.55*darkW*uHatchAmt + (tooth - 0.5)*0.75;
-  vec3 col = base * (1.0 + g*0.30*uGrain*(0.45+0.55*midW)) + g*0.022*uGrain;
+  vec3 col = base * (1.0 + g*0.30*uGrain*(0.45+0.55*midW)) + g*(0.02 + 0.045*darkW)*uGrain;
   // paper speckle: pigment misses the tooth peaks
   float sp = smoothstep(0.80, 0.97, texture(uTooth, px/95. + bo2*0.5).r);
   col = mix(col, mix(col, uPaperCol*max(L*1.6, 0.25), 0.55), sp*0.30*uSpeckle);
@@ -109,14 +109,15 @@ void main(){
   col += glow;
 
   // bloom (three radii)
-  vec3 bl = texture(uB1, uv).rgb*0.5 + texture(uB2, uv).rgb*0.7 + texture(uB3, uv).rgb*0.9;
+  vec3 bl = texture(uB1, uv).rgb*0.22 + texture(uB2, uv).rgb*0.3 + texture(uB3, uv).rgb*0.38;
   col += bl * uBloom;
 
   // grade
   col *= uExposure * (1.0 + (fract(sin(uBoilSeed*3.17)*9871.3)-0.5)*0.018*uFlick);
   col = max(col, 0.0);
   // soft shoulder tone-map so blazes don't clip harshly
-  col = col / (1.0 + max(col - 0.85, 0.0)*0.9);
+  float mx = max(max(col.r, col.g), col.b);
+  if (mx > 0.78) { float k = 0.78 + (mx - 0.78) / (1.0 + (mx - 0.78) * 2.2); col *= k / mx; } // hue-preserving shoulder
   col = pow(col, 1.0/uGamma);
   col = uLift + col*(uGain - uLift);
   float l2 = luma(col);

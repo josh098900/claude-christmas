@@ -1,0 +1,166 @@
+{
+ "statements": [
+  [
+   "A1 celesta solo",
+   0.9,
+   6.194117647058824,
+   false
+  ],
+  [
+   "A2/A3 celesta (gap falls on the photo, A5)",
+   9.4,
+   14.694117647058825,
+   false
+  ],
+  [
+   "B3 piano: the decision",
+   23.0,
+   27.0,
+   false
+  ],
+  [
+   "C3 celesta tiptoe (staccato)",
+   33.1,
+   36.7,
+   false
+  ],
+  [
+   "C4 celesta tail (D5 C#5 E5, stops on gap at end of C4)",
+   37.6,
+   38.9,
+   false
+  ],
+  [
+   "D3 caper phrase 1 (celesta+pizz), gap at 46.5",
+   44.5,
+   47.0,
+   false
+  ],
+  [
+   "D6 strings, broad (caper)",
+   52.5,
+   55.5,
+   false
+  ],
+  [
+   "D8 celesta high motif, gap at 61.25",
+   58.75,
+   61.25,
+   false
+  ],
+  [
+   "D9 caper climax, stab on E/A, gap from 63.5 to 64.5",
+   61.5,
+   63.9,
+   false
+  ],
+  [
+   "E2 piano: the reply (gap = a question)",
+   68.3,
+   72.58571428571429,
+   false
+  ],
+  [
+   "F6 full ensemble on the ladder nod (no last note)",
+   91.8,
+   94.8,
+   false
+  ],
+  [
+   "G5 strings motif (stops dead at 109.0)",
+   105.0,
+   108.0,
+   false
+  ],
+  [
+   "H3 celesta, one note per cue card; the D5 would fall on the click",
+   115.8,
+   122.75,
+   false
+  ],
+  [
+   "I2 piano, one note per bulb (fingers walk the string)",
+   131.2,
+   136.5,
+   false
+  ],
+  [
+   "I4 THE MISSING NOTE LANDS: D5 on celesta+piano+glock, full bloom",
+   136.5,
+   136.5,
+   true
+  ],
+  [
+   "J1 FULL MOTIF COMPLETE: strings + choir + celesta (D5 resolves at 152.90)",
+   147.9,
+   152.9,
+   true
+  ],
+  [
+   "K1 celesta COMPLETE, soft, once",
+   157.75,
+   161.5,
+   true
+  ]
+ ],
+ "bulb_times": [
+  131.2,
+  131.63,
+  132.06,
+  132.49,
+  132.92,
+  133.35,
+  133.78
+ ],
+ "house_times": [
+  140.6,
+  140.9,
+  141.2,
+  141.5,
+  141.8,
+  142.1,
+  142.4,
+  142.7,
+  143.0
+ ],
+ "card_notes": [
+  [
+   "H3a",
+   115.8,
+   "A4"
+  ],
+  [
+   "H3a",
+   116.7,
+   "F#4"
+  ],
+  [
+   "H3b",
+   118.1,
+   "G4"
+  ],
+  [
+   "H3c",
+   119.4,
+   "A4"
+  ],
+  [
+   "H3c",
+   120.3,
+   "D5"
+  ],
+  [
+   "H3d",
+   121.2,
+   "C#5"
+  ],
+  [
+   "H3d",
+   121.8,
+   "E5"
+  ]
+ ],
+ "blaze": 136.5,
+ "click": 122.75,
+ "stop_dead": 109.0
+}

@@ -46,7 +46,7 @@ export function glow(ctx: C2D, x: number, y: number, r: number, color: string, a
   ctx.globalAlpha = ga;
 }
 
-export interface BulbOpts { size: number; on: number; color: string; angle?: number; glowR?: number; glowA?: number; flick?: number; }
+export interface BulbOpts { size: number; on: number; color: string; angle?: number; glowR?: number; glowA?: number; flick?: number; core?: number; }
 /** One old-fashioned bulb: teardrop glass on a small dark cap. `on` 0..1. */
 export function bulb(f: F, x: number, y: number, o: BulbOpts) {
   const { ctx, glow: g } = f;
@@ -79,11 +79,11 @@ export function bulb(f: F, x: number, y: number, o: BulbOpts) {
   ctx.restore();
   if (on > 0.001) {
     const fl = 1 + (o.flick || 0);
-    const gr = (o.glowR ?? s * 4) * fl;
-    const ga = (o.glowA ?? 0.32) * on;
+    const gr = (o.glowR ?? s * 5) * fl;
+    const ga = (o.glowA ?? 0.5) * on;
     const cx = x + Math.sin(o.angle || 0) * -s * 0.4, cy = y + Math.cos(o.angle || 0) * s * 0.4;
     glow(g, cx, cy, gr, o.color, ga);
-    glow(g, cx, cy, s * 1.2, '#fff6dc', 0.3 * on);
+    glow(g, cx, cy, s * 1.4, '#fff6dc', (o.core ?? 0.4) * on);
   }
 }
 
@@ -104,6 +104,7 @@ export interface StringOpts {
   glowR?: number; glowA?: number;
   colors?: string[];
   twinkle?: number; // 0..1 amount of flicker
+  core?: number;
   hang?: number;    // bulb hang angle variation
 }
 /** Draws a string of lights; returns the bulb positions. */
@@ -141,7 +142,7 @@ export function lightString(f: F, o: StringOpts): { p: V2; c: string }[] {
       const on = typeof o.on === 'function' ? o.on(idx, p) : o.on ?? 1;
       const tw = o.twinkle ? (noise1(f.tc * 3 + idx * 1.7, seed) * 0.5) * o.twinkle : 0;
       const ang = (hash1(idx * 3.1 + seed) - 0.5) * (o.hang ?? 0.5);
-      bulb(f, p.x, p.y, { size: o.size, on: clamp(on * (1 + tw)), color: c, angle: ang, glowR: o.glowR, glowA: o.glowA, flick: tw * 0.3 });
+      bulb(f, p.x, p.y, { size: o.size, on: clamp(on * (1 + tw)), color: c, angle: ang, glowR: o.glowR, glowA: o.glowA, flick: tw * 0.3, core: o.core });
       out.push({ p, c });
       idx++;
     }

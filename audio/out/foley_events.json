@@ -1,0 +1,177 @@
+[
+ [
+  8.85,
+  "clock ticking (1 Hz) until 27.4",
+  "interior"
+ ],
+ [
+  26.0,
+  "key jingle (shed key off hook)",
+  "interior"
+ ],
+ [
+  27.65,
+  "shed door creak",
+  "exterior"
+ ],
+ [
+  29.25,
+  "box scrape",
+  "exterior"
+ ],
+ [
+  30.7,
+  "mitten wipes dust",
+  "exterior"
+ ],
+ [
+  32.8,
+  "tiptoe snow crunches x6 (0.52 s apart)",
+  "exterior"
+ ],
+ [
+  32.9,
+  "sledge runners hiss",
+  "exterior"
+ ],
+ [
+  36.2,
+  "distant crunches + sledge (C4)",
+  "exterior"
+ ],
+ [
+  39.9,
+  "bedroom door shuts",
+  "interior"
+ ],
+ [
+  44.85,
+  "tablet taps until 46.70",
+  "interior"
+ ],
+ [
+  48.0,
+  "bulb plinks into jar at 48.0, 48.5, 49.0, 49.5 (on the caper beat)",
+  "interior"
+ ],
+ [
+  50.25,
+  "tablet taps until 51.90",
+  "interior"
+ ],
+ [
+  56.45,
+  "THUMP upstairs (heard from hall)",
+  "interior"
+ ],
+ [
+  58.7,
+  "tablet taps until 60.30",
+  "interior"
+ ],
+ [
+  64.85,
+  "tablet taps until 67.50",
+  "interior"
+ ],
+ [
+  76.1,
+  "brisk snow footsteps x5",
+  "exterior"
+ ],
+ [
+  78.62,
+  "knock knock knock (old lady)",
+  "exterior"
+ ],
+ [
+  81.1,
+  "shop door bell",
+  "interior"
+ ],
+ [
+  84.15,
+  "fist bump",
+  "exterior"
+ ],
+ [
+  85.1,
+  "knock knock (young dad)",
+  "exterior"
+ ],
+ [
+  87.15,
+  "knock knock knock (ladder man, heavier)",
+  "exterior"
+ ],
+ [
+  87.6,
+  "his door opens",
+  "exterior"
+ ],
+ [
+  90.0,
+  "DOOR SLAM (music already silent)",
+  "exterior"
+ ],
+ [
+  91.4,
+  "door reopens",
+  "exterior"
+ ],
+ [
+  91.6,
+  "LADDER CLANK as it pokes out",
+  "exterior"
+ ],
+ [
+  94.3,
+  "distant church bells (descending peal, 6 strikes, soft, far left)",
+  "exterior"
+ ],
+ [
+  100.9,
+  "ladders against the wall",
+  "exterior"
+ ],
+ [
+  109.15,
+  "Grandad + Mum footsteps, slow (x7)",
+  "exterior"
+ ],
+ [
+  113.7,
+  "Nell steps forward",
+  "exterior"
+ ],
+ [
+  122.75,
+  "THE DEAD CLICK of the switch (all music cut here)",
+  "exterior"
+ ],
+ [
+  128.9,
+  "knee creak (Grandad kneels)",
+  "exterior"
+ ],
+ [
+  136.18,
+  "bulb twist squeak + seat click (ends at blaze)",
+  "exterior"
+ ],
+ [
+  144.5,
+  "PORCH BELL tinkles",
+  "exterior"
+ ],
+ [
+  147.7,
+  "airy whoosh rising to space",
+  "exterior"
+ ],
+ [
+  157.7,
+  "clock ticking (1 Hz) until 162.8",
+  "interior"
+ ]
+]

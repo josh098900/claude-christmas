@@ -1,0 +1,5 @@
+# Rendered audio is large and fully regenerable: keep it out of git.
+out/**/*.wav
+out/*.wav
+out/*.npy
+__pycache__/

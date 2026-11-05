@@ -59,6 +59,7 @@ export interface Pose {
   eyesClosed?: boolean;
   cheek?: number;
   hidden?: { armB?: boolean; legs?: boolean };
+  back?: boolean;          // seen from behind: no face
 }
 
 const DEF_LIMB: Limb = { a: 0.08, b: 0.12 };
@@ -289,8 +290,17 @@ export function drawPerson(f: F, sp: Spec, p: Pose, L: CharLight | null, opts: {
     // face
     x.beginPath(); blobEllipse(x, 0, 0, hw, hr, 51, 0.025, 12);
     x.fillStyle = T(sp.head.skin); x.fill();
-    // jaw shading toward the back side (form)
     const fcx = ft * hw * 0.42 * sx;
+    if (p.back) {
+      const hs3 = sp.hair.style;
+      if (hs3 !== 'bald' && hs3 !== 'none') { x.fillStyle = T(sp.hair.color); x.beginPath(); blobEllipse(x, 0, -hr * 0.05, hw * 1.02, hr * 1.0, 52, 0.04, 12); x.fill(); }
+      if (hs3 === 'bald') { x.fillStyle = T(sp.hair.color); x.beginPath(); blobEllipse(x, 0, hr * 0.35, hw * 0.95, hr * 0.45, 53, 0.08, 10); x.fill(); }
+      if (hs3 === 'plaits') {
+        for (const side of [-1, 1]) tube(x, [v2(side * hw * 0.35, hr * 0.3), v2(side * hw * 0.5, hr * 0.8), v2(side * hw * 0.58, hr * 1.15)], hr * 0.27, hr * 0.17, T(sp.hair.color));
+      }
+    }
+    if (p.back) { /* skip face */ } else {
+    // jaw shading toward the back side (form)
     const nod = (p.nod ?? 0) * hr * 0.22;
     const eyeY = sp.eyes.y * hr + nod;
     const gap = sp.eyes.gap * hr * lerp(1, 0.62, aft);
@@ -395,7 +405,9 @@ export function drawPerson(f: F, sp: Spec, p: Pose, L: CharLight | null, opts: {
       x.lineWidth = Math.max(1.4, 2.4 * s);
       x.beginPath(); x.moveTo(mx - mw, my - smile * mw * 0.35); x.quadraticCurveTo(mx, my + smile * mw * 0.45, mx + mw, my - smile * mw * 0.35); x.stroke();
     }
+    }
     // hair on top / front
+    if (!p.back) {
     x.fillStyle = T(sp.hair.color);
     if (hs === 'bald') {
       for (const side of [-1, 1]) {
@@ -422,12 +434,24 @@ export function drawPerson(f: F, sp: Spec, p: Pose, L: CharLight | null, opts: {
       }
       x.fill();
     } else if (hs === 'plaits') {
+      if (!sp.hat) {
+        // full hair cap with a centre parting (no hat indoors)
+        x.beginPath();
+        x.moveTo(-hw * 1.04, hr * 0.15);
+        x.bezierCurveTo(-hw * 1.12, -hr * 1.22, hw * 1.12, -hr * 1.22, hw * 1.04, hr * 0.15);
+        x.quadraticCurveTo(hw * 0.9, -hr * 0.4, fcx + hw * 0.1, -hr * 0.5);
+        x.quadraticCurveTo(-hw * 0.9, -hr * 0.4, -hw * 1.04, hr * 0.15);
+        x.fill();
+        x.strokeStyle = T(shadeHex(sp.hair.color, -0.3)); x.lineWidth = 2 * s;
+        x.beginPath(); x.moveTo(fcx * 0.6, -hr * 0.98); x.quadraticCurveTo(fcx * 0.8, -hr * 0.7, fcx + hw * 0.1, -hr * 0.52); x.stroke();
+      }
       // fringe peeking under the hat
       x.beginPath();
       x.moveTo(-hw * 0.95, -hr * 0.28);
       x.quadraticCurveTo(fcx - hw * 0.3, -hr * 0.12, fcx + hw * 0.1, -hr * 0.3);
       x.quadraticCurveTo(fcx + hw * 0.5, -hr * 0.1, hw * 0.95, -hr * 0.3);
       x.lineTo(hw * 0.9, -hr * 0.6); x.lineTo(-hw * 0.9, -hr * 0.6); x.closePath(); x.fill();
+    }
     }
     // hats
     if (sp.hat && sp.hat.style !== 'none') {

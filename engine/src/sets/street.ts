@@ -98,7 +98,7 @@ function window_(f: F, c: C2D, x: number, y: number, w: number, h: number, lit: 
         glow(f.glow, tx, ty, 10, col, 0.3 * lit);
       }
     }
-    glow(f.glow, x + w / 2, y + h / 2, Math.max(w, h) * 0.75, '#ffb060', 0.10 * lit);
+    glow(f.glow, x + w / 2, y + h / 2, Math.max(w, h) * 0.8, '#ffb060', 0.2 * lit);
   } else if (!dark) {
     // cold reflections
     c.fillStyle = 'rgba(160,190,255,0.10)';
@@ -287,32 +287,36 @@ function houseLights(f: F, h: House, on: number, density: number, o: StreetOpts)
   const x0 = h.x, w = h.w;
   const seed = h.seed;
   const size = 7;
+  const dense = density > 1.2;
+  const GA = dense ? 0.38 : 0.5, CORE = dense ? 0.08 : 0.4;
+  const GR = dense ? size * 3.2 : undefined;
+  const LS = (opts: Parameters<typeof lightString>[1]) => lightString(f, { glowA: GA, core: CORE, glowR: GR, ...opts });
   // gutter swags
   const sw: V2[] = [];
   const nSw = 4;
   for (let k = 0; k <= nSw; k++) sw.push(v2(x0 + 6 + (w - 12) * (k / nSw), -WALL_H + 6));
-  lightString(f, { anchors: sw, spacing: 26 / density, size, sag: 26, on, seed, twinkle: 0.15 });
+  LS({ anchors: sw, spacing: 26 / density, size, sag: 26, on, seed, twinkle: 0.15 });
   // around door
   const dr = doorRect(h);
-  lightString(f, { anchors: [v2(dr.x - 18, -10), v2(dr.x - 18, dr.y - 60), v2(dr.x + dr.w + 18, dr.y - 60), v2(dr.x + dr.w + 18, -10)], spacing: 24 / density, size: 6, sag: 4, on, seed: seed + 3, twinkle: 0.1 });
+  LS({ anchors: [v2(dr.x - 18, -10), v2(dr.x - 18, dr.y - 60), v2(dr.x + dr.w + 18, dr.y - 60), v2(dr.x + dr.w + 18, -10)], spacing: 24 / density, size: 6, sag: 4, on, seed: seed + 3, twinkle: 0.1 });
   if (density > 1.2) {
     // blaze: windows, roof ridge, chimney, string course, everything
     const uw = 92, uh = 140;
     for (const wx of [x0 + w * 0.28 - uw / 2, x0 + w * 0.72 - uw / 2])
-      lightString(f, { anchors: [v2(wx - 12, -WALL_H + 70 + uh + 16), v2(wx - 12, -WALL_H + 58), v2(wx + uw + 12, -WALL_H + 58), v2(wx + uw + 12, -WALL_H + 70 + uh + 16)], spacing: 20, size: 6, sag: 3, on, seed: seed + 5 });
-    lightString(f, { anchors: [v2(x0, -WALL_H * 0.5 - 8), v2(x0 + w / 2, -WALL_H * 0.5 - 8), v2(x0 + w, -WALL_H * 0.5 - 8)], spacing: 20, size: 6, sag: 18, on, seed: seed + 6 });
+      LS({ anchors: [v2(wx - 12, -WALL_H + 70 + uh + 16), v2(wx - 12, -WALL_H + 58), v2(wx + uw + 12, -WALL_H + 58), v2(wx + uw + 12, -WALL_H + 70 + uh + 16)], spacing: 20, size: 6, sag: 3, on, seed: seed + 5 });
+    LS({ anchors: [v2(x0, -WALL_H * 0.5 - 8), v2(x0 + w / 2, -WALL_H * 0.5 - 8), v2(x0 + w, -WALL_H * 0.5 - 8)], spacing: 20, size: 6, sag: 18, on, seed: seed + 6 });
     const top = -WALL_H - ROOF_H;
-    lightString(f, { anchors: [v2(x0 - 30, top - 4), v2(x0 + w / 2, top - 4), v2(x0 + w + 30, top - 4)], spacing: 22, size: 7, sag: 6, on, seed: seed + 7 });
+    LS({ anchors: [v2(x0 - 30, top - 4), v2(x0 + w / 2, top - 4), v2(x0 + w + 30, top - 4)], spacing: 22, size: 7, sag: 6, on, seed: seed + 7 });
     for (let k = 0; k < 3; k++) {
       const yy = lerp(top + 30, -WALL_H - 20, k / 2);
-      lightString(f, { anchors: [v2(x0 - 10, yy), v2(x0 + w / 2, yy + 8), v2(x0 + w + 10, yy)], spacing: 24, size: 6.5, sag: 14, on, seed: seed + 8 + k });
+      LS({ anchors: [v2(x0 - 10, yy), v2(x0 + w / 2, yy + 8), v2(x0 + w + 10, yy)], spacing: 24, size: 6.5, sag: 14, on, seed: seed + 8 + k });
     }
     // ground floor window
-    if (h.bay) lightString(f, { anchors: [v2(x0 + w * 0.32 - 115, -10), v2(x0 + w * 0.32 - 115, -262), v2(x0 + w * 0.32 + 115, -262), v2(x0 + w * 0.32 + 115, -10)], spacing: 20, size: 6, sag: 3, on, seed: seed + 11 });
+    if (h.bay) LS({ anchors: [v2(x0 + w * 0.32 - 115, -10), v2(x0 + w * 0.32 - 115, -262), v2(x0 + w * 0.32 + 115, -262), v2(x0 + w * 0.32 + 115, -10)], spacing: 20, size: 6, sag: 3, on, seed: seed + 11 });
     // vertical drops down the walls (icicle lights)
     for (let k = 0; k < 9; k++) {
       const xx = x0 + 20 + k * (w - 40) / 8;
-      lightString(f, { anchors: [v2(xx, -WALL_H + 8), v2(xx + 2, -WALL_H + 70 + (k % 3) * 25)], spacing: 18, size: 5, sag: 0, on, seed: seed + 20 + k, colors: ['#fff1cf', '#ffae2b', '#fff1cf'] });
+      LS({ anchors: [v2(xx, -WALL_H + 8), v2(xx + 2, -WALL_H + 70 + (k % 3) * 25)], spacing: 18, size: 5, sag: 0, on, seed: seed + 20 + k, colors: ['#fff1cf', '#ffae2b', '#fff1cf'] });
     }
   }
 }
@@ -398,10 +402,20 @@ export function drawStreet(f: F, o: StreetOpts) {
     if (g && on > 0.01) {
       c.save(); c.globalCompositeOperation = 'lighter';
       const gr = c.createRadialGradient(g.x + g.w / 2, -WALL_H * 0.6, 50, g.x + g.w / 2, -WALL_H * 0.6, 700);
-      gr.addColorStop(0, `rgba(255,190,120,${0.28 * on})`); gr.addColorStop(1, 'rgba(255,190,120,0)');
+      gr.addColorStop(0, `rgba(255,170,110,${0.14 * on})`); gr.addColorStop(1, 'rgba(255,170,110,0)');
       c.fillStyle = gr; c.fillRect(g.x - 700, -WALL_H - 900, g.w + 1400, 1800);
       c.restore();
-      glow(f.glow, g.x + g.w / 2, -WALL_H * 0.55, 900, '#ffb070', 0.12 * on);
+      glow(f.glow, g.x + g.w / 2, -WALL_H * 0.55, 900, '#ff9a60', 0.05 * on);
+      // coloured wash: the walls and snow catch every colour of the string
+      c.save(); c.globalCompositeOperation = 'lighter';
+      const washes: [string, number, number][] = [['255,60,50', -0.3, -0.75], ['60,220,110', 0.35, -0.6], ['70,120,255', -0.1, -0.35], ['255,170,40', 0.25, -0.15], ['255,80,60', -0.4, -0.1], ['80,140,255', 0.45, -0.85]];
+      for (const [rgb, fx, fy] of washes) {
+        const wx = g.x + g.w / 2 + fx * g.w, wy = fy * WALL_H;
+        const gg = c.createRadialGradient(wx, wy, 10, wx, wy, 460);
+        gg.addColorStop(0, `rgba(${rgb},${0.13 * on})`); gg.addColorStop(1, `rgba(${rgb},0)`);
+        c.fillStyle = gg; c.fillRect(wx - 460, wy - 460, 920, 920);
+      }
+      c.restore();
     }
   }
   // ----- front gardens, walls, pavement -----
@@ -428,6 +442,44 @@ export function drawStreet(f: F, o: StreetOpts) {
   for (let i = 0; i < 80; i++) {
     const px = vx0 + hash1(i * 2.7) * (vx1 - vx0), py = 140 + hash1(i * 5.1) * 70;
     c.beginPath(); c.ellipse(px, py, 7, 3.2, 0.1, 0, TAU); c.fill();
+  }
+  // warm light pools on the snow in front of lit houses; Grandad's stays cold
+  c.save(); c.globalCompositeOperation = 'lighter';
+  for (const h of vis) {
+    const on = h.grandad ? (o.blaze ?? 0) * (o.blazeOn ?? 1) * 1.6 : Math.max(o.lit(h) * 0.8, o.windows(h) * 0.5);
+    if (on <= 0.01) continue;
+    const cx = h.x + h.w / 2;
+    const g = c.createRadialGradient(cx, 60, 10, cx, 60, h.w * 0.75);
+    g.addColorStop(0, `rgba(255,170,95,${0.20 * on})`); g.addColorStop(0.6, `rgba(230,120,140,${0.07 * on})`); g.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = g; c.beginPath(); c.ellipse(cx, 70, h.w * 0.75, 150, 0, 0, TAU); c.fill();
+  }
+  c.restore();
+  // garden props
+  for (const h of vis) {
+    if (h.grandad) continue;
+    const k = hash1(h.seed * 1.31);
+    const dr = doorRect(h);
+    const gx = h.bay ? h.x + h.w * 0.18 : h.x + h.w * 0.86;
+    if (k < 0.3) {
+      // a small snowman: three balls, stick arms, coal buttons (no hat, no scarf)
+      c.fillStyle = '#b7c4e6';
+      for (const [r, y] of [[30, 40], [22, 0], [16, -32]] as [number, number][]) { c.beginPath(); blobEllipse(c, gx, y + 30, r, r * 0.92, h.seed + r, 0.06, 9); c.fill(); }
+      c.strokeStyle = '#3a2a22'; c.lineWidth = 3; c.beginPath(); c.moveTo(gx - 20, 32); c.lineTo(gx - 44, 14); c.moveTo(gx + 20, 32); c.lineTo(gx + 42, 20); c.stroke();
+      c.fillStyle = '#22252e'; for (const yy of [-8, 4, 18]) { c.beginPath(); c.arc(gx + 1, yy + 26, 2.6, 0, TAU); c.fill(); }
+      c.fillStyle = '#e07a30'; c.beginPath(); c.moveTo(gx + 4, -4); c.lineTo(gx + 18, -1); c.lineTo(gx + 4, 2); c.fill();
+    } else if (k < 0.62) {
+      // potted fir with lights
+      c.fillStyle = '#2c4a3a';
+      c.beginPath(); c.moveTo(gx, -60); c.lineTo(gx + 30, 30); c.lineTo(gx - 30, 30); c.closePath(); c.fill();
+      snowCap(c, gx - 18, -10, 36, 6, h.seed + 5);
+      c.fillStyle = nightCol('#8a4a32', 0.5); c.fillRect(gx - 16, 30, 32, 26);
+      const pts = [] as V2[]; for (let j = 0; j < 7; j++) pts.push(v2(gx - 22 + (j % 3) * 20 + hash1(j + h.seed) * 6, -40 + j * 11));
+      dotLights(f, pts, 3, o.lit(h), h.seed % 5, 12, 0.6);
+    } else if (k < 0.8) {
+      // wheelie bin with a snow hat
+      c.fillStyle = '#26333a'; c.beginPath(); handRect(c, gx - 26, -20, 52, 76, h.seed, 1.2); c.fill();
+      snowCap(c, gx - 30, -20, 60, 12, h.seed + 6);
+    }
   }
   // kerb + road
   c.fillStyle = '#4a5788'; c.fillRect(vx0, 228, vx1 - vx0, 10);
