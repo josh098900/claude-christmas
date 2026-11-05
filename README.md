@@ -8,9 +8,14 @@
 
 ## Watch
 
-- `final/seen_from_space.mp4` is the film (1920×1080, 24 fps, about 2:45).
-- `final/poster.png` and `final/storyboard_contact_sheet.png` are the poster and the contact sheet.
-- `final/score.wav` is the original score and sound design.
+| File | What |
+|---|---|
+| `final/seen_from_space.mp4` | **The film.** 1920×1080, 24 fps, 2:48, H.264 High with AAC 320k |
+| `final/seen_from_space_30s.mp4` | 30-second cut-down |
+| `final/seen_from_space_10s.mp4` | 10-second teaser |
+| `final/poster.png` | 2:3 poster, plus `final/keyart_16x9.png` |
+| `final/storyboard_contact_sheet.png` | One frame per shot, all 53 shots |
+| `final/score.wav` | Original score and sound design (48 kHz stereo, −14 LUFS) |
 
 ## How it was made
 

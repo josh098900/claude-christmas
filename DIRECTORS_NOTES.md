@@ -30,6 +30,22 @@ The film rests on one idea: **a missing note and a dead bulb are the same thing.
 
 Everything is code: a TypeScript 2D engine with characters as layered Bézier shapes on simple rigs, sets drawn procedurally, and a WebGL post stack for pencil grain, paper tooth, line boil, bloom and grade. Headless Chromium renders it frame by frame. The score is MIDI rendered through FluidSynth with the MIT-licensed FluidR3 soundfont, and all foley is synthesised in numpy. No image or video models were used anywhere. The handmade feel comes from texture and imperfection that were designed in, not generated.
 
+## What changed in the polish passes (three blind critics)
+
+Each pass, a fresh subagent who had never seen the script got only frames sampled every 0.5 s and a listener's cue sheet. They retold the story and scored it against the brief's rubric. Their biggest notes changed the film:
+
+- **"A nine-year-old alone at night with an AI app."** Consumer Claude is for adults, so a brand team would stop here. Mum now sits with Nell for every question and for the Turn. Dad gets the comic worry alone, and Mum walks Nell to the gate before she knocks on doors. That made Mum the co-conspirator who takes Grandad out on Christmas Eve, which is better story anyway.
+- **"Who lives on *his* street?"** That gave the reveal away. The line is now "Who lives on the street?"
+- **"Her hand does the fix."** Grandad now finds the bulb. His finger walks the string one note per bulb, and when he wiggles the loose one the whole string blinks on for two frames, paying off "why does 1 bulb make them ALL go off". Then he twists it home himself while Nell holds the torch. This departs from the brief's "lets her twist it", and I made the call because three critics in a row read any shared twist as hers. A close-up of his face in the blaze gives the arc its missing beat.
+- **"The blaze is a pink-white haze."** The bulbs are now saturated points. The panes stay dark inside their frames of light, the colour spills onto snow and walls, and the coloured washes scale down in close-ups.
+- **"The dead switch looks half-working."** On the click the string gives one weak flicker and then dies. The dead glass is darker, and the torches stop short of the roof.
+- **Tagline.** It went from "Some problems need a whole street." to "Think it through. Then knock on doors." (critic 1 caught an echo), then back again. Critic 2 noted that "knock on doors", after a child door-knocking, has a stranger-danger and canvasser ring. The coda now reads "it worked. everyone helped." so there's no echo.
+
+### Where it honestly still falls short
+
+- **The misdirect never fully fooled anyone.** The brief's Act 1 has her look at the photo and Grandad, then fetch Grandma's labelled lights, so every critic guessed the plan early. The Santa material plays as a red herring, not a true twist. The scene that actually reframes the film is the cue cards: "GRANDMA ALWAYS SAID / IT SHOULD BE SEEN FROM SPACE". A real fix would restructure Act 1 so we don't know whose lights they are.
+- **Character animation is clean but stiff.** Poses are mostly frontal, the crowds are small, and secondary motion is limited. A hand-keyed pass would lift the whole film.
+
 ## With more time I would
 
 - Hand-key more secondary animation: coat swing, plait follow-through on every move, breath in the cold.

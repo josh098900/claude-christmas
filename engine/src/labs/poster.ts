@@ -13,22 +13,28 @@ const GH = TERRACE.find((h) => h.grandad)!;
 const DR = doorRect(GH);
 
 lab('poster', (f) => {
-  const cam = { x: 0, y: -470, z: 1.0 };
+  const cam = { x: 0, y: -583, z: 0.74 };
   drawStreet(f, { mood: 'eve', cam, houses: TERRACE, lit: (h) => (Math.abs(h.i) > 2 ? 1 : 0), windows: (h) => (h.grandad ? 0.6 : Math.abs(h.i) > 2 ? 1 : 0), blaze: 1, blazeOn: 1, lampsOn: 1, bellFrost: 0 });
   const doorX = DR.x + DR.w / 2;
   personInStreet(f, cam, C.GRANDAD_OUT, DR.x - 120, 40, { flip: 1, turn: 0.6, hipDrop: 92, legF: { a: 1.5, b: -1.55 }, legB: { a: -0.25, b: -1.35 }, lean: 0.0, headTilt: -0.3, look: { x: 0.4, y: -1 }, mouth: { open: 0.6, smile: 1 }, eyesClosed: true, browUp: 0.8, armF: { a: 1.6, b: 0.6 } }, L_BLAZE_FRONT);
   personInStreet(f, cam, C.NELL, DR.x - 30, 50, { flip: -1, turn: 0.4, armF: { a: 2.6, b: -0.08 }, armFLen: 1.6, look: { x: -0.2, y: -1 }, headTilt: -0.25, browUp: 1, mouth: { open: 0.6, smile: 1 }, cheek: 1 }, L_BLAZE_FRONT);
-  for (const [sp, x, y, s] of [[C.LADDER_MAN, 640, 1420, 1.0], [C.OLD_LADY, 790, 1330, 1.05], [C.TEEN1, 1290, 1420, 0.95], [C.YOUNG_DAD, 1160, 1390, 1.0]] as const) {
+  for (const [sp, x, y, s] of [[C.LADDER_MAN, 650, 1400, 0.82], [C.OLD_LADY, 780, 1330, 0.86], [C.TEEN1, 1280, 1400, 0.8], [C.YOUNG_DAD, 1160, 1380, 0.82]] as const) {
     drawPerson(f, sp, { x, y, s, back: true, turn: 0, flip: 1, headTilt: -0.15, armF: { a: 0.1, b: 0.2 } }, L_BLAZE_BACK);
   }
   snowfall(f, 0.6, 0.2, 13, '#ffd6a0');
   // the dot in the sky she's pointing at
   glow(f.glow, 1150, 60, 14, '#ffe2b0', 0.8); glow(f.glow, 1150, 60, 4, '#ffffff', 1);
   const c = f.ctx;
-  handText(c, 'SEEN', W / 2, 120, 92, { color: '#f6ead2', align: 'center', seed: 31, weight: 1.25, slant: 0.04, wobble: 1.1 });
-  handText(c, 'FROM SPACE', W / 2, 230, 72, { color: '#f6ead2', align: 'center', seed: 37, weight: 1.2, slant: 0.04, wobble: 1.1 });
-  c.textAlign = 'center'; c.fillStyle = 'rgba(246,234,210,0.92)'; c.font = '600 34px Inter'; c.fillText('Claude', W / 2, 1012);
-  c.fillStyle = 'rgba(200,196,214,0.7)'; c.font = '400 13px Inter'; c.fillText('Fan-made. Not affiliated with or endorsed by Anthropic.', W / 2, 1050); c.textAlign = 'left';
+  handText(c, 'SEEN', W / 2, 90, 92, { color: '#f6ead2', align: 'center', seed: 31, weight: 1.25, slant: 0.04, wobble: 1.1 });
+  handText(c, 'FROM SPACE', W / 2, 200, 72, { color: '#f6ead2', align: 'center', seed: 37, weight: 1.2, slant: 0.04, wobble: 1.1 });
+  // a quiet dark band at the foot for the small print
+  const band = c.createLinearGradient(0, 1000, 0, 1080);
+  band.addColorStop(0, 'rgba(6,10,28,0)'); band.addColorStop(1, 'rgba(6,10,28,0.85)');
+  c.fillStyle = band; c.fillRect(0, 1000, W, 80);
+  c.textAlign = 'center';
+  c.fillStyle = 'rgba(246,234,210,0.95)'; c.font = '600 30px Inter'; c.fillText('Claude', W / 2, 336);
+  c.fillStyle = 'rgba(214,208,224,0.85)'; c.font = '400 13px Inter'; c.fillText('Fan-made. Not affiliated with or endorsed by Anthropic.', W / 2, 1066);
+  c.textAlign = 'left';
   f.grade.saturation = 1.15; f.grade.bloom = 1.2; f.grade.vignette = 0.5;
 });
 

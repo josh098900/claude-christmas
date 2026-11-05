@@ -52,13 +52,19 @@ Use `SFS_BUNDLE=engine_x.js` with both `render/build.mjs` and the render scripts
 | `stills/` | style frames and lab turnarounds |
 | `final/` | deliverables |
 
-## Status
+## Status (end of the night)
 
-See the bottom of this file. It's updated as the night goes on.
+- [x] Writers' room, EDL, shot list (`writers_room/`)
+- [x] Engine and post stack, style frames (`stills/`), style bible
+- [x] Score and foley, mastered to -14 LUFS; the missing note lands on frame 3276
+- [x] All 53 shots, built by me plus two production forks
+- [x] Three blind-critic polish passes, each followed by fixes (DECISIONS.md, entries 33–57)
+- [x] 1080p master, poster, contact sheet, 30 s and 10 s cut-downs (`final/`)
 
-- [x] Writers' room, EDL, shot list
-- [x] Engine and post stack
-- [x] Score and foley, mastered (−14 LUFS)
-- [x] All 53 shots implemented
-- [ ] Polish passes (see DECISIONS.md and DIRECTORS_NOTES.md)
-- [ ] 1080p master, poster, contact sheet, cut-downs
+## Known issues and what's unfinished
+
+- **Misdirect strength.** Every blind critic guessed her real plan early, because Act 1 (the photo, Grandad and Grandma's labelled boxes) telegraphs it. The Santa material reads as a brief red herring, not a full misdirect. Fixing it properly means restructuring Act 1: hide whose lights they are until the reveal, which the brief's own beat order makes hard.
+- **Animation.** Poses are clean but often frontal and stiff. Crowd figures in wide shots are small and simple. The rig has no squash and stretch and no overlapping action on coats.
+- **J1, mid-rise.** The top-down town reads as procedural for about a second.
+- **Score.** The General MIDI strings are serviceable but thin. `audio/score.py` is the place to swap in a better sample library.
+- **Shot-by-shot ownership.** C/D/E were built by production fork 1 (`seqC/D/E.ts`, `sets/shed.ts`, `hallway.ts`, `props.ts`). F/G/H were built by production fork 2 (`seqF/G/H.ts`, `sets/doorstep.ts`, `shop.ts`). Everything else is mine.
