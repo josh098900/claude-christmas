@@ -216,7 +216,7 @@ function drawHouse(f: F, c: C2D, h: House, o: StreetOpts) {
     c.fillStyle = '#b8302c'; c.beginPath(); c.arc(wx, wy + 20, 5, 0, TAU); c.fill();
   } else {
     // the little brass bell by the door, frosted
-    const bx0 = dr.x + dr.w + 30, by0 = dr.y + 20;
+    const bx0 = dr.x + dr.w + 56, by0 = dr.y + 20;
     c.save(); c.translate(bx0, by0 - 26); c.rotate(o.bellSwing ?? 0); c.translate(-bx0, -(by0 - 26));
     const bx = bx0, by = by0;
     c.strokeStyle = '#3a3a44'; c.lineWidth = 2; c.beginPath(); c.moveTo(bx, by - 26); c.lineTo(bx, by - 10); c.stroke();

@@ -38,7 +38,7 @@ shot('J1', (f) => {
     } else earthView(f, u, u);
   }
   // rising through cloud: soft puffs swell past, a brief white-out
-  const ca = smoothstep(2.4, 3.3, t) * (1 - smoothstep(3.7, 4.8, t));
+  const ca = smoothstep(2.6, 3.3, t) * (1 - smoothstep(3.6, 4.4, t));
   if (ca > 0.01) {
     for (let i = 0; i < 22; i++) {
       const a = hash1(i * 2.7) * TAU, r0 = 40 + hash1(i * 5.1) * 420;
@@ -46,7 +46,7 @@ shot('J1', (f) => {
       const x = W / 2 + Math.cos(a) * r0 * grow, y = H / 2 + Math.sin(a) * r0 * grow * 0.7;
       const rr = (260 + hash1(i * 3.3) * 360) * grow;
       const gr = c.createRadialGradient(x, y, 0, x, y, rr);
-      gr.addColorStop(0, `rgba(150,160,205,${0.45 * ca})`); gr.addColorStop(0.6, `rgba(120,132,185,${0.22 * ca})`); gr.addColorStop(1, 'rgba(100,110,160,0)');
+      gr.addColorStop(0, `rgba(96,108,160,${0.42 * ca})`); gr.addColorStop(0.55, `rgba(74,86,140,${0.24 * ca})`); gr.addColorStop(1, 'rgba(60,70,120,0)');
       c.fillStyle = gr; c.fillRect(x - rr, y - rr, rr * 2, rr * 2);
       glow(f.glow, x, y + rr * 0.25, rr * 0.7, '#ffb070', 0.05 * ca);
     }

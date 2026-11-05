@@ -15,9 +15,10 @@ const DR = doorRect(GH);
 // I4: the blaze. Wide, low, from behind the crowd.
 shot('I4', (f) => {
   const t = f.tc;
-  const flash = clamp(1 - t / 0.5);
-  const u = prog(t, 0, f.dur, ease.outCubic);
-  const cam = { x: lerp(10, 20, u), y: lerp(-330, -350, u), z: lerp(1.22, 1.32, u) };
+  if (t >= 2.25) { grandadFace(f, t - 2.25); return; }
+  const flash = clamp(1 - t / 0.35);
+  const u = prog(t, 0, 2.25, ease.outCubic);
+  const cam = { x: lerp(10, 16, u), y: lerp(-330, -345, u), z: lerp(1.22, 1.3, u) };
   drawStreet(f, {
     mood: 'eve', cam, houses: TERRACE,
     lit: () => 0, windows: (h) => (h.grandad ? 0.6 : 0),
@@ -25,21 +26,42 @@ shot('I4', (f) => {
   });
   // Nell and Grandad at the door, small, lit full-on
   const doorX = DR.x + DR.w / 2;
-  personInStreet(f, cam, C.GRANDAD_OUT, doorX - 70, 30, { flip: 1, turn: 0.2, hipDrop: 70, legF: { a: 1.4, b: -1.5 }, legB: { a: -0.3, b: -1.2 }, lean: -0.1, browUp: 0.7, mouth: { open: 0.3, smile: 0.6 }, armF: { a: 0.5, b: 0.4 } }, L_BLAZE_FRONT);
-  personInStreet(f, cam, C.NELL, doorX + 40, 30, { flip: -1, turn: 0.3, browUp: 1, mouth: { open: 0.6, smile: 0.9 }, armF: { a: 0.6, b: 0.6 }, cheek: 1 }, L_BLAZE_FRONT);
+  personInStreet(f, cam, C.GRANDAD_OUT, doorX - 70, 30, { flip: 1, turn: 0.35, ...KNEEL, browUp: 0.7, mouth: { open: 0.3, smile: 0.6 }, armF: { a: 0.6, b: 0.5 }, look: { x: 0.3, y: -1 }, headTilt: -0.2 }, L_BLAZE_FRONT);
+  personInStreet(f, cam, C.NELL, doorX + 40, 30, { flip: -1, turn: 0.3, browUp: 1, mouth: { open: 0.6, smile: 0.9 }, armF: { a: 0.6, b: 0.6 }, cheek: 1, look: { x: 0, y: -1 }, headTilt: -0.2 }, L_BLAZE_FRONT);
   // the crowd, from behind, heads and shoulders against the blaze
   const crowd: [typeof C.NELL, number, number, number][] = [
     [C.MUM, 90, 1420, 1.45], [C.LADDER_MAN, 360, 1500, 1.4], [C.OLD_LADY, 640, 1320, 1.5], [C.SHOPKEEPER, 1290, 1420, 1.4],
     [C.TEEN2, 1530, 1440, 1.42], [C.TEEN1, 1760, 1520, 1.35], [C.YOUNG_DAD, 1960, 1440, 1.4],
   ];
   for (const [sp, x, y, s] of crowd) {
-    drawPerson(f, sp, { x, y: y + Math.sin(t * 1.3 + x) * 3, s, back: true, turn: 0, flip: 1, headTilt: -0.12 + hash1(x) * 0.1, armF: { a: 0.1, b: 0.2 }, armB: { a: -0.1, b: 0.2 } }, L_BLAZE_BACK);
+    drawPerson(f, sp, { x, y: y + Math.sin(t * 1.3 + x) * 3, s, back: true, turn: 0, flip: 1, headTilt: -0.12 + hash1(x) * 0.1 - clamp(t * 2) * 0.12, armF: { a: 0.1, b: 0.2 }, armB: { a: -0.1, b: 0.2 } }, L_BLAZE_BACK);
   }
   snowfall(f, 0.7, 0.2, 7, '#ffd6a0');
   const g = f.grade;
-  g.saturation = 1.18; g.bloom = 1.25; g.bloomThreshold = 0.62; g.exposure = 1.0 + flash * 0.35; g.vignette = 0.4;
+  g.saturation = 1.22; g.bloom = 0.95; g.bloomThreshold = 0.7; g.exposure = 1.0 + flash * 0.25; g.vignette = 0.42;
   g.gain = [1.04, 1.0, 0.95];
 });
+
+/** I4 (second half): Grandad's face, lit by the blaze. Forty years come back. */
+function grandadFace(f: F, t: number) {
+  const tq = f.t - 2.25;
+  const cam = { x: GRAN_X + 64 + t * 2, y: -96 - t * 2, z: lerp(6.4, 6.8, t / 1.75) };
+  doorStreet(f, cam, 1, {});
+  const tw = (k: number) => 0.8 + 0.2 * Math.sin(f.tc * 2.2 + k);
+  const L: CharLight = { ...L_BLAZE_FRONT, key: -0.9, shadowAmt: 0.4, rimAmt: 0.9, rimW: 6, rimDir: -2.6, rim: '#ffb0c8',
+    spots: [{ x: W * 0.78, y: H * 0.15, r: 1100, color: '#ffb060', a: 0.45 * tw(0) }, { x: W * 0.95, y: H * 0.6, r: 700, color: '#ff5a50', a: 0.22 * tw(1) },
+            { x: W * 0.6, y: -100, r: 800, color: '#5f8cff', a: 0.16 * tw(2) }, { x: W * 0.9, y: H * 0.35, r: 600, color: '#3fd67a', a: 0.12 * tw(3) }] };
+  const k = trk(tq, [[0, 0], [1.6, 1, ease.inOutSine]]);
+  personInStreet(f, cam, C.GRANDAD_OUT, GRAN_X + 30, 40, {
+    flip: 1, turn: 0.42, ...KNEEL, lean: 0.05, headTilt: -0.12 - 0.08 * k,
+    look: { x: 0.5, y: -0.9 }, browUp: lerp(0.35, 0.95, k), browIn: lerp(0.7, 0.45, k),
+    mouth: { open: lerp(0.15, 0.3, k), smile: lerp(0.0, 0.75, k) }, cheek: k, blink: blink(tq, [0.25]),
+    armF: { a: 0.6, b: 0.6 }, armB: { a: 0.4, b: 0.6 },
+  }, L);
+  snowfall(f, 0.45, 0.2, 21, '#ffd6a0');
+  const g = f.grade;
+  g.saturation = 1.18; g.bloom = 0.9; g.bloomThreshold = 0.72; g.vignette = 0.5; g.gain = [1.05, 1.0, 0.94];
+}
 
 // ------------------------------------------------------------------ the door two-shot staging
 import { blink, track as trk, antic } from '../core/anim';
@@ -124,12 +146,16 @@ shot('I2', (f) => {
   // which bulb the finger is on
   let fi = -1; for (let i = 0; i < BULB_T.length; i++) if (t >= BULB_T[i]) fi = i;
   const toLast = prog(t, 2.95, 3.0) ;
+  const flick = f.t >= 2.875 && f.t < 2.96 ? 1 : 0; // the wiggle makes contact: the whole string blinks on
   for (let i = 0; i < n; i++) {
     const p = pts[i];
     const touched = fi === i ? Math.exp(-(t - BULB_T[i]) * 8) : 0;
     const loose = i === n - 1;
-    const wig = loose ? Math.sin(t * 40) * 0.25 * prog(t, 2.85, 2.95) : 0;
-    bulb(f, p.x, p.y, { size: 64, on: 0, color: BULB_SEQ[(i + 2) % 5], angle: Math.sin(i * 1.3) * 0.25 + touched * 0.14 + wig + (loose ? 0.35 : 0) });
+    const wig = loose ? Math.sin(t * 40) * 0.3 * prog(t, 2.8, 2.9) : 0;
+    // the loose one hangs half out of its socket, tilted, a gap of bare wire showing
+    const py = loose ? p.y + 16 : p.y;
+    if (loose) { c.strokeStyle = '#b9a26a'; c.lineWidth = 4; c.beginPath(); c.moveTo(p.x, p.y - 10); c.lineTo(p.x + 6, py - 6); c.stroke(); }
+    bulb(f, p.x + (loose ? 8 : 0), py, { size: 64, on: flick * (loose ? 0.6 : 1), color: BULB_SEQ[(i + 2) % 5], angle: Math.sin(i * 1.3) * 0.25 + touched * 0.14 + wig + (loose ? 0.75 : 0), glowA: 0.4 });
   }
   // the hand: fingertip moves from bulb to bulb (on twos), small lift between
   const tq = f.t;
@@ -177,6 +203,9 @@ shot('I3', (f) => {
     for (let k = 0; k < 5; k++) { x.beginPath(); x.moveTo(-60 + k * 20, 60); x.lineTo(-56 + k * 20, 90); x.stroke(); }
     x.restore();
   });
+  // his big hand closes over her mitten: they twist it together
+  const cover = prog(t, 1.15, 1.55, ease.outCubic);
+  if (cover > 0) litGroup(f, { x: 0, y: 0, w: W, h: H }, L_HANDS_DARK, (x) => bigHand(x, lerp(bx - 260, bx - 30, cover), lerp(by + 260, by - 70, cover), 1.35, -0.55 + twist * 0.7, '#e6b496', '#2e384b', 1.0));
   // held breath: the faintest flicker in the bulb on the last frames
   if (t > 2.38) glow(f.glow, bx, by + 40, 90, BULB_SEQ[0], 0.15);
   f.grade.vignette = 0.62; f.grade.saturation = 0.9;
@@ -187,14 +216,14 @@ const HOUSE_ON = (k: number) => 0.10 + (k - 1) * 0.30; // k = 1..9 (cue sheet)
 shot('I5', (f) => {
   const t = f.tc;
   const u = prog(t, 0, f.dur, ease.inOutSine);
-  const cam = { x: lerp(200, 500, u), y: lerp(-340, -360, u), z: lerp(0.5, 0.36, u) };
+  const cam = { x: lerp(0, 420, u), y: lerp(-330, -360, u), z: lerp(0.78, 0.36, u) };
   const lit = (h: { i: number; grandad?: boolean }) => {
     if (h.grandad) return 0;
     const k = Math.abs(h.i);
     const t0 = HOUSE_ON(Math.min(9, k));
     if (f.t < t0) return 0;
     const dt = f.t - t0;
-    return dt < 0.09 ? 0.5 : 1; // a stutter as they catch
+    return dt < 0.09 ? 0.35 : 0.72; // a stutter as they catch; never as bright as his
   };
   drawStreet(f, { mood: 'eve', cam, houses: TERRACE, lit, windows: (h) => (h.grandad ? 0.6 : Math.min(1, lit(h) * 1.0)), blaze: 1, blazeOn: 1, lampsOn: 1, bellFrost: 0 });
   // the crowd in the street, small, turning to watch the fuse go by
@@ -211,17 +240,26 @@ shot('I6', (f) => {
   const u = prog(f.tc, 0, f.dur, ease.inOutSine);
   const cam = { x: lerp(DR.x - 100, DR.x - 95, u), y: lerp(-110, -125, u), z: lerp(3.3, 3.45, u) };
   const swing = Math.sin(Math.max(0, f.tc - 1.0) * 9) * 0.35 * Math.exp(-Math.max(0, f.tc - 1.0) * 1.2) * (f.tc > 1.0 ? 1 : 0);
+  if (f.tc >= 0.92 && f.tc < 1.6) {
+    // insert: the little bell by the door, thawed, tinkling in the wind
+    const bx = DR.x + DR.w + 56, by = DR.y + 4;
+    doorStreet(f, { x: bx - 6, y: by, z: 7.6 + (f.tc - 0.92) * 0.4 }, 1, { bellSwing: swing });
+    const p = toScreen({ x: bx - 6, y: by, z: 7.6 + (f.tc - 0.92) * 0.4 }, v2(bx, by + 10));
+    glow(f.glow, p.x + 20, p.y + 10, 46, '#fff2c8', 0.5 + 0.4 * Math.abs(Math.sin(f.tc * 9)));
+    f.grade.saturation = 1.15; f.grade.bloom = 0.9; f.grade.vignette = 0.5;
+    return;
+  }
   doorStreet(f, cam, 1, { bellSwing: swing });
   const point = antic(t, 0.2, 0.9, 0.15);
-  const sees = trk(t, [[0, 0], [0.9, 0], [1.3, 1, ease.outBack]]);
-  const laugh = trk(t, [[0, 0], [1.5, 0], [1.8, 1, ease.outCubic], [4, 1]]);
-  const hug = trk(t, [[0, 0], [2.3, 0], [3.1, 1, ease.inOutCubic], [4, 1]]);
+  const sees = trk(t, [[0, 0], [1.6, 0], [1.95, 1, ease.outBack]]);
+  const laugh = trk(t, [[0, 0], [2.05, 0], [2.35, 1, ease.outCubic], [4, 1]]);
+  const hug = trk(t, [[0, 0], [2.7, 0], [3.4, 1, ease.inOutCubic], [4, 1]]);
   const L = { ...L_BLAZE_FRONT, spots: [{ x: W * 0.7, y: H * 0.2, r: 900, color: '#ffb070', a: 0.35 }, { x: W * 0.2, y: H * 0.5, r: 600, color: '#ff6a8a', a: 0.15 }] };
   const gPose = {
     flip: 1, turn: 0.6, ...KNEEL, lean: 0.12 - laugh * 0.12 + hug * 0.1, headTilt: -0.25 * laugh + 0.1 * hug,
     armB: { a: 0.7, b: 0.9 }, armF: { a: lerp(1.0, 1.75, hug), b: lerp(0.6, 0.9, hug) },
     look: { x: lerp(1, 0.6, sees), y: lerp(0.2, -0.6, sees) }, browUp: 0.3 + sees * 0.6, browIn: 0.4 * sees * (1 - laugh),
-    mouth: { open: laugh * 0.85, smile: 0.3 + laugh * 0.7 }, eyesClosed: laugh > 0.5 && t < 3.3, cheek: laugh,
+    mouth: { open: laugh * 0.85, smile: 0.3 + laugh * 0.7 }, eyesClosed: laugh > 0.5 && t < 3.6, cheek: laugh,
   } as any;
   personInStreet(f, cam, C.GRANDAD_OUT, GRAN_X + 30, 40, { ...gPose, hidden: { armF: true } }, L);
   personInStreet(f, cam, C.NELL, NELL_X + 25 - hug * 55, 50, {

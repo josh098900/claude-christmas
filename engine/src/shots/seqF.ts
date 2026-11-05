@@ -92,7 +92,7 @@ function nellAtDoor(f: F, cam: DCam, hall: number, extra: Partial<Pose> = {}, sh
   } as Pose, lNellAtDoor(cam, hall));
   if (showDrawing) {
     const hx = (R.handF.x + R.handB.x) / 2, hy = (R.handF.y + R.handB.y) / 2;
-    LAST_PAPER.x = hx + 46 * s + tug * 20 * s + 58 * s; LAST_PAPER.y = hy - 18 * s - 44 * s + PAPER_DY * s;
+    LAST_PAPER.x = hx + 46 * s + tug * 20 * s + 26 * s; LAST_PAPER.y = hy - 18 * s - 47 * s + PAPER_DY * s;
     heldDrawing(f, f.ctx, hx + 46 * s + tug * 20 * s, hy - 18 * s + PAPER_DY * s, 132 * s, 100 * s, drawingAng + tug * 0.25, hall, true);
     mitten(f.ctx, R.handF.x + 6 * s, R.handF.y, 11.5 * s, 0, '#b98a48');
     mitten(f.ctx, R.handB.x + 6 * s, R.handB.y, 11.5 * s, 0, '#a37a3c');
@@ -247,15 +247,23 @@ shot('F5', (f) => {
   c.strokeStyle = '#3a1a18'; c.lineWidth = 1.6 * s; c.beginPath(); c.arc(bh.x - 5 * s, bh.y + 10 * s, 3.5 * s, 0.2, Math.PI - 0.2); c.stroke();
   // Nell with the drawing; the baby grabs the corner
   PAPER_DY = -40;
-  nellAtDoor(f, cam, open5, { browUp: 0.4 + grab * 0.3, mouth: { smile: 0.3 + grab * 0.3, open: grab * 0.2 }, armF: { a: 2.45, b: 0.15 }, armB: { a: 2.35, b: 0.25 }, look: { x: 1, y: -1 } }, true, -0.08, grab * 0.5, -60);
+  nellAtDoor(f, cam, open5, { browUp: 0.4 + grab * 0.3, mouth: { smile: 0.3 + grab * 0.3, open: grab * 0.2 }, armF: { a: 2.45, b: 0.15 }, armB: { a: 2.35, b: 0.25 }, look: { x: 1, y: -1 } }, true, -0.08, grab * 0.5 + track(t, [[0, 0], [0.8, 0], [1.0, 0.5], [1.2, 0.2], [1.4, 0.5], [2.0, 0.4]]), -60);
   PAPER_DY = 0;
-  // baby arm reaching to the paper
-  const pc0 = v2(LAST_PAPER.x, LAST_PAPER.y), root = v2(bh.x - 8 * s, bh.y + 22 * s);
-  const dd = Math.hypot(pc0.x - root.x, pc0.y - root.y), maxL = 95 * s * grab;
-  const paperCorner = dd > maxL ? v2(root.x + (pc0.x - root.x) / dd * maxL, root.y + (pc0.y - root.y) / dd * maxL) : pc0;
-  const armEnd = v2(lerp(bh.x - 10 * s, paperCorner.x, grab), lerp(bh.y + 20 * s, paperCorner.y, grab));
-  tube(c, [v2(bh.x - 8 * s, bh.y + 22 * s), v2((bh.x + armEnd.x) / 2, (bh.y + armEnd.y) / 2 + 6 * s), armEnd], 9 * s, 7 * s, '#e9c45a');
-  c.fillStyle = '#7a4a34'; c.beginPath(); c.arc(armEnd.x, armEnd.y, 5.5 * s, 0, TAU); c.fill();
+  // baby arm: a chubby onesie sleeve stretching out to grab the paper's top edge
+  const root = v2(bh.x - 14 * s, bh.y + 26 * s);
+  const pc0 = v2(LAST_PAPER.x, LAST_PAPER.y);
+  const dd = Math.hypot(pc0.x - root.x, pc0.y - root.y), maxL = 110 * s;
+  const tgt = dd > maxL ? v2(root.x + (pc0.x - root.x) / dd * maxL, root.y + (pc0.y - root.y) / dd * maxL) : pc0;
+  const rest = v2(root.x + 6 * s, root.y + 14 * s);
+  const armEnd = v2(lerp(rest.x, tgt.x, grab), lerp(rest.y, tgt.y, grab));
+  const elbow = v2((root.x + armEnd.x) / 2 - 6 * s, (root.y + armEnd.y) / 2 - 8 * s * grab);
+  c.fillStyle = '#9fbbe0'; c.beginPath(); blobEllipse(c, root.x, root.y, 15 * s, 12 * s, 73, 0.06, 8); c.fill();
+  tube(c, [root, elbow, armEnd], 15 * s, 12 * s, '#7f9ccc');
+  tube(c, [v2(root.x - 1.5 * s, root.y - 2 * s), v2(elbow.x - 1.5 * s, elbow.y - 2 * s), v2(armEnd.x - 1, armEnd.y - 2)], 11 * s, 8 * s, '#a9c4e8');
+  // tiny fist gripping the paper edge
+  c.fillStyle = '#7a4a34'; c.beginPath(); blobEllipse(c, armEnd.x, armEnd.y, 8.5 * s, 7.5 * s, 74, 0.08, 8); c.fill();
+  c.fillStyle = '#8e5a42'; for (let k = 0; k < 3; k++) { c.beginPath(); c.arc(armEnd.x - 4 * s + k * 4 * s, armEnd.y + 5 * s, 2.6 * s, 0, TAU); c.fill(); }
+  if (grab > 0.9) glow(f.glow, armEnd.x, armEnd.y, 30 * s, '#fff0d0', 0.12);
   snowfall(f, 0.45, 0.2, 51);
   f.grade.vignette = 0.5; f.grade.bloom = 0.85;
 });

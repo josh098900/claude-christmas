@@ -26,8 +26,8 @@ The end card holds the tagline and **Claude** in clean type, plus the fan-made d
 
 ## Decision
 
-**"Some problems need a whole street."** It is the line the whole film argues for. After a shot where one tiny dot is the brightest thing on Earth, it tells you *why* the dot is bright: not because of a tablet, but because a street turned up.
+**"Think it through. Then knock on doors."**
 
-**"Keep thinking."** is Anthropic's own line and the one to beat. It would sit better on a campaign card than on this story.
+My first choice was "Some problems need a whole street." It's the lovelier line. The blind critic in pass 1 pointed out that it lands three seconds after the tablet reads "it worked. the whole street came.", so it reads as an echo, not a payoff. "Think it through. Then knock on doors." names both halves of the film, the desk and then the doorsteps, and exactly what Claude did in them. Claude helped her think it through, and people did the rest. It is also the most honest brand line of the set.
 
-This decision was confirmed by the fresh-eyes critics in Phase 6; see DECISIONS.md.
+"Keep thinking." remains Anthropic's real line, and the film is happy to sit under it on a campaign page.

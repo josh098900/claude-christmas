@@ -221,7 +221,7 @@ export function planWall(f: F, c: C2D, o: { reveal?: number; tally?: string; see
   c.save(); c.translate(centre.x, centre.y); c.rotate(-0.02);
   c.fillStyle = '#f0ead8'; c.beginPath(); handRect(c, -centre.w / 2, -centre.h / 2, centre.w, centre.h, 77, 1.5); c.fill();
   drawSketch(c, 'grandad', centre.w, centre.h, f);
-  c.fillStyle = '#d23a32'; c.beginPath(); c.arc(0, -centre.h / 2 + 12, 7, 0, TAU); c.fill();
+  c.fillStyle = '#d23a32'; c.beginPath(); c.arc(centre.w * 0.42, -centre.h / 2 + 12, 7, 0, TAU); c.fill();
   c.restore();
   // cover sheet over the centre during the misdirect
   const rev = clamp(o.reveal ?? 1);
@@ -237,7 +237,7 @@ export function planWall(f: F, c: C2D, o: { reveal?: number; tally?: string; see
 /** Child-drawn sketches in felt tip. */
 export function drawSketch(c: C2D, kind: string, w: number, h: number, f: F) {
   const ink = '#2b2b4a', red = '#c4302c', b = f.boil;
-  const L = (pts: [number, number][], col = ink, wd = 3) => pencilLine(c, pts.map(([x, y]) => v2(x * w, y * h)), wd, col, (pts[0][0] * 100) | 0, 1, 0.9);
+  const L = (pts: [number, number][], col = ink, wd = 3) => pencilLine(c, pts.map(([x, y]) => v2(x * w, y * h)), wd, col, (pts[0][0] * 100) | 0, 1, 0.9, pts.length > 6 ? 1 : 0);
   const T = (s: string, x: number, y: number, sz: number, col = ink) => handText(c, s, x * w, y * h, sz, { color: col, seed: (x * 97) | 0, weight: 1.1, boil: 0 });
   const dots = (pts: [number, number][]) => { pts.forEach(([x, y], i) => { c.fillStyle = BULB_SEQ[i % 5]; c.beginPath(); c.arc(x * w, y * h, 4, 0, TAU); c.fill(); }); };
   switch (kind) {
@@ -274,6 +274,7 @@ export function drawSketch(c: C2D, kind: string, w: number, h: number, f: F) {
     case 'grandad': {
       // house outline
       L([[-0.3, 0.32], [-0.3, -0.05], [0, -0.3], [0.3, -0.05], [0.3, 0.32], [-0.3, 0.32]], ink, 4);
+      L([[0.12, -0.17], [0.12, -0.3], [0.2, -0.3], [0.2, -0.1]], ink, 3);
       L([[-0.08, 0.32], [-0.08, 0.12], [0.06, 0.12], [0.06, 0.32]], ink, 3);
       L([[-0.22, 0.0], [-0.12, 0.0], [-0.12, 0.08], [-0.22, 0.08], [-0.22, 0.0]], ink, 3);
       L([[0.12, 0.0], [0.22, 0.0], [0.22, 0.08], [0.12, 0.08], [0.12, 0.0]], ink, 3);

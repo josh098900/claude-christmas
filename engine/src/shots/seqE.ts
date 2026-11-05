@@ -10,16 +10,26 @@ import * as C from '../chars/cast';
 import { CharLight } from '../draw/shade';
 import { glow } from '../draw/light';
 import { blobEllipse } from '../draw/brush';
-import { tabletCU, deskScene, Q1, Q2, Q3, R1, R2, R3 } from './seqD';
+import { tabletCU, deskScene, nellDeskLight, MUM_HOME, Q1, Q2, Q3, R1, R2, R3 } from './seqD';
+import { santaPapers } from '../sets/props';
+import { rToScreen } from '../sets/bedroom';
 
 export const Q4 = 'i need them on the roof but im not allowed up ladders';
-export const R4 = 'Good rule. This bit needs more people. Who lives on his street?';
+export const R4 = 'Good rule. This bit needs more people. Who lives on the street?';
 
 const HISTORY: Msg[] = [
   { who: 'me', text: Q1 }, { who: 'reply', text: R1, blur: 7 },
   { who: 'me', text: Q2 }, { who: 'reply', text: R2, blur: 7 },
   { who: 'me', text: Q3 }, { who: 'reply', text: R3, blur: 7 },
 ];
+
+/** Over-the-shoulder foreground: Nell (left) and Mum (right) reading the screen together, rim-lit by it. */
+function readingTogether(f: F, t: number, mumLean = 0, mumNod = 0) {
+  const L: CharLight = { key: -1.57, shadow: '#1e1a30', shadowAmt: 0.7, shadowOff: 26, shadowSoft: 8, rim: '#ffd29a', rimAmt: 1.0, rimW: 8, rimDir: -1.45, ambient: '#3a3050', ambientAmt: 0.8, spots: [{ x: 960, y: 520, r: 900, color: '#ffc98e', a: 0.18 }] };
+  drawPerson(f, C.NELL_HOME, { x: 300, y: 1640, s: 2.9, back: true, turn: 0.1, flip: 1, headTilt: 0.06, lean: 0.05, armF: { a: 0.6, b: 0.6 }, armB: { a: 0.4, b: 0.6 } }, L);
+  drawPerson(f, MUM_HOME, { x: 1660 - mumLean * 40, y: 1590 + mumNod * 6, s: 2.45, back: true, turn: 0.25, flip: -1, headTilt: -0.1 + mumNod * 0.1, lean: 0.12 + mumLean * 0.1, armF: { a: 0.5, b: 0.8 }, armB: { a: 0.2, b: 0.4 } }, { ...L, rimDir: -1.75 });
+  void t;
+}
 
 // E1: slow, deliberate typing. We read every letter. (cue sheet: taps 0.35–3.0)
 shot('E1', (f) => {
@@ -34,7 +44,8 @@ shot('E1', (f) => {
   const msgs: Msg[] = [{ who: 'me', text: Q3 }, { who: 'reply', text: R3, blur: 7 }];
   if (sent) msgs.push({ who: 'me', text: Q4, reveal: prog(t, TS + 0.1, TS + 0.25, ease.outCubic) });
   const z = lerp(1.24, 1.3, prog(f.tc, 0, f.dur, ease.inOutSine));
-  tabletCU(f, { msgs, typing: sent ? '' : ty, caret: !sent, font: 44 }, { zoom: z, oy: -150, ox: 40 });
+  tabletCU(f, { msgs, typing: sent ? '' : ty, caret: !sent, font: 44 }, { zoom: z, oy: -300, ox: 60 });
+  readingTogether(f, t, prog(t, 1.2, 1.8, ease.inOutCubic));
   f.grade.vignette = 0.68;
 });
 
@@ -46,7 +57,9 @@ shot('E2', (f) => {
   if (t >= TR) msgs.push({ who: 'reply', text: R4, reveal: prog(t, TR, TD, ease.linear), blur: 0 });
   const push = prog(tc, 1.6, f.dur, ease.inOutSine);
   const z = lerp(1.28, 1.5, push);
-  tabletCU(f, { msgs, typing: '', caret: false, thinking: t < TR ? 1 : 0, font: 46 }, { zoom: z, oy: lerp(-170, -200, push), ox: lerp(40, 190, push) });
+  tabletCU(f, { msgs, typing: '', caret: false, thinking: t < TR ? 1 : 0, font: 46 }, { zoom: z, oy: lerp(-300, -330, push), ox: lerp(60, 190, push) });
+  // Mum reads it too; a small nod as the last line lands
+  readingTogether(f, t, 1, Math.sin(clamp((t - 2.3) / 0.6) * Math.PI) * 1.0);
   f.grade.vignette = lerp(0.65, 0.78, push);
 });
 
@@ -65,7 +78,14 @@ shot('E3', (f) => {
   if (tc < CUT) {
     const cam = { x: 46, y: -318, z: 2.9 };
     const up = prog(t, 0.05, 0.4, ease.outBack);
-    deskScene(f, cam, { look: { x: 1, y: -1 * up }, headTilt: -0.12 * up, nod: -0.5 * up, browUp: 0.9 * up, mouth: { open: 0.25 * up, smile: 0 }, armF: { a: 1.0, b: 0.6 } }, { msgs: [] }, { jar: 0.95, tangles: 0, coils: 5 });
+    deskScene(f, cam, { look: { x: 1, y: -1 * up }, headTilt: -0.12 * up, nod: -0.5 * up, browUp: 0.9 * up, mouth: { open: 0.25 * up, smile: 0 }, armF: { a: 1.0, b: 0.6 } }, { msgs: [] }, {
+      jar: 0.95, tangles: 0, coils: 5,
+      beforeNell: (tabS) => {
+        const p = rToScreen(cam, v2(-150, -10));
+        drawPerson(f, MUM_HOME, { x: p.x, y: p.y, s: cam.z * 0.92, flip: 1, turn: 0.8, hipDrop: 46, legF: { a: 1.4, b: -1.4 }, legB: { a: 1.3, b: -1.4 }, lean: 0.3 - 0.15 * up,
+          look: { x: 1, y: 0.3 - 1.2 * up }, nod: 0.2 - 0.6 * up, headTilt: -0.1 * up, browUp: 0.5 * up, mouth: { smile: 0.2 }, armF: { a: 0.9, b: 0.9 }, armB: { a: 0.7, b: 1.0 } } as Pose, nellDeskLight(tabS, 0.8));
+      },
+    });
     return;
   }
   const u = prog(tc, CUT, 3.0, ease.inOutCubic);
@@ -74,6 +94,7 @@ shot('E3', (f) => {
   for (const x of [c, f.glow]) { x.save(); x.translate(W / 2, H / 2); x.scale(z, z); x.translate(-cx, -cy); }
   c.fillStyle = '#26346a'; c.fillRect(-2000, -1400, 4000, 2800);
   planWall(f, c, { reveal: 1, tally: '1,206' });
+  santaPapers(f, c);
   c.save(); c.globalCompositeOperation = 'multiply'; c.fillStyle = '#6a74b8'; c.fillRect(-1300, -700, 2600, 1400); c.restore();
   // warm torch light holding on the centre drawing; the strings glow toward it
   c.save(); c.globalCompositeOperation = 'lighter';
@@ -98,6 +119,14 @@ shot('E3', (f) => {
       holdF: hatOn || t < 2.95 ? undefined : (x, hp) => hatInHand(x, hp, 2.35 * 0.9),
     };
     drawPerson(f, hatOn ? NELL_HAT : C.NELL_HOME, pose, L);
+    // Mum, left foreground: watches the wall, then turns to Nell with a small knowing smile and nod
+    const mt = prog(t, 3.1, 3.4, ease.inOutCubic);
+    const nodM = Math.sin(clamp((t - 3.4) / 0.45) * Math.PI) * 0.5;
+    drawPerson(f, MUM_HOME, {
+      x: lerp(-260, 330, inN), y: 1330, s: 2.2, flip: mt < 0.5 ? 1 : 1, turn: mt < 0.5 ? 0.5 : lerp(0.4, 0.75, mt), back: mt < 0.5,
+      look: { x: 1, y: 0.1 }, nod: nodM, browUp: 0.45 * mt, browIn: 0.1, mouth: { smile: 0.75 * mt, w: 0.9 }, cheek: mt,
+      armF: { a: 0.3, b: 1.2 }, armB: { a: 0.1, b: 0.3 }, lean: 0.04,
+    }, { ...L, rimDir: -0.4, key: -0.3, spots: [{ x: 700, y: 600, r: 520, color: '#ffc58a', a: 0.22 * mt }] });
   }
   f.grade.vignette = 0.62; f.grade.bloom = 0.8;
 });

@@ -5,7 +5,7 @@ import { V2, v2, lerp, clamp, TAU, vrot, vadd, noise1 } from '../core/math';
 import { smoothClosed, smoothOpen, tube, blobEllipse, jit } from '../draw/brush';
 import { CharLight, litGroup, tint } from '../draw/shade';
 
-export type HairStyle = 'plaits' | 'bald' | 'curly' | 'ponytail' | 'short' | 'bob' | 'braids' | 'none' | 'buzz';
+export type HairStyle = 'plaits' | 'bald' | 'curly' | 'ponytail' | 'short' | 'bob' | 'braids' | 'none' | 'buzz' | 'long';
 export type HatStyle = 'bobble' | 'flatcap' | 'beanie' | 'hijab' | 'hood' | 'none' | 'woolly';
 export type CoatStyle = 'aline' | 'cardigan' | 'long' | 'puffer' | 'round' | 'hoodie' | 'jumper';
 
@@ -61,6 +61,7 @@ export interface Pose {
   hidden?: { armB?: boolean; legs?: boolean; armF?: boolean };
   only?: 'armF';           // draw just the near arm (for hugs: arm drawn over another character)
   back?: boolean;          // seen from behind: no face
+  armFLen?: number;        // stretch the near arm (cartoon reach, e.g. pointing at the sky)
   wink?: number;           // >0.5 closes the eye on the facing side
 }
 
@@ -246,11 +247,12 @@ export function drawPerson(f: F, sp: Spec, p: Pose, L: CharLight | null, opts: {
     x.fillRect(-hw * 0.28, hr * 0.5, hw * 0.56, sp.head.neck * s + hr * 0.4);
     // hair behind head
     const hs = sp.hair.style;
-    if (hs === 'curly' || hs === 'bob' || hs === 'braids' || hs === 'ponytail') {
+    if (hs === 'curly' || hs === 'bob' || hs === 'braids' || hs === 'ponytail' || hs === 'long') {
       x.fillStyle = T(sp.hair.color);
       x.beginPath();
       if (hs === 'curly') blobEllipse(x, -ft * hw * 0.15 * sx, -hr * 0.12, hw * 1.25, hr * 1.12, 31, 0.1, 14);
       else if (hs === 'bob') blobEllipse(x, -ft * hw * 0.12 * sx, hr * 0.05, hw * 1.12, hr * 1.08, 32, 0.04, 10);
+      else if (hs === 'long') { blobEllipse(x, -ft * hw * 0.12 * sx, hr * 0.3, hw * 1.18, hr * 1.38, 34, 0.05, 12); }
       else blobEllipse(x, -ft * hw * 0.1 * sx, -hr * 0.05, hw * 1.08, hr * 1.06, 33, 0.04, 10);
       x.fill();
       if (hs === 'ponytail') {
@@ -423,7 +425,7 @@ export function drawPerson(f: F, sp: Spec, p: Pose, L: CharLight | null, opts: {
       x.quadraticCurveTo(hw * 0.7, -hr * (hs === 'buzz' ? 0.75 : 0.55), fcx + hw * 0.2, -hr * (hs === 'buzz' ? 0.82 : 0.62));
       x.quadraticCurveTo(-hw * 0.5, -hr * 0.6, -hw * 1.0, -hr * 0.05);
       x.fill();
-    } else if (hs === 'curly' || hs === 'bob' || hs === 'braids' || hs === 'ponytail') {
+    } else if (hs === 'curly' || hs === 'bob' || hs === 'braids' || hs === 'ponytail' || hs === 'long') {
       x.beginPath();
       if (hs === 'curly') {
         for (let k = 0; k < 7; k++) { const a = Math.PI + (k / 6) * Math.PI; blobEllipse(x, Math.cos(a) * hw * 0.85, -hr * 0.35 + Math.sin(a) * hr * 0.75, hr * 0.32, hr * 0.28, 95 + k, 0.1, 7); }

@@ -7,7 +7,7 @@ import { drawStreet, snowfall, makeTerrace, doorRect, toScreen, Cam, House } fro
 import { drawPerson, Pose, walk, Spec, Rigged } from '../chars/rig';
 import * as C from '../chars/cast';
 import { CharLight } from '../draw/shade';
-import { glow, bulb, BULB_SEQ, lightString } from '../draw/light';
+import { glow, bulb, BULB_SEQ, lightString, beam } from '../draw/light';
 import { blobEllipse, handRect, vgrad, tube } from '../draw/brush';
 import { handText, measure } from '../draw/letters';
 import { STREET_S, L_DARK_STREET } from './common';
@@ -44,17 +44,91 @@ export function blurSoFar(f: F, px: number) {
 const L_COLD = (spots: { x: number; y: number; r: number; color: string; a: number }[] = []): CharLight => ({ ...L_DARK_STREET, spots });
 
 // the waiting crowd in front of Grandad's house (world x, y, spec, flip)
-const CROWD: [Spec, number, number, number][] = [
-  [LADDER_MAN_HAT, -250, 150, 1], [C.OLD_LADY, -150, 175, 1], [C.SHOPKEEPER, -60, 160, 1], [C.TEEN1, 210, 150, -1],
-  [C.TEEN2, 140, 168, -1], [C.YOUNG_DAD, -330, 168, 1], [C.DAD, 290, 172, -1],
+/** A younger child from the street (holds Dad's hand). */
+export const CHILD: Spec = {
+  ...C.NELL, name: 'Child', legLen: 50, torso: 70, shoulderW: 52, hemW: 92, hemY: 34,
+  coat: { color: '#3f6fa8', trim: '#2c5282', style: 'aline', buttons: '#e9dcc0' },
+  arm: { ...C.NELL.arm, upper: 32, lower: 28, w: 21, color: '#3f6fa8', cuff: '#345e92' },
+  hand: { r: 10, color: '#c9463c', mitten: true },
+  head: { ...C.NELL.head, r: 50, skin: '#e8b48e' },
+  hair: { style: 'short', color: '#3a2618' },
+  hat: { style: 'bobble', color: '#3f8a5a', color2: '#2f6e46' },
+  boot: { color: '#c9463c', h: 22, len: 11 },
+};
+
+interface Extra { sp: Spec; x: number; y: number; fl: number; ph: number; look?: number; pose?: Partial<Pose>; torch?: boolean; }
+// the waiting crowd in front of Grandad's house: groups at different depths, not a line-up
+export const CROWD: Extra[] = [
+  { sp: LADDER_MAN_HAT, x: -310, y: 132, fl: 1, ph: 0.3, look: 1 },
+  { sp: C.OLD_LADY, x: -228, y: 206, fl: 1, ph: 1.7, torch: true },
+  { sp: C.SHOPKEEPER, x: -112, y: 150, fl: 1, ph: 2.9, look: -1 },
+  { sp: C.TEEN2, x: 300, y: 158, fl: -1, ph: 0.9, look: 1 },
+  { sp: C.TEEN1, x: 352, y: 142, fl: -1, ph: 3.6, look: -1 },
+  { sp: C.YOUNG_DAD, x: 210, y: 122, fl: -1, ph: 2.2 },
+  { sp: C.DAD, x: -10, y: 232, fl: 1, ph: 1.1, pose: { armB: { a: -0.35, b: 0.1 } } },
+  { sp: CHILD, x: -62, y: 238, fl: 1, ph: 4.2, pose: { armB: { a: -0.1, b: -0.4 }, armF: { a: 0.3, b: 0.4 } } },
 ];
 
-function crowd(f: F, cam: Cam, L: CharLight, t: number, faceRight = true, skip?: string) {
-  const order = [...CROWD].sort((a, b) => a[2] - b[2]);
-  for (const [sp, x, y, fl] of order) {
-    if (skip === sp.name) continue;
-    const p = toScreen(cam, v2(x, y));
-    drawPerson(f, sp, { x: p.x, y: p.y + Math.sin(t * 1.1 + x) * 1.5, s: STREET_S * cam.z, flip: faceRight ? 1 : fl, turn: 0.45, armF: { a: 0.15, b: 0.6 }, armB: { a: 0.1, b: 0.5 }, browUp: 0.2, browIn: 0.3, mouth: { smile: 0.1 }, look: { x: 1, y: 0 }, blink: blink(t, [0.7 + hash1(x) * 2]) } as Pose, L);
+/** Breath in the cold: a soft puff that drifts up, on a slow cycle. */
+export function breath(f: F, head: V2, dir: number, sc: number, ph: number, rate = 0.45, amt = 1) {
+  const u = (f.t * rate + ph) % 1;
+  if (u > 0.45) return;
+  const k = u / 0.45;
+  const c = f.ctx;
+  for (let i = 0; i < 3; i++) {
+    const kk = clamp(k * 1.2 - i * 0.12);
+    if (kk <= 0) continue;
+    c.fillStyle = `rgba(214,224,250,${0.16 * (1 - kk) * amt})`;
+    c.beginPath(); c.arc(head.x + dir * (26 + kk * 50 + i * 8) * sc, head.y + (24 - kk * 46) * sc, (6 + kk * 18) * sc, 0, TAU); c.fill();
+  }
+}
+
+/** Idle life for a standing person: breathing, weight shifts, glances, blinks. */
+export function idle(t: number, ph: number, look = 0): Partial<Pose> {
+  const glance = look !== 0 ? clamp((Math.sin(t * 0.55 + ph * 1.7) - 0.35) * 3) : 0;
+  return {
+    bob: Math.sin(t * 1.7 + ph) * 1.6 + Math.max(0, Math.sin(t * 0.37 + ph)) * 2,
+    lean: Math.sin(t * 0.45 + ph) * 0.035,
+    headTilt: Math.sin(t * 0.6 + ph * 2) * 0.04,
+    headTurn: glance * 0.35 * look,
+    look: { x: lerp(1, -look, glance), y: Math.sin(t * 0.8 + ph) * 0.2 },
+    blink: blink(t, [0.4 + (ph % 1) * 2.5, 2.9 + (ph % 0.7)]),
+  };
+}
+
+function crowd(f: F, cam: Cam, L: CharLight, t: number, faceRight = true, skip?: string, o: { torchDrop?: number; glanceAt?: number } = {}) {
+  const order = [...CROWD].sort((a, b) => a.y - b.y);
+  const rig: Record<string, Rigged> = {};
+  for (const e of order) {
+    if (skip === e.sp.name) continue;
+    const p = toScreen(cam, v2(e.x, e.y));
+    const depth = 1 + (e.y - 170) / 650;
+    const sc = STREET_S * cam.z * depth;
+    const id = idle(t, e.ph, e.look ?? 0);
+    const torchA = e.torch ? ((o.torchDrop ?? -1) >= 0 ? lerp(2.5, 0.35, clamp(o.torchDrop ?? 0)) : 0.2) : 0;
+    const R = drawPerson(f, e.sp, {
+      x: p.x, y: p.y, s: sc, flip: faceRight ? 1 : e.fl, turn: 0.45,
+      armF: e.torch ? { a: torchA, b: 0.2 } : { a: 0.15, b: 0.6 }, armB: { a: 0.1, b: 0.5 },
+      browUp: 0.2, browIn: 0.3, mouth: { smile: 0.05 }, ...id, ...(e.pose || {}),
+      holdF: e.torch ? (x: C2D, h: V2, ang: number) => { x.save(); x.translate(h.x, h.y); x.rotate(ang); x.fillStyle = '#c8402e'; x.beginPath(); x.roundRect(-3 * sc, -6 * sc, 26 * sc, 12 * sc, 3 * sc); x.fill(); x.restore(); } : undefined,
+    } as Pose, L);
+    if (e.torch && (o.torchDrop ?? -1) >= 0) {
+      const ang = Math.atan2(R.handF.y - R.shoulderF.y, R.handF.x - R.shoulderF.x);
+      glow(f.glow, R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc, 14 * sc, '#fff4d8', 0.7);
+      beam(f.glow, v2(R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc), ang, 520 * sc, 0.17, 'rgba(255,240,205,0.85)', 0.35, 4);
+    }
+    breath(f, R.head, faceRight ? 1 : e.fl, sc, e.ph * 0.37);
+    rig[e.sp.name] = R;
+  }
+  // child holding Dad's hand: a joined mitten where their hands meet
+  const rd = rig['Dad'], rk = rig['Child'];
+  if (rd && rk) {
+    const m = v2((rd.handB.x + rk.handF.x) / 2, (rd.handB.y + rk.handF.y) / 2);
+    const sc = STREET_S * cam.z;
+    f.ctx.strokeStyle = '#3f6fa8'; f.ctx.lineWidth = 8 * sc; f.ctx.lineCap = 'round';
+    f.ctx.beginPath(); f.ctx.moveTo(rk.handF.x, rk.handF.y); f.ctx.lineTo(m.x, m.y); f.ctx.stroke();
+    f.ctx.fillStyle = '#7a4434'; f.ctx.beginPath(); blobEllipse(f.ctx, m.x, m.y, 13 * sc, 11 * sc, 5, 0.06, 8); f.ctx.fill();
+    f.ctx.fillStyle = '#c9463c'; f.ctx.beginPath(); blobEllipse(f.ctx, m.x - 3 * sc, m.y + 3 * sc, 9 * sc, 8 * sc, 6, 0.06, 8); f.ctx.fill();
   }
 }
 
@@ -74,8 +148,10 @@ shot('H1', (f) => {
   const pg = toScreen(cam, v2(x, 172)), pm = toScreen(cam, v2(x + 66, 176));
   const puzzle = prog(tc, 1.0, 2.2);
   drawPerson(f, C.MUM, { x: pm.x, y: pm.y, s: STREET_S * cam.z, flip: -1, turn: 0.7, ...wm, armB: { a: 0.5, b: 1.0 }, look: { x: 1, y: -0.2 }, mouth: { smile: 0.15 }, browUp: 0.2 } as Pose, L);
-  drawPerson(f, C.GRANDAD_OUT, { x: pg.x, y: pg.y, s: STREET_S * cam.z, flip: -1, turn: 0.6, ...wg, armF: { a: 0.4, b: 0.8 },
+  breath(f, v2(pm.x, pm.y - 330 * STREET_S * cam.z), -1, STREET_S * cam.z, 0.2);
+  const RG = drawPerson(f, C.GRANDAD_OUT, { x: pg.x, y: pg.y, s: STREET_S * cam.z, flip: -1, turn: 0.6, ...wg, armF: { a: 0.4, b: 0.8 },
     browUp: puzzle * 0.7, browIn: puzzle * 0.5, nod: lerp(0.25, -0.15, puzzle), look: { x: lerp(0.3, 1, puzzle), y: lerp(0.2, -0.6, puzzle) }, headTilt: puzzle * 0.08, mouth: { smile: -0.1 } } as Pose, L);
+  breath(f, RG.head, -1, STREET_S * cam.z, 0.6, 0.4);
   snowfall(f, 0.5, 0.15, 81);
   f.grade.vignette = 0.6; f.grade.bloom = 0.8; f.grade.exposure = 0.95;
 });
@@ -89,7 +165,7 @@ shot('H2', (f) => {
   crowd(f, cam, { ...L, ambientAmt: 0.85 }, t);
   // Nell steps forward at +1.2 with her stack of cards
   const step = prog(tc, 1.0, 1.7, ease.inOutCubic);
-  const nx = lerp(30, 120, step), ny = lerp(190, 250, step);
+  const nx = lerp(60, 140, step), ny = lerp(205, 262, step);
   const w = walk(t * 1.2, 0.35 * (step > 0 && step < 1 ? 1 : 0), 0);
   const np = toScreen(cam, v2(nx, ny));
   const R = drawPerson(f, C.NELL, { x: np.x, y: np.y, s: STREET_S * cam.z * lerp(1.05, 1.25, step), flip: 1, turn: 0.55, ...(step > 0 && step < 1 ? w : {}), armF: { a: 1.2, b: 1.0 }, armB: { a: 1.1, b: 1.1 }, browUp: 0.3, browIn: 0.4, look: { x: 1, y: -0.3 }, mouth: { smile: 0.1 } } as Pose, L);
@@ -258,22 +334,45 @@ shot('H4', (f) => {
 // ---------------------------------------------------------------- H5: the worst moment
 shot('H5', (f) => {
   const t = f.t, tc = f.tc;
+  if (tc < 1.2) {
+    // WIDE, silence: no. 40 is still dark. Nobody moves; a torch is slowly lowered.
+    const cam: Cam = { x: 50, y: -250, z: 1.13 + tc * 0.012 };
+    drawStreet(f, { mood: 'eve', cam, houses: TERRACE, ...DARK });
+    const L = L_COLD();
+    crowd(f, cam, { ...L, ambientAmt: 0.86 }, t + 2.0, false, undefined, { torchDrop: prog(tc, 0.05, 1.1, ease.inOutSine) });
+    // Nell at the front by the switch box, head already bowing
+    const np = toScreen(cam, v2(140, 262));
+    drawPerson(f, C.NELL, { x: np.x, y: np.y, s: STREET_S * cam.z * 1.25, flip: 1, turn: 0.3, nod: lerp(0.2, 0.5, tc / 1.2), browIn: 0.8, browUp: -0.1, mouth: { smile: -0.5 },
+      armF: { a: 0.12, b: 0.3 }, armB: { a: 0.08, b: 0.3 }, look: { x: 0, y: 1 } } as Pose, L);
+    const bx = toScreen(cam, v2(196, 268));
+    f.ctx.fillStyle = '#4d5560'; f.ctx.fillRect(bx.x - 14, bx.y - 12, 28, 14);
+    f.ctx.fillStyle = '#ff6a4a'; f.ctx.beginPath(); f.ctx.arc(bx.x + 9, bx.y - 9, 2.4, 0, TAU); f.ctx.fill();
+    glow(f.glow, bx.x + 9, bx.y - 9, 14, '#ff6a4a', 0.5);
+    // Grandad and Mum, backs to us, right foreground
+    const gp = v2(W * 0.86, H + 260), mp = v2(W * 1.0, H + 280);
+    drawPerson(f, C.MUM, { x: mp.x, y: mp.y, s: 1.35, flip: -1, turn: 0.2, back: true, armF: { a: 0.2, b: 0.4 } } as Pose, { ...L, ambientAmt: 0.95, rimAmt: 0.6 });
+    drawPerson(f, C.GRANDAD_OUT, { x: gp.x, y: gp.y, s: 1.3, flip: -1, turn: 0.2, back: true, armF: { a: 0.2, b: 0.4 } } as Pose, { ...L, ambientAmt: 0.95, rimAmt: 0.6 });
+    snowfall(f, 0.4, 0.1, 87);
+    f.grade.vignette = 0.62; f.grade.bloom = 0.7; f.grade.exposure = 0.92; f.grade.saturation = 0.88;
+    return;
+  }
+  // CU: her face is already falling, and keeps falling. No smile at all.
   const cam: Cam = { x: GDR.x + GDR.w / 2 - 40, y: -60, z: 2.8 };
   drawStreet(f, { mood: 'eve', cam, houses: TERRACE, ...DARK });
   crowd(f, cam, { ...L_COLD(), ambientAmt: 0.92 }, t, false);
   blurSoFar(f, 8);
-  const fall = track(t, [[0, 0], [0.4, 0], [2.6, 1, ease.inOutSine]]);
-  const push = lerp(1.0, 1.06, ease.inOutSine(tc / f.dur));
+  const fall = track(tc, [[1.2, 0.35], [3.0, 1, ease.inOutSine]]);
+  const push = lerp(1.0, 1.06, ease.inOutSine((tc - 1.2) / (f.dur - 1.2)));
   const s = 3.3 * push;
   const R = drawPerson(f, C.NELL, {
     x: W * 0.5, y: H + 120 + fall * 30, s, flip: 1, turn: 0.1,
-    browUp: lerp(0.55, -0.1, fall), browIn: lerp(0.0, 1.0, fall), nod: lerp(-0.15, 0.55, fall), headTilt: fall * 0.06,
-    look: { x: lerp(0.1, -0.2, fall), y: lerp(-0.6, 0.9, fall) }, mouth: { smile: lerp(0.55, -0.75, fall), w: lerp(1, 0.8, fall) },
-    blink: blink(t, [1.6]) + (tc > 2.9 ? clamp((tc - 2.9) * 2) * 0.35 : 0), armF: { a: lerp(0.5, 0.05, fall), b: 0.4 }, armB: { a: lerp(0.45, 0.05, fall), b: 0.4 },
+    browUp: lerp(0.15, -0.15, fall), browIn: lerp(0.55, 1.0, fall), nod: lerp(0.15, 0.6, fall), headTilt: fall * 0.06,
+    look: { x: lerp(0.0, -0.2, fall), y: lerp(0.3, 0.95, fall) }, mouth: { smile: lerp(-0.25, -0.8, fall), w: lerp(0.95, 0.8, fall) },
+    blink: blink(t, [2.0]) + (tc > 3.05 ? clamp((tc - 3.05) * 2) * 0.35 : 0), armF: { a: lerp(0.25, 0.04, fall), b: 0.35 }, armB: { a: lerp(0.22, 0.04, fall), b: 0.35 },
     lean: fall * 0.05, plait: -fall * 0.3,
-  } as Pose, { ...L_COLD([{ x: W * 0.92, y: -150, r: 1500, color: '#ffcf8a', a: 0.18 * (1 - fall * 0.5) }]), key: -0.9, rimAmt: 0.5, ambientAmt: 0.66 });
+  } as Pose, { ...L_COLD([{ x: W * 0.92, y: -150, r: 1500, color: '#ffcf8a', a: 0.14 }]), key: -0.9, rimAmt: 0.5, ambientAmt: 0.68 });
   // a small sigh of breath in the cold
-  const sigh = clamp((tc - 2.2) / 1.2);
+  const sigh = clamp((tc - 2.3) / 1.1);
   if (sigh > 0 && sigh < 1) {
     const m = v2(R.head.x + 14, R.head.y + 120);
     for (let k = 0; k < 4; k++) {
@@ -283,5 +382,5 @@ shot('H5', (f) => {
     }
   }
   snowfall(f, 0.35, 0.1, 86);
-  f.grade.vignette = 0.65 + fall * 0.1; f.grade.bloom = 0.7; f.grade.exposure = 0.95 - fall * 0.05; f.grade.saturation = 0.95 - fall * 0.1;
+  f.grade.vignette = 0.68 + fall * 0.08; f.grade.bloom = 0.7; f.grade.exposure = 0.93 - fall * 0.05; f.grade.saturation = 0.9 - fall * 0.1;
 });

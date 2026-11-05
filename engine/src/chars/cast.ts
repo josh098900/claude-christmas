@@ -100,9 +100,10 @@ export const MUM: Spec = {
   head: { r: 46, w: 0.92, neck: 8, skin: SKIN.mum, blush: '#e38e80' },
   eyes: { r: 1.0, gap: 0.35, y: 0.06 },
   brows: { color: '#4b2a18', w: 5.4, len: 0.36, gap: 0.24 },
-  nose: { r: 1.0 }, mouth: { w: 1.0 },
-  hair: { style: 'ponytail', color: '#6e4126' },
+  nose: { r: 1.0 }, mouth: { w: 1.0, color: '#a2404a' },
+  hair: { style: 'long', color: '#6e4126' },
   scarf: '#2f6b6a',
+  ears: false,
   stoop: 0,
 };
 

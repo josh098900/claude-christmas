@@ -6,7 +6,7 @@ import { glow, BULB_SEQ } from '../draw/light';
 
 export interface Cam3 { x: number; y: number; z: number; pitch: number; f: number; }
 interface P3 { sx: number; sy: number; d: number; }
-function proj(c: Cam3, X: number, Y: number, Z: number): P3 {
+function projRaw(c: Cam3, X: number, Y: number, Z: number): P3 {
   const dx = X - c.x, dy = Y - c.y, dz = Z - c.z;
   const sp = Math.sin(c.pitch), cp = Math.cos(c.pitch);
   const d = -dy * sp + dz * cp;
@@ -62,7 +62,7 @@ export function drawTown(f: F, cam: Cam3, o: TownOpts = {}) {
   const c = f.ctx, g = f.glow;
   const fogD = o.fog ?? 900;
   // sky + ground
-  const hz = proj(cam, cam.x, 0, cam.z + 20000).sy; // horizon line
+  const hz = projRaw(cam, cam.x, 0, cam.z + 20000).sy; // horizon line
   const sg = c.createLinearGradient(0, Math.min(hz, H) - 700, 0, Math.max(0, hz) + 20);
   const dusk = o.dusk ?? 0;
   sg.addColorStop(0, '#0b1636'); sg.addColorStop(0.6, dusk ? '#33447e' : '#16264f'); sg.addColorStop(0.9, dusk ? '#8a7aa2' : '#2b3c70'); sg.addColorStop(1, dusk ? '#d9a48c' : '#3a4a7a');
@@ -78,6 +78,8 @@ export function drawTown(f: F, cam: Cam3, o: TownOpts = {}) {
   const order = [...rows.keys()].sort((a, b) => b - a);
   for (const row of order) {
     const Z = row * ROW;
+    const skew = row === 0 ? 0 : (hash1(row * 7.7) - 0.5) * 0.09;
+    const proj = (c3: Cam3, X: number, Y: number, Zz: number) => projRaw(c3, X, Y, Zz + X * skew + Math.sin(X * 0.004 + row) * 6 * (row === 0 ? 0 : 1));
     const dRow = proj(cam, cam.x, 0, Z).d;
     if (dRow < 2) continue;
     const haze = clamp((dRow - 60) / fogD) * 0.85;

@@ -31,7 +31,7 @@ export function mug(x: C2D, h: V2, ang: number) {
 
 shot('A2', (f) => {
   const u = prog(f.tc, 0, f.dur, ease.inOutSine);
-  const cam = { x: lerp(-60, 0, u), y: lerp(-300, -330, u), z: lerp(0.40, 0.56, u) };
+  const cam = { x: lerp(-40, 0, u), y: lerp(-320, -340, u), z: lerp(0.55, 0.82, u) };
   drawStreet(f, {
     mood: 'dusk', cam, houses: TERRACE,
     lit: (h) => (h.grandad ? 0 : 1), windows: (h) => (h.grandad ? 0 : 1),

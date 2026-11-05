@@ -11,7 +11,7 @@ import { CharLight } from '../draw/shade';
 import { glow, bulb, BULB_SEQ, beam, shaft, motes } from '../draw/light';
 import { handText } from '../draw/letters';
 import { handRect, blobEllipse, smoothOpen, tube, vgrad } from '../draw/brush';
-import { topHand, topHandTip, NELL_HAND, coil, advent, softShadow } from '../sets/props';
+import { topHand, topHandTip, NELL_HAND, coil, advent, softShadow, santaPapers } from '../sets/props';
 import { landing, hallway } from '../sets/hallway';
 
 export const Q1 = 'why does 1 bulb make them ALL go off';
@@ -44,7 +44,7 @@ function sideTablet(f: F, c: C2D, x: number, y: number, amt: number) {
 }
 
 /** Nell at her desk, seen from the side, the tablet in front of her. */
-export function deskScene(f: F, cam: RCam, pose: Partial<Pose>, tab: TabletState, o: { jar?: number; tangles?: number; glowAmt?: number; moon?: V2; spec?: Spec; nellX?: number; coils?: number; shaftAmt?: number; noNell?: boolean } = {}) {
+export function deskScene(f: F, cam: RCam, pose: Partial<Pose>, tab: TabletState, o: { jar?: number; tangles?: number; glowAmt?: number; moon?: V2; spec?: Spec; nellX?: number; coils?: number; shaftAmt?: number; noNell?: boolean; beforeNell?: (tabS: V2) => void; afterNell?: (tabS: V2) => void; mug?: boolean } = {}) {
   void tab;
   const amt = o.glowAmt ?? 1;
   drawRoom(f, cam, { moon: o.moon });
@@ -63,6 +63,7 @@ export function deskScene(f: F, cam: RCam, pose: Partial<Pose>, tab: TabletState
   c.fillRect(nx - 92, -262, 14, 262); c.fillRect(nx + 40, -110, 12, 110); c.fillRect(nx - 90, -112, 150, 14);
   c.beginPath(); c.arc(nx - 85, -262, 11, 0, TAU); c.fill(); c.fillRect(nx - 96, -214, 24, 10);
   c.restore();
+  if (o.beforeNell) o.beforeNell(tabS);
   if (!o.noNell) {
     drawPerson(f, o.spec || C.NELL_HOME, {
       x: feet.x, y: feet.y, s: cam.z * 1.0, flip: 1, turn: 0.95, hipDrop: -112,
@@ -71,9 +72,17 @@ export function deskScene(f: F, cam: RCam, pose: Partial<Pose>, tab: TabletState
       look: { x: 1, y: 0.25 }, ...pose,
     } as Pose, nellDeskLight(tabS, amt));
   }
+  if (o.afterNell) o.afterNell(tabS);
   // desk in front
   c.save(); f.glow.save(); rcamApply(c, cam); rcamApply(f.glow, cam);
   drawDesk(f, c, { jar: o.jar ?? 0.3, tangles: o.tangles ?? 2 });
+  if (o.mug) {
+    // a mug of cocoa, steaming
+    c.fillStyle = '#d8d0c4'; c.beginPath(); handRect(c, 62, DESK_Y - 70, 30, 34, 3, 0.5); c.fill();
+    c.strokeStyle = '#d8d0c4'; c.lineWidth = 5; c.beginPath(); c.arc(94, DESK_Y - 54, 8, -1.2, 1.2); c.stroke();
+    c.fillStyle = '#5a3424'; c.fillRect(64, DESK_Y - 70, 26, 5);
+    for (let k = 0; k < 3; k++) { const u = (f.tc * 0.6 + k / 3) % 1; c.fillStyle = `rgba(230,225,240,${0.35 * (1 - u)})`; c.beginPath(); c.arc(76 + Math.sin(u * 6 + k) * 5, DESK_Y - 78 - u * 50, 4 + u * 6, 0, TAU); c.fill(); }
+  }
   // warm pool on the desk top from the screen
   c.save(); c.globalCompositeOperation = 'lighter';
   const pg = c.createRadialGradient(tabW.x - 40, DESK_Y - 20, 5, tabW.x - 40, DESK_Y - 20, 200);
@@ -376,6 +385,7 @@ shot('D6', (f) => {
   for (const x of [c, f.glow]) { x.save(); x.translate(W / 2, H / 2); x.scale(z, z); x.translate(-cx, -cy); }
   c.fillStyle = '#26346a'; c.fillRect(-2000, -1400, 4000, 2800);
   planWall(f, c, { reveal: 0, tally });
+  santaPapers(f, c);
   // night ambience over the wall
   c.save(); c.globalCompositeOperation = 'multiply'; c.fillStyle = '#6a74b8'; c.fillRect(-1300, -700, 2600, 1400); c.restore();
   // Nell's torch sweeping the plans (a moving warm pool), Home-Alone-at-midnight energy
@@ -394,7 +404,12 @@ shot('D6', (f) => {
 });
 
 // ---------------------------------------------------------------- D7: Mum and Dad, worried
-const MUM_HOME: Spec = { ...C.MUM, coat: { color: '#5d7f86', style: 'jumper' }, arm: { ...C.MUM.arm, color: '#5d7f86' }, hemY: 128, hemW: 90, scarf: undefined, boot: { color: '#c9b9a8', h: 12, len: 18 } };
+/** Mum indoors: the same bob and teal scarf as outdoors (recognisable from D7 to G1), a cream jumper. */
+export const MUM_HOME: Spec = { ...C.MUM, coat: { color: '#d8c6a4', style: 'jumper' }, arm: { ...C.MUM.arm, color: '#d8c6a4' }, hemY: 128, hemW: 92, boot: { color: '#7a4a5a', h: 12, len: 18 } };
+function mugInHand(x: C2D, hp: V2) {
+  x.fillStyle = '#d8d0c4'; x.beginPath(); handRect(x, hp.x - 13, hp.y - 30, 28, 30, 3, 0.5); x.fill();
+  x.fillStyle = '#5a3424'; x.fillRect(hp.x - 11, hp.y - 30, 24, 5);
+}
 function mug(x: C2D, hp: V2, slosh: boolean) {
   x.fillStyle = '#c8d2e0'; x.beginPath(); handRect(x, hp.x - 14, hp.y - 34, 30, 34, 3, 0.5); x.fill();
   x.strokeStyle = '#c8d2e0'; x.lineWidth = 5; x.beginPath(); x.arc(hp.x + 18, hp.y - 18, 8, -1.2, 1.2); x.stroke();
@@ -464,7 +479,20 @@ shot('D9', (f) => {
   // moon arcs across the window each night
   const moon = v2(WIN.x + 30 + within * (WIN.w - 60), WIN.y + 60 - Math.sin(within * Math.PI) * 30);
   const flick = 0.75 + 0.25 * hash1(k * 7.7);
-  deskScene(f, cam, NIGHT_POSES[k], { msgs: [] }, { jar: 0.3 + 0.6 * (k / (nights - 1)), tangles: Math.max(0, 3 - Math.floor(k / 3)), coils: Math.min(6, Math.floor(k * 0.8)), glowAmt: flick, moon, shaftAmt: 0.7 });
+  const mumNight = k === nights - 1;
+  const mumIn = mumNight ? prog(t, (NT * (nights - 1)) / nights, NT + 0.15, ease.outCubic) : 0;
+  const pose = mumNight ? { ...NIGHT_POSES[k], look: { x: 0.9, y: -0.8 * mumIn }, browUp: 0.4 * mumIn, browIn: -0.3, mouth: { smile: 0.5 * mumIn } } : NIGHT_POSES[k];
+  deskScene(f, cam, pose, { msgs: [] }, {
+    jar: 0.3 + 0.6 * (k / (nights - 1)), tangles: Math.max(0, 3 - Math.floor(k / 3)), coils: Math.min(6, Math.floor(k * 0.8)), glowAmt: flick, moon, shaftAmt: 0.7, mug: mumNight && t > NT,
+    afterNell: mumNight ? (tabS) => {
+      const p = rToScreen(cam, v2(lerp(430, 330, mumIn), 0));
+      drawPerson(f, MUM_HOME, {
+        x: p.x, y: p.y, s: cam.z * 0.92, flip: -1, turn: 0.75, lean: 0.22 * mumIn, look: { x: 1, y: 0.6 }, nod: 0.3,
+        browUp: 0.3, browIn: 0.2, mouth: { smile: 0.45 }, armF: { a: 0.9 * mumIn + 0.2, b: 0.6 }, armB: { a: 0.1, b: 0.3 }, blink: blink(t, [2.6]),
+        holdF: t <= NT ? (x, hp) => mugInHand(x, hp) : undefined,
+      } as Pose, nellDeskLight(tabS, 0.7));
+    } : undefined,
+  });
   // advent calendar on the wall: one more door each night
   const c = f.ctx;
   c.save(); f.glow.save(); rcamApply(c, cam); rcamApply(f.glow, cam);

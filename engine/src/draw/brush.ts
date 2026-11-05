@@ -109,12 +109,12 @@ export function tube(ctx: C2D, pts: V2[], w0: number, w1: number, color: string 
 }
 
 /** A pencil line: a slightly irregular stroke made from a few overlapping passes. */
-export function pencilLine(ctx: C2D, pts: V2[], width: number, color: string, seed = 0, passes = 2, alpha = 0.85) {
+export function pencilLine(ctx: C2D, pts: V2[], width: number, color: string, seed = 0, passes = 2, alpha = 0.85, tension = 1) {
   ctx.save();
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   for (let p = 0; p < passes; p++) {
     const off = pts.map((q, i) => v2(q.x + jit(seed + p * 31, i * 2) * width * 0.35, q.y + jit(seed + p * 31, i * 2 + 1) * width * 0.35));
-    ctx.beginPath(); smoothOpen(ctx, off, 1);
+    ctx.beginPath(); smoothOpen(ctx, off, tension);
     ctx.strokeStyle = color; ctx.globalAlpha = alpha * (p === 0 ? 1 : 0.55); ctx.lineWidth = width * (p === 0 ? 1 : 0.7);
     ctx.stroke();
   }

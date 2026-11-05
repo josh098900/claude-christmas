@@ -6,7 +6,7 @@ import { ease, lerp, clamp, hash1 } from '../core/math';
 import { glow } from '../draw/light';
 import { vgrad } from '../draw/brush';
 
-export const TAGLINE = 'Some problems need a whole street.';
+export const TAGLINE = 'Think it through. Then knock on doors.';
 
 shot('L1', (f) => {
   const c = f.ctx, t = f.tc;
