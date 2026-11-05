@@ -20,6 +20,9 @@ export const L_GRANDAD_WINDOW: CharLight = {
   rim: '#8fb0ff', rimAmt: 0.75, rimW: 5, rimDir: -0.4, ambient: '#4f5a92', ambientAmt: 0.72,
 };
 
+/** A3: he lifts the mug, pauses, and lowers it without drinking: the tea has gone cold. */
+function sip(t: number) { return track(t, [[0, 0], [1.2, 0], [1.8, 1, ease.inOutSine], [2.4, 1], [3.0, 0, ease.inOutSine]]); }
+
 export function mug(x: C2D, h: V2, ang: number) {
   x.save(); x.translate(h.x, h.y - 4); x.rotate(0);
   x.fillStyle = '#d8d0c0'; x.beginPath(); x.roundRect(-13, -26, 26, 30, 4); x.fill();
@@ -49,7 +52,7 @@ shot('A3', (f) => {
   drawArmchair(f, cam, LR.chair.x, { cardigan: true });
   const p = rToScreen(cam, v2(880, 10));
   drawPerson(f, C.GRANDAD, {
-    x: p.x, y: p.y, s: cam.z * 1.0, flip: -1, turn: 0.9, armF: { a: 0.35, b: 2.0 }, armB: { a: 0.1, b: 0.25 },
+    x: p.x, y: p.y, s: cam.z * 1.0, flip: -1, turn: 0.9, armF: { a: 0.35 + 0.55 * sip(f.t), b: 2.0 + 0.45 * sip(f.t) }, armB: { a: 0.1, b: 0.25 }, bob: Math.sin(f.t * 1.6) * 1.2, headTilt: -0.05 * sip(f.t),
     holdF: mug, nod: 0.2, browIn: 0.35, mouth: { smile: -0.15 }, blink: blink(f.t, [1.6]), look: { x: 1, y: 0.1 },
   }, L_GRANDAD_WINDOW);
   f.grade.vignette = 0.6; f.grade.bloom = 0.8; f.grade.saturation = 0.9;

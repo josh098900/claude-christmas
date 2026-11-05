@@ -78,10 +78,10 @@ export function deskScene(f: F, cam: RCam, pose: Partial<Pose>, tab: TabletState
   drawDesk(f, c, { jar: o.jar ?? 0.3, tangles: o.tangles ?? 2 });
   if (o.mug) {
     // a mug of cocoa, steaming
-    c.fillStyle = '#d8d0c4'; c.beginPath(); handRect(c, 62, DESK_Y - 70, 30, 34, 3, 0.5); c.fill();
-    c.strokeStyle = '#d8d0c4'; c.lineWidth = 5; c.beginPath(); c.arc(94, DESK_Y - 54, 8, -1.2, 1.2); c.stroke();
-    c.fillStyle = '#5a3424'; c.fillRect(64, DESK_Y - 70, 26, 5);
-    for (let k = 0; k < 3; k++) { const u = (f.tc * 0.6 + k / 3) % 1; c.fillStyle = `rgba(230,225,240,${0.35 * (1 - u)})`; c.beginPath(); c.arc(76 + Math.sin(u * 6 + k) * 5, DESK_Y - 78 - u * 50, 4 + u * 6, 0, TAU); c.fill(); }
+    c.fillStyle = '#d8d0c4'; c.beginPath(); handRect(c, -72, DESK_Y - 58, 30, 34, 3, 0.5); c.fill();
+    c.strokeStyle = '#d8d0c4'; c.lineWidth = 5; c.beginPath(); c.arc(-40, DESK_Y - 42, 8, -1.2, 1.2); c.stroke();
+    c.fillStyle = '#5a3424'; c.fillRect(-70, DESK_Y - 58, 26, 5);
+    for (let k = 0; k < 3; k++) { const u = (f.tc * 0.6 + k / 3) % 1; c.fillStyle = `rgba(230,225,240,${0.35 * (1 - u)})`; c.beginPath(); c.arc(-58 + Math.sin(u * 6 + k) * 5, DESK_Y - 66 - u * 50, 4 + u * 6, 0, TAU); c.fill(); }
   }
   // warm pool on the desk top from the screen
   c.save(); c.globalCompositeOperation = 'lighter';

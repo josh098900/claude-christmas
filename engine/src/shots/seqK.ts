@@ -15,6 +15,8 @@ const L_CODA: CharLight = {
   key: 0.5, shadow: '#5a3a5a', shadowAmt: 0.5, shadowOff: 14, shadowSoft: 6,
   rim: '#ffb0d0', rimAmt: 0.6, rimW: 5, rimDir: -0.3, ambient: '#e9c9a8', ambientAmt: 0.35,
 };
+/** K1: this time he drinks (it's warm now). */
+function drink(t: number) { return track(t, [[0, 0], [3.2, 0], [3.8, 1, ease.inOutSine], [4.6, 1], [5.2, 0.2, ease.inOutSine]]); }
 export const CODA_MSG = 'it worked. the whole street came.';
 
 export const CODA_REPLY = 'You knocked on the doors. Happy Christmas, Nell.';
@@ -46,7 +48,7 @@ shot('K1', (f) => {
   const gp = rToScreen(cam, v2(cx + 330, 0));
   drawPerson(f, C.GRANDAD, {
     x: gp.x, y: gp.y, s: cam.z, flip: -1, turn: 0.6, hipDrop: 80, legF: { a: 1.4, b: -1.6 }, legB: { a: 1.2, b: -1.5 },
-    lean: 0.15, armF: { a: 0.35, b: 2.0 }, holdF: mug, look: { x: 1, y: 0.4 }, mouth: { smile: 0.8 }, browUp: 0.2, blink: blink(t, [3.4]), nod: 0.2,
+    lean: 0.15, armF: { a: 0.35 + 0.6 * drink(t), b: 2.0 + 0.5 * drink(t) }, holdF: mug, look: { x: 1, y: 0.4 - 0.5 * drink(t) }, mouth: { smile: 0.8 }, browUp: 0.2, blink: blink(t, [3.4]), nod: 0.2 - 0.3 * drink(t),
   }, L_CODA);
   f.grade.vignette = 0.5; f.grade.saturation = 1.05; f.grade.gain = [1.04, 1.0, 0.94];
 });

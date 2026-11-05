@@ -115,7 +115,7 @@ function crowd(f: F, cam: Cam, L: CharLight, t: number, faceRight = true, skip?:
     if (e.torch && (o.torchDrop ?? -1) >= 0) {
       const ang = Math.atan2(R.handF.y - R.shoulderF.y, R.handF.x - R.shoulderF.x);
       glow(f.glow, R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc, 14 * sc, '#fff4d8', 0.7);
-      beam(f.glow, v2(R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc), ang, 520 * sc, 0.17, 'rgba(255,240,205,0.85)', 0.35, 4);
+      beam(f.glow, v2(R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc), ang, 900 * sc, 0.16, 'rgba(255,240,205,0.9)', 0.6, 4);
     }
     breath(f, R.head, faceRight ? 1 : e.fl, sc, e.ph * 0.37);
     rig[e.sp.name] = R;
@@ -278,11 +278,11 @@ shot('H4', (f) => {
   for (let k = 0; k < 60; k++) { const bx = hash1(k * 2.3) * W, by = hash1(k * 5.7) * H * 0.38; c.fillRect(bx, by, 64, 22); }
   c.fillStyle = '#a3b2da'; c.fillRect(0, H * 0.42, W, 16);
   // camera drifts along the dead string after the click
-  const pan = clicked ? ease.inOutSine(clamp((tc - 0.6) / 1.4)) * 260 : 0;
+  const pan = clicked ? ease.inOutSine(clamp((tc - 0.55) / 1.45)) * 420 : 0;
   c.save(); f.glow.save(); c.translate(-pan, 0); f.glow.translate(-pan, 0);
   // the string of dead bulbs trailing from the box across the snow and up the wall
   const anchors: V2[] = [v2(W * 0.56, H * 0.66), v2(W * 0.8, H * 0.74), v2(W * 1.05, H * 0.6), v2(W * 1.25, H * 0.2), v2(W * 1.4, -40)];
-  lightString(f, { anchors, spacing: 64, size: 22, sag: 30, on: 0, seed: 7 });
+  lightString(f, { anchors, spacing: 78, size: 30, sag: 30, on: 0, seed: 7 });
   // cables into the box
   c.strokeStyle = '#c8702a'; c.lineWidth = 12; c.lineCap = 'round';
   c.beginPath(); c.moveTo(W * 0.3, H * 0.66); c.bezierCurveTo(W * 0.15, H * 0.75, W * 0.05, H * 0.95, -60, H * 0.98); c.stroke();

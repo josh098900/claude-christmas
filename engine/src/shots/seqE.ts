@@ -27,7 +27,8 @@ const HISTORY: Msg[] = [
 function readingTogether(f: F, t: number, mumLean = 0, mumNod = 0) {
   const L: CharLight = { key: -1.57, shadow: '#1e1a30', shadowAmt: 0.7, shadowOff: 26, shadowSoft: 8, rim: '#ffd29a', rimAmt: 1.0, rimW: 8, rimDir: -1.45, ambient: '#3a3050', ambientAmt: 0.8, spots: [{ x: 960, y: 520, r: 900, color: '#ffc98e', a: 0.18 }] };
   drawPerson(f, C.NELL_HOME, { x: 300, y: 1640, s: 2.9, back: true, turn: 0.1, flip: 1, headTilt: 0.06, lean: 0.05, armF: { a: 0.6, b: 0.6 }, armB: { a: 0.4, b: 0.6 } }, L);
-  drawPerson(f, MUM_HOME, { x: 1660 - mumLean * 40, y: 1590 + mumNod * 6, s: 2.45, back: true, turn: 0.25, flip: -1, headTilt: -0.1 + mumNod * 0.1, lean: 0.12 + mumLean * 0.1, armF: { a: 0.5, b: 0.8 }, armB: { a: 0.2, b: 0.4 } }, { ...L, rimDir: -1.75 });
+  // Mum: three-quarter from behind, her face turned to the screen, lit warm by it
+  drawPerson(f, MUM_HOME, { x: 1690 - mumLean * 50, y: 1560, s: 2.45, flip: -1, turn: 0.97, headTilt: 0.05 + mumNod * 0.08, nod: -0.25 + mumNod * 0.5, lean: 0.14 + mumLean * 0.1, look: { x: 1, y: -0.5 }, browUp: 0.25, mouth: { smile: 0.2 + 0.4 * mumNod }, armF: { a: 0.2, b: 0.3 }, armB: { a: 0.1, b: 0.3 } }, { ...L, key: -2.6, rimDir: -2.2, ambientAmt: 0.55, spots: [{ x: 1500, y: 650, r: 520, color: '#ffc98e', a: 0.5 }] });
   void t;
 }
 
@@ -82,7 +83,7 @@ shot('E3', (f) => {
       jar: 0.95, tangles: 0, coils: 5,
       beforeNell: (tabS) => {
         const p = rToScreen(cam, v2(-150, -10));
-        drawPerson(f, MUM_HOME, { x: p.x, y: p.y, s: cam.z * 0.92, flip: 1, turn: 0.8, hipDrop: 46, legF: { a: 1.4, b: -1.4 }, legB: { a: 1.3, b: -1.4 }, lean: 0.3 - 0.15 * up,
+        drawPerson(f, MUM_HOME, { x: p.x, y: p.y, s: cam.z * 0.92, flip: 1, turn: 0.8, hipDrop: -30, legF: { a: 1.4, b: -1.4 }, legB: { a: 1.3, b: -1.4 }, lean: 0.22 - 0.12 * up,
           look: { x: 1, y: 0.3 - 1.2 * up }, nod: 0.2 - 0.6 * up, headTilt: -0.1 * up, browUp: 0.5 * up, mouth: { smile: 0.2 }, armF: { a: 0.9, b: 0.9 }, armB: { a: 0.7, b: 1.0 } } as Pose, nellDeskLight(tabS, 0.8));
       },
     });

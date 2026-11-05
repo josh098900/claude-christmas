@@ -66,9 +66,11 @@ She types slowly, and this time we read every letter:
 
 For the first time we can read the reply. It's plain and short:
 
-> Good rule. This bit needs more people. Who lives on his street?
+> Good rule. This bit needs more people. Who lives on the street?
 
-*His* street. Nell looks up at her wall, and we pull back with her. Every string on the wall leads to one place in the middle: a child's drawing of Grandad's house blazing with lights, with a stick-Grandma pointing at the sky.
+*(Mum is beside her now, reading over her shoulder. She smiles.)*
+
+Nell and Mum look up at her wall, and we pull back with them. Every string on the wall leads to one place in the middle: a child's drawing of Grandad's house blazing with lights, with a stick-Grandma pointing at the sky.
 
 It was never a trap.
 
@@ -146,5 +148,5 @@ Grandad sits beside her. The window behind them is ablaze with colour. The clock
 
 ### 2:43 · END CARD
 
-Night blue. The tagline and **Claude** in clean type.
+Night blue. *Think it through. Then knock on doors.* and **Claude** in clean type.
 *Fan-made. Not affiliated with or endorsed by Anthropic.*

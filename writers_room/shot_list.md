@@ -52,7 +52,7 @@
 | Shot | In | Dur | Camera | Action | Emotion | Sound / music |
 |---|---|---|---|---|---|---|
 | E1 | 1:04:12 | 3.5s | Tablet CU | i need them on the roof but im not allowed up ladders | Stuck | Slow taps, near silence |
-| E2 | 1:08:00 | 4.0s | Tablet CU, readable | Good rule. This bit needs more people. Who lives on his street? | The turn | Piano motif, gentle, the gap is a question |
+| E2 | 1:08:00 | 4.0s | Tablet CU, readable | Good rule. This bit needs more people. Who lives on the street? | The turn | Piano motif, gentle, the gap is a question |
 | E3 | 1:12:00 | 4.0s | Pull back from wall | Every string leads to a drawing of Grandad's house ablaze with stick-Grandma pointing up; Nell grabs her hat | Reveal: it was never a trap | Strings swell |
 
 ### F. Knocking on doors

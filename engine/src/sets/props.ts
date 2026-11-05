@@ -164,9 +164,9 @@ export function softShadow(c: C2D, x: number, y: number, rx: number, ry: number,
 export function santaPapers(f: F, c: C2D) {
   const ink = '#2b2b4a', red = '#c4302c';
   const papers: { x: number; y: number; w: number; h: number; r: number; kind: string; ex: number; ey: number }[] = [
-    { x: -860, y: -220, w: 250, h: 180, r: -0.04, kind: 'sleigh', ex: -190, ey: -60 },
+    { x: -860, y: -230, w: 310, h: 220, r: -0.04, kind: 'sleigh', ex: -190, ey: -60 },
     { x: -900, y: 130, w: 230, h: 160, r: 0.05, kind: 'trap', ex: -190, ey: 60 },
-    { x: 880, y: -130, w: 230, h: 170, r: 0.04, kind: 'reindeer', ex: 190, ey: -40 },
+    { x: 880, y: -140, w: 270, h: 190, r: 0.04, kind: 'reindeer', ex: 190, ey: -40 },
     { x: 880, y: 120, w: 210, h: 150, r: -0.05, kind: 'net', ex: 190, ey: 70 },
   ];
   c.strokeStyle = red; c.lineWidth = 3;
@@ -192,9 +192,10 @@ export function santaPapers(f: F, c: C2D) {
       }
       L([[-0.04, -0.18], [-0.08, -0.16]], ink, 2);
       // arrow down to a roof + chimney
-      L([[0.12, -0.02], [0.2, 0.12], [0.18, 0.24]], red, 4); L([[0.12, 0.18], [0.18, 0.26], [0.25, 0.19]], red, 4);
-      L([[0.0, 0.42], [0.18, 0.3], [0.36, 0.42]]); L([[0.24, 0.35], [0.24, 0.27], [0.3, 0.27], [0.3, 0.39]]);
-      T('SANTA?', -0.44, 0.12, 30, red);
+      L([[0.3, -0.16], [0.36, 0.0], [0.3, 0.16]], red, 4); L([[0.22, 0.1], [0.3, 0.18], [0.37, 0.1]], red, 4);
+      L([[0.08, 0.44], [0.26, 0.28], [0.44, 0.44]]); L([[0.32, 0.36], [0.32, 0.26], [0.38, 0.26], [0.38, 0.4]]);
+      L([[0.26, 0.22], [0.42, 0.2]], ink, 2);
+      T('SANTA?', -0.46, 0.18, 30, red);
     } else if (p.kind === 'reindeer') {
       T('8 REINDEER', -0.44, -0.4, 26);
       for (let k = 0; k < 8; k++) {

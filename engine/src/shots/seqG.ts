@@ -13,10 +13,22 @@ import { handText } from '../draw/letters';
 import { STREET_S, L_NIGHT_STREET } from './common';
 import { drawLadder, bulbBox, mitten } from '../sets/doorstep';
 import { LADDER_MAN_HAT } from './seqF';
+import { idle, breath } from './seqH';
+import { Rigged } from '../chars/rig';
 
 const TERRACE = makeTerrace(-7, 7);
 const GH = TERRACE.find((h) => h.grandad)!;
 const GDR = doorRect(GH);
+
+/** Mum's teal scarf, drawn over the collar so it always reads (her bob would otherwise hide it). */
+function mumScarf(f: F, R: Rigged, sc: number, dir: number) {
+  const c = f.ctx, col = '#2f7a78', dk = '#235e5c';
+  const n = R.neck;
+  tube(c, [v2(n.x - 30 * sc, n.y + 2 * sc), v2(n.x, n.y + 10 * sc), v2(n.x + 30 * sc, n.y + 2 * sc)], 17 * sc, 17 * sc, col);
+  tube(c, [v2(n.x + dir * 14 * sc, n.y + 8 * sc), v2(n.x + dir * 20 * sc, n.y + 40 * sc), v2(n.x + dir * 16 * sc, n.y + 66 * sc)], 15 * sc, 12 * sc, dk);
+  c.strokeStyle = 'rgba(240,230,200,0.35)'; c.lineWidth = 2 * sc;
+  for (const yy of [52, 60]) { c.beginPath(); c.moveTo(n.x + dir * 10 * sc, n.y + yy * sc); c.lineTo(n.x + dir * 23 * sc, n.y + yy * sc); c.stroke(); }
+}
 
 /** A church spire on the far skyline, lit warm (drawn in screen space above the roofline). */
 function spire(f: F, x: number, baseY: number, h: number, glowAmt = 1) {
@@ -76,7 +88,8 @@ shot('G1', (f) => {
     const L = lightAt(cam);
     const pg = toScreen(cam, v2(gx, 168)), pm = toScreen(cam, v2(gx + 70, 172));
     drawPerson(f, C.GRANDAD_OUT, { x: pg.x, y: pg.y, s: STREET_S * cam.z, flip: 1, turn: 0.75, ...wg, armF: { a: 0.6, b: 0.9 }, nod: 0.2, browIn: 0.2 } as Pose, L);
-    drawPerson(f, C.MUM, { x: pm.x, y: pm.y, s: STREET_S * cam.z, flip: 1, turn: 0.75, ...wm, armB: { a: 0.5, b: 1.0 }, plait: Math.sin(t * 5) * 0.4 } as Pose, L);
+    const RM = drawPerson(f, C.MUM, { x: pm.x, y: pm.y, s: STREET_S * cam.z, flip: 1, turn: 0.75, ...wm, armB: { a: 0.5, b: 1.0 }, plait: Math.sin(t * 5) * 0.4 } as Pose, L);
+    mumScarf(f, RM, STREET_S * cam.z, 1);
     snowfall(f, 0.6, 0.2, 71);
   } else {
     // Mum glances back over her shoulder at the street: a wink
@@ -90,8 +103,10 @@ shot('G1', (f) => {
     const gx = walkX(tc);
     const pg = toScreen(cam, v2(gx + 10, 168)), pm = toScreen(cam, v2(gx + 80, 172));
     drawPerson(f, C.GRANDAD_OUT, { x: pg.x, y: pg.y, s: STREET_S * cam.z, flip: 1, turn: 0.85, ...wg, armF: { a: 0.6, b: 0.9 }, nod: 0.25, browIn: 0.25 } as Pose, L);
-    drawPerson(f, C.MUM, { x: pm.x, y: pm.y, s: STREET_S * cam.z, flip: turnBack > 0.5 ? -1 : 1, turn: lerp(0.75, 0.35, turnBack), headTilt: turnBack * 0.1, ...wm,
+    const RM = drawPerson(f, C.MUM, { x: pm.x, y: pm.y, s: STREET_S * cam.z, flip: turnBack > 0.5 ? -1 : 1, turn: lerp(0.75, 0.35, turnBack), headTilt: turnBack * 0.1, ...wm,
       armB: { a: 0.5, b: 1.0 }, wink, mouth: { smile: 0.4 + wink * 0.5 }, browL: wink * -0.5, browR: wink * 0.4, cheek: wink, look: { x: 1, y: 0 }, plait: Math.sin(t * 5) * 0.4 } as Pose, L);
+    mumScarf(f, RM, STREET_S * cam.z, turnBack > 0.5 ? -1 : 1);
+    breath(f, RM.head, turnBack > 0.5 ? -1 : 1, STREET_S * cam.z, 0.3, 0.5);
     snowfall(f, 0.6, 0.2, 72);
   }
   f.grade.vignette = 0.5; f.grade.bloom = 0.9;
@@ -136,11 +151,12 @@ shot('G2', (f) => {
     const p = toScreen(cam, v2(wx, wy));
     const s = STREET_S * cam.z;
     const R = drawPerson(f, hp.sp, {
-      x: p.x, y: p.y, s, flip: dir, turn: 0.7, ...(moving ? w : {}),
+      x: p.x, y: p.y, s, flip: dir, turn: 0.7, ...(moving ? w : idle(t, hp.dx * 0.013, hp.dx > 0 ? 1 : -1)),
       armF: hp.carry === 'ladder' ? { a: 2.6, b: 0.6 } : hp.carry === 'box' ? { a: 1.2, b: 1.0 } : hp.carry === 'torch' ? { a: 1.3 + Math.sin(tc * 1.3 + hp.dx) * 0.2, b: 0.2 } : (moving ? w.armF : undefined),
       armB: hp.carry === 'box' ? { a: 1.1, b: 1.1 } : (moving ? w.armB : undefined),
       browUp: 0.3, mouth: { smile: 0.4 }, holdF: hp.carry === 'torch' ? torchProp : hp.carry === 'box' ? (x, hh) => boxProp(x, hh) : undefined,
     } as Pose, L);
+    breath(f, R.head, dir, s, (hp.dx * 0.0071) % 1, 0.55);
     if (hp.carry === 'ladder') {
       const a = R.shoulderF;
       drawLadder(f.ctx, a.x - dir * 150 * s, a.y - 6 * s, a.x + dir * 250 * s, a.y - 18 * s, 18 * s, '#a3acc0', 22 * s);
