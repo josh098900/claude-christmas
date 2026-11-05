@@ -1,0 +1,19 @@
+{
+  "name": "seen-from-space",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Seen From Space - a fan-made animated Christmas film. Engine, renderer and score.",
+  "type": "module",
+  "scripts": {
+    "build": "node render/build.mjs",
+    "still": "node render/still.mjs",
+    "render": "node render/render.mjs"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@napi-rs/canvas": "^0.1.65",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.6.3",
+    "ws": "^8.18.0"
+  }
+}

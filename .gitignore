@@ -1,0 +1,11 @@
+node_modules/
+build/
+frames/
+*.raw
+*.rgba
+audio/out/*.wav
+!audio/out/.keep
+__pycache__/
+*.pyc
+.DS_Store
+/tmp/
