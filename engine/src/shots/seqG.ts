@@ -182,7 +182,7 @@ shot('G3', (f) => {
   // ladder 1 (ladder man) and ladder 2 (clacks against the wall at +0.4)
   drawLadder(c, -150, 40, -95, -530, 34, '#a3acc0', 30);
   const tilt = track(tc, [[0, 0.5], [0.2, 0.5], [0.4, 0, ease.inQuad], [0.48, 0.02], [0.55, 0]]);
-  c.save(); c.translate(250, 60); c.rotate(-tilt); drawLadder(c, 0, 0, 50, -480, 34, '#9aa3b8', 30); c.restore();
+  c.save(); c.translate(165, 60); c.rotate(-tilt); drawLadder(c, 0, 0, 30, -480, 34, '#9aa3b8', 30); c.restore();
   c.restore(); f.glow.restore();
   const L = lightAt(cam, [{ x: W * 0.5, y: H + 100, r: 1100, color: '#fff0d0', a: 0.18 }]);
   // ladder man on the rungs, back to us, reaching to the gutter
@@ -205,6 +205,31 @@ shot('G3', (f) => {
   f.grade.vignette = 0.5; f.grade.bloom = 1.0;
 });
 
+/** A hand gripping (palm + curled fingers + thumb). ang = direction the fingers point. */
+function grip(c: C2D, x: number, y: number, r: number, ang: number, col: string, shadow: string, mittenHand = false) {
+  c.save(); c.translate(x, y); c.rotate(ang);
+  c.fillStyle = shadow; c.beginPath(); blobEllipse(c, -r * 0.1, r * 0.12, r * 1.0, r * 0.82, 21, 0.05, 10); c.fill();
+  c.fillStyle = col; c.beginPath(); blobEllipse(c, -r * 0.18, 0, r * 0.95, r * 0.78, 22, 0.05, 10); c.fill();
+  if (mittenHand) {
+    c.beginPath(); blobEllipse(c, r * 0.55, -r * 0.05, r * 0.6, r * 0.62, 23, 0.06, 9); c.fill();
+    c.strokeStyle = shadow; c.lineWidth = r * 0.08;
+    for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(-r * 0.95, k * r * 0.18); c.lineTo(-r * 0.7, k * r * 0.18); c.stroke(); }
+  } else {
+    for (let k = 0; k < 4; k++) {
+      const fy = -r * 0.48 + k * r * 0.32;
+      c.fillStyle = shadow; c.beginPath(); blobEllipse(c, r * 0.72, fy + r * 0.05, r * 0.36, r * 0.17, 24 + k, 0.05, 8); c.fill();
+      c.fillStyle = col; c.beginPath(); blobEllipse(c, r * 0.68, fy, r * 0.34, r * 0.15, 30 + k, 0.05, 8); c.fill();
+    }
+  }
+  // thumb wrapped over the top
+  c.fillStyle = col; c.beginPath(); blobEllipse(c, r * 0.25, -r * 0.62, r * 0.42, r * 0.2, 40, 0.05, 8, -0.3); c.fill();
+  c.restore();
+}
+function sleeve(c: C2D, pts: V2[], w0: number, w1: number, col: string, dark: string) {
+  tube(c, pts.map((q) => v2(q.x + 6, q.y + 8)), w0, w1, dark);
+  tube(c, pts.map((q) => v2(q.x - 3, q.y - 3)), w0 * 0.86, w1 * 0.86, col);
+}
+
 // ---------------------------------------------------------------- G4: hands passing the string
 shot('G4', (f) => {
   const t = f.t, tc = f.tc;
@@ -218,16 +243,16 @@ shot('G4', (f) => {
   }
   // the wall of the house (top right) with the ladder rising
   c.fillStyle = '#3a2a3e'; c.beginPath(); c.moveTo(W * 0.62, 0); c.lineTo(W, 0); c.lineTo(W, H * 0.7); c.lineTo(W * 0.78, H * 0.75); c.closePath(); c.fill();
-  drawLadder(c, W * 0.66, H + 60, W * 0.9, -60, 110, '#a3acc0', 110);
+  drawLadder(c, W * 0.66, H + 60, W * 0.9, -60, 120, '#6f7890', 110);
   // the chain: kid's mitten (bottom left) -> big hand (middle) -> gloved hand on the ladder (top right)
   const pass = prog(tc, 0.0, 2.5, ease.inOutSine);
   const p0 = v2(W * 0.16 + Math.sin(t * 3) * 6, H * 0.86 - pass * 40);
   const p1 = v2(W * 0.48, H * 0.52 + Math.sin(t * 2.2) * 8);
   const p2 = v2(W * 0.79, H * 0.2 - pass * 20);
   // arms (sleeves) coming in from off-screen
-  tube(c, [v2(-60, H + 80), v2(W * 0.05, H * 0.97), p0], 96, 78, '#a8342e');
-  tube(c, [v2(W * 0.3, H + 100), v2(W * 0.39, H * 0.76), p1], 110, 92, '#4f7c4a');
-  tube(c, [v2(W + 80, H * 0.38), v2(W * 0.9, H * 0.27), p2], 110, 92, '#8a3a32');
+  sleeve(c, [v2(-60, H + 80), v2(W * 0.05, H * 0.97), p0], 96, 78, '#a8342e', '#6a2026');
+  sleeve(c, [v2(W * 0.3, H + 100), v2(W * 0.39, H * 0.76), p1], 110, 92, '#4f7c4a', '#2c4a30');
+  sleeve(c, [v2(W + 80, H * 0.38), v2(W * 0.9, H * 0.27), p2], 110, 92, '#8a3a32', '#542226');
   // warm torch pool on the chain
   c.save(); c.globalCompositeOperation = 'lighter';
   const tp = c.createRadialGradient(W * 0.45, H * 0.5, 40, W * 0.45, H * 0.5, 900);
@@ -255,11 +280,9 @@ shot('G4', (f) => {
     bulb(f, q.x, q.y + 8, { size: 28, on: 0, color: BULB_SEQ[k % 5], angle: Math.sin(k * 1.7) * 0.4 });
   }
   // hands over the string
-  mitten(c, p0.x, p0.y, 52, -0.6, '#e3a53a');
-  c.fillStyle = '#d9a27e'; c.beginPath(); blobEllipse(c, p1.x, p1.y, 56, 46, 3, 0.05, 10, -0.4); c.fill();
-  c.beginPath(); blobEllipse(c, p1.x - 30, p1.y - 34, 22, 16, 4, 0.05, 8, -1.2); c.fill();
-  c.fillStyle = '#3a3a40'; c.beginPath(); blobEllipse(c, p2.x, p2.y, 54, 46, 5, 0.05, 10, 0.3); c.fill();
-  c.beginPath(); blobEllipse(c, p2.x + 26, p2.y + 36, 20, 15, 6, 0.05, 8, 1.0); c.fill();
+  grip(c, p0.x, p0.y, 50, -0.65, '#e3a53a', '#b07a26', true);
+  grip(c, p1.x, p1.y, 58, -0.35, '#d9a27e', '#a8705a');
+  grip(c, p2.x, p2.y, 58, -0.25, '#3a3a42', '#24242a');
   // torch light washing across
   beam(f.glow, v2(-60, H * 0.5), -0.35 + Math.sin(tc * 0.9) * 0.05, 2300, 0.18, 'rgba(255,240,205,0.85)', 0.2, 10);
   for (let k = 0; k < 40; k++) {
@@ -277,7 +300,7 @@ shot('G5', (f) => {
   const c = f.ctx;
   const s = STREET_S * cam.z;
   // outdoor socket on the wall right of the door
-  const sock = toScreen(cam, v2(GDR.x + GDR.w + 70, -60));
+  const sock = toScreen(cam, v2(GDR.x + GDR.w + 34, -112));
   c.fillStyle = '#d8d2c6'; c.beginPath(); handRect(c, sock.x - 16 * s / 0.43 * 0.43 * 1.6, sock.y - 22, 52, 44, 3, 0.8); c.fill();
   c.fillStyle = '#2a2a30'; c.fillRect(sock.x - 8, sock.y - 8, 6, 12); c.fillRect(sock.x + 6, sock.y - 8, 6, 12);
   const plugged = tc > 1.6;
@@ -285,8 +308,8 @@ shot('G5', (f) => {
   const L = lightAt(cam, [torchSpot]);
   // young dad crouched at the socket, plugging the extension in
   const plugIn = track(tc, [[0, 0], [1.2, 0], [1.6, 1, ease.inBack]]);
-  const yd = toScreen(cam, v2(GDR.x + GDR.w + 30, 40));
-  const RD = drawPerson(f, C.YOUNG_DAD, { x: yd.x, y: yd.y, s, flip: 1, turn: 0.75, hipDrop: 112, legF: { a: 1.9, b: -2.3 }, legB: { a: 1.7, b: -2.1 }, lean: 0.4,
+  const yd = toScreen(cam, v2(GDR.x + GDR.w - 52, 30));
+  const RD = drawPerson(f, C.YOUNG_DAD, { x: yd.x, y: yd.y, s, flip: 1, turn: 0.75, legF: { a: 0.15, b: -0.25 }, legB: { a: -0.15, b: -0.1 }, lean: 0.42,
     armF: { a: lerp(1.3, 1.65, plugIn), b: 0.5 }, armB: { a: 1.0, b: 0.6 }, look: { x: 1, y: 0.2 }, browIn: -0.3, mouth: { smile: 0.2 } } as Pose, L);
   // the plug + extension cable to the off-screen reel
   c.strokeStyle = '#c8702a'; c.lineWidth = 8; c.lineCap = 'round'; c.beginPath(); c.moveTo(RD.handF.x, RD.handF.y); c.bezierCurveTo(RD.handF.x - 40, yd.y - 10, yd.x - 120, yd.y + 20, yd.x - 260, H + 30); c.stroke();
@@ -300,7 +323,7 @@ shot('G5', (f) => {
   // Nell with her clipboard, pointing up at the roof, giving orders
   const point = track(t, [[0, 0.2], [0.4, 1, ease.outBack], [1.6, 1], [1.9, 0.6], [2.2, 1, ease.outBack]]);
   const np = toScreen(cam, v2(GDR.x - 130, 150));
-  const RN = drawPerson(f, C.NELL, { x: np.x, y: np.y, s: s * 1.15, flip: 1, turn: 0.6, armF: { a: lerp(1.6, 2.75, point), b: 0.1 }, armB: { a: 1.2, b: 1.4 },
+  const RN = drawPerson(f, C.NELL, { x: np.x, y: np.y, s: s * 1.15, flip: 1, turn: 0.6, armF: { a: lerp(1.5, 2.3, point), b: 0.1 }, armB: { a: 0.7, b: 1.1 },
     look: { x: 1, y: -1 }, headTilt: -0.15, browIn: -0.7, browUp: 0.2, mouth: { open: 0.35 + Math.sin(t * 9) * 0.1, smile: 0.3 }, lean: 0.05,
     holdB: (x, h) => {
       x.save(); x.translate(h.x + 8 * s, h.y - 8 * s); x.rotate(-0.25);

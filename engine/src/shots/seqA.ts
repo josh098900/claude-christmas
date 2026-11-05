@@ -77,12 +77,12 @@ shot('A5', (f) => {
   f.grade.vignette = 0.6;
 });
 
-// A1: the glide over the rooftops at dusk, descending toward the one dark roof.
-import { roofGlide } from '../sets/aerial';
+// A1: the glide over the rooftops at dusk, descending toward the one dark house.
+import { drawTown } from '../sets/town3d';
 shot('A1', (f) => {
   const u = prog(f.tc, 0, f.dur, ease.inOutSine);
-  const camZ = lerp(0, 990, u), camH = lerp(70, 26, u);
-  roofGlide(f, camZ, camH, { darkRow: 17, horizonY: lerp(330, 250, u) });
+  const cam = { x: lerp(-60, 0, u), y: lerp(78, 14, u), z: lerp(-430, -24, u), pitch: lerp(0.38, 0.33, u), f: 1250 };
+  drawTown(f, cam, { dusk: 1, grandadDark: true, fog: 700 });
   snowfall(f, 0.6, 0.3, 2);
   f.grade.vignette = 0.5; f.grade.bloom = 0.9;
   f.grade.fade = clamp(1 - f.tc / 0.8); // fade up from black

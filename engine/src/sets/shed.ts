@@ -69,13 +69,30 @@ export function shedInterior(f: F, c: C2D, o: { open: number; t: number }) {
 }
 
 /** The stack of Grandma's labelled boxes, screen space. lit = torch amount. topShift = top box slide. */
+function shadeHexLocal(h: string, k: number): string {
+  const n = parseInt(h.replace('#', ''), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  if (k < 0) { r = r * (1 + k) + 20 * -k; g = g * (1 + k) + 22 * -k; b = b * (1 + k) + 40 * -k; } else { r += (255 - r) * k; g += (246 - g) * k; b += (228 - b) * k; }
+  return `rgb(${r | 0},${g | 0},${b | 0})`;
+}
+
 export function boxStack(f: F, c: C2D, x: number, y: number, s: number, o: { dust?: number; topShift?: number; lit?: number } = {}) {
   const T = (h: string) => h;
   c.save(); c.translate(x, y); c.scale(s, s);
   c.fillStyle = 'rgba(4,5,12,0.5)'; c.beginPath(); c.ellipse(170, 4, 260, 26, 0, 0, TAU); c.fill();
-  labelledBox(f, c, -40, -230, 420, 230, ['LIGHTS — FRONT'], { seed: 11, dust: o.dust ?? 0, size: 34, tint: T, col: '#a88052' });
-  labelledBox(f, c, 0 - (o.topShift ?? 0), -440, 380, 210, ['LIGHTS — ROOF', '(careful!)'], { seed: 23, dust: o.dust ?? 0, size: 32, tint: T, col: '#b48a5c', underline: 120 });
-  labelledBox(f, c, 300, -560, 160, 120, ['SPARES'], { seed: 37, dust: o.dust ?? 0, size: 24, tint: T, col: '#9a7650' });
+  const box3d = (bx: number, by: number, bw: number, bh: number, col: string) => {
+    // right side and top faces so stacked boxes separate
+    c.fillStyle = shadeHexLocal(col, -0.35); c.beginPath(); c.moveTo(bx + bw, by); c.lineTo(bx + bw + 46, by - 26); c.lineTo(bx + bw + 46, by + bh - 26); c.lineTo(bx + bw, by + bh); c.closePath(); c.fill();
+    c.fillStyle = shadeHexLocal(col, 0.12); c.beginPath(); c.moveTo(bx, by); c.lineTo(bx + 46, by - 26); c.lineTo(bx + bw + 46, by - 26); c.lineTo(bx + bw, by); c.closePath(); c.fill();
+    c.fillStyle = 'rgba(5,6,14,0.45)'; c.fillRect(bx, by + bh - 6, bw, 6);
+  };
+  const ts = o.topShift ?? 0;
+  box3d(-40, -230, 420, 230, '#a88052');
+  labelledBox(f, c, -40, -230, 420, 230, ['LIGHTS — FRONT'], { seed: 11, dust: o.dust ?? 0, size: 38, tint: T, col: '#a88052' });
+  box3d(300, -556, 160, 112, '#9a7650');
+  labelledBox(f, c, 300, -556, 160, 112, ['SPARES'], { seed: 37, dust: o.dust ?? 0, size: 26, tint: T, col: '#9a7650' });
+  c.fillStyle = 'rgba(5,6,14,0.5)'; c.fillRect(-10 - ts, -236, 400, 10); // shadow of the top box
+  box3d(10 - ts, -444, 360, 208, '#b48a5c');
+  labelledBox(f, c, 10 - ts, -444, 360, 208, ['LIGHTS — ROOF', '(careful!)'], { seed: 23, dust: o.dust ?? 0, size: 36, tint: T, col: '#b48a5c', underline: 140 });
   c.restore();
 }
 
@@ -95,7 +112,7 @@ export function backGarden(f: F, c: C2D, o: { t: number; windowLit: number }) {
   c.fillStyle = '#2a2028'; c.beginPath(); handRect(c, -470, -260, 90, 220, 7, 1); c.fill();
   c.fillStyle = '#1e2436'; c.fillRect(340, -560, 9, 520);
   // the lit window: Grandad in his chair, his back to us
-  const wx = -70, wy = -360, ww = 170, wh = 150;
+  const wx = -70, wy = -320, ww = 170, wh = 150;
   c.fillStyle = '#d9d0bd'; c.fillRect(wx - 10, wy - 10, ww + 20, wh + 20);
   const lit = o.windowLit;
   const g = c.createLinearGradient(wx, wy, wx, wy + wh);
@@ -104,10 +121,11 @@ export function backGarden(f: F, c: C2D, o: { t: number; windowLit: number }) {
   // lamp inside
   glow(f.glow, wx + ww * 0.78, wy + wh * 0.35, 40, '#fff0c8', 0.6 * lit);
   // armchair back + Grandad's bald head and shoulders, silhouetted
-  c.fillStyle = '#5a2f2c'; c.beginPath(); handRect(c, wx + 30, wy + 70, 110, 90, 3, 2); c.fill();
-  c.fillStyle = '#3a2a2a'; c.beginPath(); blobEllipse(c, wx + 85, wy + 78, 44, 22, 4, 0.05, 9); c.fill(); // shoulders
-  c.fillStyle = '#6a4a40'; c.beginPath(); blobEllipse(c, wx + 85, wy + 52, 21, 24, 5, 0.04, 9); c.fill(); // head
-  c.fillStyle = '#d8d0c4'; c.beginPath(); blobEllipse(c, wx + 66, wy + 56, 6, 9, 6, 0.1, 7); c.fill(); c.beginPath(); blobEllipse(c, wx + 104, wy + 56, 6, 9, 7, 0.1, 7); c.fill();
+  c.fillStyle = '#5a2f2c'; c.beginPath(); handRect(c, wx + 50, wy + 96, 76, 60, 3, 1.5); c.fill(); // chair back
+  c.beginPath(); blobEllipse(c, wx + 50, wy + 100, 10, 14, 2, 0.05, 7); c.fill(); c.beginPath(); blobEllipse(c, wx + 126, wy + 100, 10, 14, 3, 0.05, 7); c.fill();
+  c.fillStyle = '#3a2a2a'; c.beginPath(); blobEllipse(c, wx + 88, wy + 98, 26, 13, 4, 0.05, 9); c.fill(); // stooped shoulders
+  c.fillStyle = '#6a4a40'; c.beginPath(); blobEllipse(c, wx + 90, wy + 80, 11, 13, 5, 0.04, 9); c.fill(); // head
+  c.fillStyle = '#d8d0c4'; c.beginPath(); blobEllipse(c, wx + 80, wy + 83, 3.5, 5, 6, 0.1, 7); c.fill(); c.beginPath(); blobEllipse(c, wx + 100, wy + 83, 3.5, 5, 7, 0.1, 7); c.fill();
   // glazing bars + sill
   c.fillStyle = '#d9d0bd'; c.fillRect(wx + ww / 2 - 3, wy, 6, wh); c.fillRect(wx, wy + wh * 0.42, ww, 5);
   c.fillRect(wx - 18, wy + wh + 8, ww + 36, 10);
@@ -135,7 +153,8 @@ export function backGarden(f: F, c: C2D, o: { t: number; windowLit: number }) {
   c.fillStyle = '#4a3a34';
   c.beginPath(); c.moveTo(384, -110); c.lineTo(440, -90); c.lineTo(440, 50); c.lineTo(384, 30); c.closePath(); c.fill();
   c.fillStyle = '#2a2026'; c.fillRect(372, -130, 14, 166); c.fillRect(246, -130, 14, 166);
-  // a bird table and a buried bench for shape
-  c.fillStyle = '#3a2e30'; c.fillRect(-300, -180, 8, 180); c.fillRect(-340, -190, 90, 10);
-  snowCap(c, -342, -190, 94, 10, 8);
+  // a snowy bush and a washing-line post for shape
+  c.fillStyle = '#26303f'; c.beginPath(); blobEllipse(c, -420, -26, 42, 26, 8, 0.12, 11); c.fill();
+  snowCap(c, -456, -48, 72, 12, 8);
+  c.fillStyle = '#2a2428'; c.fillRect(-620, -330, 7, 300);
 }

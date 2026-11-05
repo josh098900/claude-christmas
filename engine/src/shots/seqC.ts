@@ -37,26 +37,27 @@ shot('C1', (f) => {
     rim: '#9ab8ff', rimAmt: 1.0, rimW: 7, rimDir: -1.9, ambient: '#2c3360', ambientAmt: 0.86,
     spots: [{ x: 760, y: 640, r: 380, color: '#ffcf96', a: 0.3 * torchOn }],
   };
-  const nx = d.dx + d.dw * 0.48, ny = d.dy + d.dh + 6;
+  const stepIn = prog(t, 0.5, 0.95, ease.outCubic);
+  const nx = d.dx + d.dw * lerp(0.62, 0.46, stepIn), ny = d.dy + d.dh + 6 + stepIn * 8;
   const r = drawPerson(f, C.NELL, {
     x: nx, y: ny, s: 1.82, flip: 1, turn: 0.55, lean: 0.06 + reach * 0.1,
     armF: { a: lerp(lerp(0.9, 1.35, sweep), 1.75, reach), b: lerp(0.2, -0.1, reach) }, armB: { a: 0.1, b: 0.4 },
     look: { x: 1, y: 0.2 }, browUp: 0.5 * open, mouth: { open: 0.3 * sweep, smile: 0.1 }, blink: blink(t, [2.6]),
     holdF: reach > 0.5 ? undefined : (x, hp, ang) => torchInHand(x, hp, ang - 0.15 + 0.25 * (1 - sweep), 1.82),
-  }, open > 0.05 ? L : { ...L, rimAmt: 0 });
+  }, L, { alpha: prog(t, 0.42, 0.62, ease.linear) });
   // the boxes, dusty; the top one slides toward her
-  boxStack(f, c, 860, 990, 1.0, { dust: 0.85, topShift: slide });
+  boxStack(f, c, 880, 980, 0.86, { dust: 0.6, topShift: slide });
   // torch beam cutting through the dust onto the boxes
   if (torchOn > 0) {
     const from = r.handF;
-    const tgt = v2(lerp(820, 1040, sweep), lerp(960, 640, sweep));
+    const tgt = v2(lerp(820, 1060, sweep), lerp(960, 720, sweep));
     const dir = Math.atan2(tgt.y - from.y, tgt.x - from.x);
     const bOn = torchOn * (1 - reach * 0.6);
     beam(f.glow, from, dir, 900, 0.17, 'rgba(255,232,180,0.8)', 0.45 * bOn, 6);
     glow(f.glow, from.x, from.y, 30, '#fff4d8', 0.8 * bOn);
     c.save(); c.globalCompositeOperation = 'lighter';
     const g = c.createRadialGradient(tgt.x, tgt.y, 10, tgt.x, tgt.y, 300);
-    g.addColorStop(0, `rgba(255,214,150,${0.42 * bOn})`); g.addColorStop(1, 'rgba(255,214,150,0)');
+    g.addColorStop(0, `rgba(255,214,150,${0.3 * bOn})`); g.addColorStop(1, 'rgba(255,214,150,0)');
     c.fillStyle = g; c.fillRect(tgt.x - 300, tgt.y - 300, 600, 600);
     c.restore();
     motes(f, lerp(from.x, tgt.x, 0.55), lerp(from.y, tgt.y, 0.55), 220, 90, 40, '#ffe8c4', 0.55 * bOn, 3);
@@ -74,10 +75,17 @@ shot('C2', (f) => {
   c.fillStyle = '#0e1020'; c.fillRect(-100, -100, W + 200, H + 200);
   // the box face, huge
   const bx = 140, by = 150, bw = 1640, bh = 820;
-  labelledBox(f, c, bx, by, bw, bh, ['LIGHTS — ROOF', '(careful!)'], { seed: 23, dust: 0, size: 150, col: '#b48a5c', underline: 520 });
+  labelledBox(f, c, bx, by, bw, bh, ['LIGHTS — ROOF', '  careful!'], { seed: 23, dust: 0, size: 122, col: '#b48a5c', underline: 0 });
+  // hand-drawn parentheses and underline around "careful!"
+  c.save(); c.strokeStyle = '#26222e'; c.lineWidth = 10; c.lineCap = 'round';
+  const px0 = bx + bw * 0.08 + 20, py0 = by + bh * 0.26 + 122 * 1.45 + 6, pw = 640, ph = 120;
+  c.beginPath(); c.moveTo(px0 + 30, py0 - 14); c.quadraticCurveTo(px0 - 4, py0 + ph * 0.5, px0 + 30, py0 + ph + 10); c.stroke();
+  c.beginPath(); c.moveTo(px0 + pw, py0 - 14); c.quadraticCurveTo(px0 + pw + 34, py0 + ph * 0.5, px0 + pw, py0 + ph + 10); c.stroke();
+  c.lineWidth = 8; c.beginPath(); c.moveTo(px0 + 70, py0 + ph + 18); c.quadraticCurveTo(px0 + 300, py0 + ph + 30, px0 + 560, py0 + ph + 12); c.stroke();
+  c.restore();
   // a little heart after "careful!" in Grandma's hand
   c.save(); c.strokeStyle = '#26222e'; c.lineWidth = 9; c.lineCap = 'round'; c.lineJoin = 'round';
-  const hx = 1330, hy = 640;
+  const hx = 1080, hy = 610;
   c.beginPath(); c.moveTo(hx, hy + 50); c.bezierCurveTo(hx - 60, hy + 10, hx - 40, hy - 40, hx, hy - 8); c.bezierCurveTo(hx + 40, hy - 40, hx + 60, hy + 10, hx, hy + 50); c.stroke();
   c.restore();
   // dust film, wiped away behind the mitten
@@ -87,9 +95,9 @@ shot('C2', (f) => {
   dustOver(sc.x, bx, by, bw, bh, 1.0, 23);
   const wx = lerp(bx - 260, bx + bw + 200, wipe);
   sc.x.globalCompositeOperation = 'destination-out';
-  sc.x.beginPath(); sc.x.moveTo(bx - 50, by + 120);
-  for (let k = 0; k <= 10; k++) sc.x.lineTo(wx + noise1(k * 0.8, 4) * 40, by + 120 + k * 64);
-  sc.x.lineTo(bx - 50, by + 760); sc.x.closePath();
+  sc.x.beginPath(); sc.x.moveTo(bx - 50, by - 30);
+  for (let k = 0; k <= 12; k++) sc.x.lineTo(wx + noise1(k * 0.8, 4) * 40, by - 30 + k * ((bh + 60) / 12));
+  sc.x.lineTo(bx - 50, by + bh + 30); sc.x.closePath();
   sc.x.fillStyle = 'rgba(0,0,0,0.92)'; sc.x.fill();
   sc.x.setTransform(1, 0, 0, 1, 0, 0);
   c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(sc.c, 0, 0); c.restore();
@@ -127,9 +135,9 @@ function tiptoe(t: number, t0: number, period: number) {
   const th = p * TAU;
   const swingF = Math.max(0, -Math.sin(th)), swingB = Math.max(0, Math.sin(th));
   return {
-    legF: { a: 0.55 * Math.cos(th), b: -1.25 * swingF },
-    legB: { a: -0.55 * Math.cos(th), b: -1.25 * swingB },
-    bob: -Math.abs(Math.sin(th)) * 14,
+    legF: { a: 0.45 * Math.cos(th) + 0.75 * swingF, b: -1.5 * swingF },
+    legB: { a: -0.45 * Math.cos(th) + 0.75 * swingB, b: -1.5 * swingB },
+    bob: -Math.abs(Math.sin(th)) * 22 - 6,
     p,
   };
 }
@@ -140,7 +148,7 @@ shot('C3', (f) => {
   const steps = Math.floor((t - STEP0) / PER) + 1;
   const along = clamp((t - STEP0 + PER) / (PER * 7.4), 0, 1.2);
   const nx = lerp(-260, 290, along);
-  const cam = { x: lerp(-60, 60, prog(tc, 0, f.dur, ease.inOutSine)), y: -170, z: 2.6 };
+  const cam = { x: lerp(-70, 70, prog(tc, 0, f.dur, ease.inOutSine)), y: -150, z: 3.0 };
   for (const x of [c, f.glow]) { x.save(); x.translate(W / 2, H / 2); x.scale(cam.z, cam.z); x.translate(-cam.x, -cam.y); }
   backGarden(f, c, { t: tc, windowLit: 1 });
   // tracks: sledge runners from the shed, and her footprints
@@ -166,10 +174,10 @@ shot('C3', (f) => {
     spots: [{ x: p.x, y: p.y - 220, r: 360, color: '#ffb870', a: 0.5 * inPool }],
   };
   const rr = drawPerson(f, C.NELL, {
-    x: p.x, y: p.y, s: STREET_S * cam.z * 1.0, flip: 1, turn: 0.75, lean: 0.18, bob: w.bob,
+    x: p.x, y: p.y, s: STREET_S * cam.z * 1.0, flip: 1, turn: 0.92, lean: 0.2, bob: w.bob,
     legF: w.legF, legB: w.legB,
-    armF: { a: 0.7, b: 2.1 }, armB: { a: -0.9, b: 1.5 },
-    look: { x: -1, y: -0.4 }, headTurn: -0.5, browUp: 0.55, browIn: 0.3, mouth: { open: 0.18, smile: -0.2, w: 0.5 },
+    armF: { a: -0.5, b: -0.4 }, armB: { a: 1.75, b: 1.9 },
+    look: { x: -1, y: -0.5 }, headTurn: -0.35, browUp: 0.65, browIn: 0.35, mouth: { open: 0.12, smile: -0.1, w: 0.45 }, cheek: 0.5,
     plait: Math.sin(w.p * TAU * 2) * 0.6,
   }, L);
   // rope from her hand back to the sledge

@@ -11,3 +11,4 @@ import './seqF';
 import './seqJ';
 import './seqL';
 import './seqG';
+import './seqH';
