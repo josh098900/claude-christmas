@@ -105,7 +105,7 @@ export function drawPerson(f: F, sp: Spec, p: Pose, L: CharLight | null, opts: {
   const armF = p.armF || DEF_LIMB, armB = p.armB || DEF_LIMB;
   const legF = p.legF || { a: 0.05, b: 0 }, legB = p.legB || { a: -0.05, b: 0 };
   const ls = sp.arm.upper * s, ls2 = sp.arm.lower * s;
-  const aF = limbPts(nearSh, armF.a, armF.b, ls, ls2, fl, rot);
+  const aF = limbPts(nearSh, armF.a, armF.b, ls * (p.armFLen ?? 1), ls2 * (p.armFLen ?? 1), fl, rot);
   const aB = limbPts(farSh, armB.a, armB.b, ls, ls2, fl, rot);
   const hipHalf = sp.hipW / 2 * lerp(1, 0.55, at);
   const hipF = W(hipHalf * (turn >= 0 ? 1 : -1) + turn * 3, hipY);

@@ -224,10 +224,10 @@ shot('I6', (f) => {
     mouth: { open: laugh * 0.85, smile: 0.3 + laugh * 0.7 }, eyesClosed: laugh > 0.5 && t < 3.3, cheek: laugh,
   } as any;
   personInStreet(f, cam, C.GRANDAD_OUT, GRAN_X + 30, 40, { ...gPose, hidden: { armF: true } }, L);
-  personInStreet(f, cam, C.NELL, NELL_X - hug * 30, 50, {
-    flip: -1, turn: lerp(0.3, 0.6, hug), lean: -hug * 0.15,
-    armF: { a: lerp(0.1, 2.85, point) * (1 - hug * 0.4), b: 0.05 }, armB: { a: 0.2, b: 0.3 },
-    look: { x: -0.3, y: lerp(-0.2, -1, point) * (1 - hug) }, headTilt: lerp(0, -0.25, point) * (1 - hug),
+  personInStreet(f, cam, C.NELL, NELL_X + 25 - hug * 55, 50, {
+    flip: hug > 0.08 ? -1 : 1, turn: hug > 0.08 ? lerp(0.3, 0.6, hug) : 0.35, lean: -hug * 0.15,
+    armF: { a: lerp(0.1, 2.6, point) * (1 - hug * 0.15), b: -0.08 }, armFLen: lerp(1, 1.6, point), armB: { a: 0.2, b: 0.3 },
+    look: { x: 0.4, y: lerp(-0.2, -1, point) * (1 - hug) }, headTilt: lerp(0, -0.3, point) * (1 - hug),
     browUp: 0.9, mouth: { open: 0.5 + 0.2 * Math.sin(t * 3), smile: 1 }, cheek: 1, eyesClosed: hug > 0.7, plait: Math.sin(t * 6) * 0.3 * hug,
   }, L);
   personInStreet(f, cam, C.GRANDAD_OUT, GRAN_X + 30, 40, { ...gPose, only: 'armF' }, L);

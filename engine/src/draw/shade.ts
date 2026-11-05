@@ -141,5 +141,13 @@ export function litGroup(f: F, bbox: BBox, L: CharLight | null, draw: (x: C2D) =
   if (opts.alpha !== undefined) T.globalAlpha = opts.alpha;
   T.drawImage(A.c, d.x, d.y, d.w, d.h, d.x, d.y, d.w, d.h);
   T.restore();
+  // characters occlude light sources behind them (glow drawn earlier), so they never look ghostly
+  if (!target || target === f.ctx) {
+    const G = f.glow;
+    G.save(); G.setTransform(1, 0, 0, 1, 0, 0);
+    G.globalCompositeOperation = 'destination-out'; G.globalAlpha = 0.85 * (opts.alpha ?? 1);
+    G.drawImage(A.c, d.x, d.y, d.w, d.h, d.x, d.y, d.w, d.h);
+    G.restore();
+  }
   st.release(used);
 }

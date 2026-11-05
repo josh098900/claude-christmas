@@ -17,7 +17,7 @@ lab('poster', (f) => {
   drawStreet(f, { mood: 'eve', cam, houses: TERRACE, lit: (h) => (Math.abs(h.i) > 2 ? 1 : 0), windows: (h) => (h.grandad ? 0.6 : Math.abs(h.i) > 2 ? 1 : 0), blaze: 1, blazeOn: 1, lampsOn: 1, bellFrost: 0 });
   const doorX = DR.x + DR.w / 2;
   personInStreet(f, cam, C.GRANDAD_OUT, DR.x - 120, 40, { flip: 1, turn: 0.6, hipDrop: 92, legF: { a: 1.5, b: -1.55 }, legB: { a: -0.25, b: -1.35 }, lean: 0.0, headTilt: -0.3, look: { x: 0.4, y: -1 }, mouth: { open: 0.6, smile: 1 }, eyesClosed: true, browUp: 0.8, armF: { a: 1.6, b: 0.6 } }, L_BLAZE_FRONT);
-  personInStreet(f, cam, C.NELL, DR.x - 30, 50, { flip: -1, turn: 0.4, armF: { a: 2.85, b: 0.05 }, look: { x: -0.2, y: -1 }, headTilt: -0.25, browUp: 1, mouth: { open: 0.6, smile: 1 }, cheek: 1 }, L_BLAZE_FRONT);
+  personInStreet(f, cam, C.NELL, DR.x - 30, 50, { flip: -1, turn: 0.4, armF: { a: 2.6, b: -0.08 }, armFLen: 1.6, look: { x: -0.2, y: -1 }, headTilt: -0.25, browUp: 1, mouth: { open: 0.6, smile: 1 }, cheek: 1 }, L_BLAZE_FRONT);
   for (const [sp, x, y, s] of [[C.LADDER_MAN, 640, 1420, 1.0], [C.OLD_LADY, 790, 1330, 1.05], [C.TEEN1, 1290, 1420, 0.95], [C.YOUNG_DAD, 1160, 1390, 1.0]] as const) {
     drawPerson(f, sp, { x, y, s, back: true, turn: 0, flip: 1, headTilt: -0.15, armF: { a: 0.1, b: 0.2 } }, L_BLAZE_BACK);
   }
