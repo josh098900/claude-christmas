@@ -202,6 +202,12 @@ export function santaSketch(c: C2D, kind: string, w: number, h: number) {
     for (let k = 0; k < 6; k++) { const a = (k / 6) * TAU; L([[0.12 + Math.cos(a) * 0.05, -0.03 + Math.sin(a) * 0.07], [0.12 + Math.cos(a) * 0.09, -0.03 + Math.sin(a) * 0.12]], '#d89a20', 2); }
     sleigh(0.18, -0.32, 0.55);
     for (let k = 0; k < 3; k++) L([[0.24 - k * 0.03, -0.25 + k * 0.06], [0.22 - k * 0.03, -0.22 + k * 0.06]], red, 2);
+  } else if (kind === 'pies') {
+    // lure him down: mince pies on the roof, right where the runway ends
+    L([[-0.42, 0.42], [-0.1, 0.12], [0.22, 0.42]]);
+    c.fillStyle = '#b8743a'; for (const px of [-0.2, -0.1, 0.0]) { c.beginPath(); c.ellipse(px * w, 0.16 * h, 9, 6, 0, 0, TAU); c.fill(); }
+    L([[0.42, -0.1], [0.12, 0.08]], red, 3); L([[0.16, -0.02], [0.12, 0.08], [0.24, 0.1]], red, 3);
+    T('BAIT: MINCE PIES', -0.46, -0.44, 15, red);
   } else if (kind === 'lights') {
     // "LIGHTS = RUNWAY": two rows of landing lights leading to a roof
     T('LIGHTS =', -0.44, -0.44, 22); T('RUNWAY', -0.44, -0.2, 22, red);
@@ -220,6 +226,7 @@ export function santaPapers(f: F, c: C2D) {
     { x: -900, y: 130, w: 250, h: 180, r: 0.05, kind: 'space', ex: -190, ey: 60 },
     { x: 880, y: -140, w: 270, h: 190, r: 0.04, kind: 'reindeer', ex: 190, ey: -40 },
     { x: 880, y: 120, w: 230, h: 160, r: -0.05, kind: 'lights', ex: 190, ey: 70 },
+    { x: -560, y: -445, w: 190, h: 115, r: 0.06, kind: 'pies', ex: -150, ey: -130 },
   ];
   c.strokeStyle = red; c.lineWidth = 3;
   for (const p of papers) {

@@ -17,7 +17,7 @@ export function drawPhoto(f: F, x: number, y: number, w: number, h: number, o: {
   A.x.setTransform(S, 0, 0, S, 0, 0); B.x.setTransform(S, 0, 0, S, 0, 0); B.x.globalCompositeOperation = 'lighter';
   const sub: F = { ...f, ctx: A.x, glow: B.x };
   const doorX = DR.x + DR.w / 2;
-  const cam = { x: doorX - 130, y: -150, z: 2.5 };
+  const cam = { x: doorX - 140, y: -110, z: 3.2 };
   drawStreet(sub, { mood: 'eve', cam, houses: TER, lit: () => 0, windows: (hh) => (hh.grandad ? 1 : 0.6), blaze: 1, blazeOn: 1, lampsOn: 0, bellFrost: 0, smoke: false, farLights: 0.6 });
   // young Grandma laughing, pointing at the sky
   personInStreet(sub, cam, C.GRANDMA_PHOTO, doorX - 260, 60, { flip: 1, turn: 0.35, armF: { a: 2.75, b: 0.1 }, armB: { a: -0.3, b: 0.4 }, browUp: 0.8, mouth: { open: 0.7, smile: 1 }, eyesClosed: true, cheek: 1, headTilt: -0.15 }, L_BLAZE_FRONT);

@@ -54,13 +54,20 @@ shot('B3', (f) => {
   const c = f.ctx;
   vgrad(c, 0, 0, W, H, [[0, '#18203f'], [1, '#26305a']]);
   glow(f.glow, 1500, 300, 700, '#6f8fe0', 0.15);
+  // a light crossing the night sky through the window behind her, blinking (a plane? a sleigh?): the idea arrives
+  {
+    const bx = 1080 + f.tc * 150, by = 120 - f.tc * 14;
+    const on = Math.floor(f.tc * 2.4) % 2 === 0;
+    glow(f.glow, bx, by, on ? 34 : 16, on ? "#ff5040" : "#fff4e0", on ? 1 : 0.7);
+    glow(f.glow, bx, by, 4, '#ffffff', 0.9);
+  }
   // out-of-focus window lights behind her
   for (let i = 0; i < 14; i++) glow(f.glow, 1350 + (i % 7) * 80, 200 + Math.floor(i / 7) * 60 + (i % 2) * 20, 60, ['#ff3b2e', '#2fd665', '#ffae2b', '#3f7dff', '#fff1cf'][i % 5], 0.22);
   const sad = track(t, [[0, 0.3], [0.5, 0.9], [1.1, 0.9]]);
   const set = track(t, [[0, 0], [1.1, 0], [1.5, 1, ease.outBack], [2.5, 1]]);
   const browIn = lerp(sad, -0.55, set);
   drawPerson(f, C.NELL_HOME, {
-    x: 960, y: 1610, s: 5.2, flip: 1, turn: 0.25, look: { x: lerp(-0.6, -0.9, set), y: lerp(-0.5, -1.0, set) }, browIn, browUp: lerp(0.15, 0.25, set),
+    x: 960, y: 1610, s: 5.2, flip: 1, turn: 0.25, look: { x: lerp(-0.6, 0.95, set), y: lerp(-0.5, -1.0, set) }, browIn, browUp: lerp(0.15, 0.25, set),
     mouth: { smile: lerp(-0.4, 0.3, set), w: lerp(1, 0.8, set) }, nod: lerp(0.15, -0.12, set), blink: blink(t, [0.9]), headTilt: lerp(0.06, -0.06, set),
   }, { ...L_NELL_ROOM, spots: [{ x: 1300, y: 300, r: 700, color: '#8fa8ff', a: 0.25 }] });
   f.grade.vignette = 0.6;

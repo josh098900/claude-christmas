@@ -258,7 +258,7 @@ shot('G4', (f) => {
   // arms (sleeves) coming in from off-screen
   sleeve(c, [v2(-60, H + 80), v2(W * 0.05, H * 0.97), p0], 96, 78, '#a8342e', '#6a2026');
   sleeve(c, [v2(W * 0.3, H + 100), v2(W * 0.39, H * 0.76), p1], 110, 92, '#4f7c4a', '#2c4a30');
-  sleeve(c, [v2(W + 80, H * 0.38), v2(W * 0.9, H * 0.27), p2], 110, 92, '#8a3a32', '#542226');
+  sleeve(c, [v2(W + 80, H * 0.38), v2(W * 0.9, H * 0.27), p2], 110, 92, '#6b4a32', '#43301f');
   // warm torch pool on the chain
   c.save(); c.globalCompositeOperation = 'lighter';
   const tp = c.createRadialGradient(W * 0.45, H * 0.5, 40, W * 0.45, H * 0.5, 900);

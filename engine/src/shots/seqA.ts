@@ -17,7 +17,7 @@ export const TERRACE = makeTerrace(-7, 7);
 /** Cold window light on Grandad: no warmth reaches him. */
 export const L_GRANDAD_WINDOW: CharLight = {
   key: -0.2, shadow: '#1f2650', shadowAmt: 0.8, shadowOff: 18, shadowSoft: 5,
-  rim: '#8fb0ff', rimAmt: 0.75, rimW: 5, rimDir: -0.4, ambient: '#4f5a92', ambientAmt: 0.72,
+  rim: '#8fb0ff', rimAmt: 0.75, rimW: 5, rimDir: -0.4, ambient: '#7480b8', ambientAmt: 0.55,
 };
 
 /** A3: he lifts the mug, pauses, and lowers it without drinking: the tea has gone cold. */

@@ -120,6 +120,22 @@ export function tabletCU(f: F, st: TabletState, o: { zoom?: number; drift?: numb
   return { tx, ty, tw, th };
 }
 
+/** Over-the-shoulder foreground: the backs of Nell's and Mum's heads side by side, rim-lit by the screen.
+ *  Mum is with her for every question (brand safety). */
+export function readingTogether(f: F, t: number, mumLean = 0, mumNod = 0) {
+  const L: CharLight = { key: -1.57, shadow: '#1e1a30', shadowAmt: 0.7, shadowOff: 26, shadowSoft: 8, rim: '#ffd29a', rimAmt: 1.0, rimW: 8, rimDir: -1.45, ambient: '#3a3050', ambientAmt: 0.8, spots: [{ x: 960, y: 520, r: 900, color: '#ffc98e', a: 0.18 }] };
+  drawPerson(f, MUM_HOME, { x: 820 - mumLean * 40, y: 1770, s: 2.6, back: true, turn: 0.1, flip: -1, headTilt: 0.12 + mumNod * 0.12, lean: 0.1 + mumLean * 0.12, armF: { a: 0.3, b: 0.4 }, armB: { a: 0.2, b: 0.4 } }, { ...L, rimDir: -1.7 });
+  drawPerson(f, C.NELL_HOME, { x: 400, y: 1660, s: 2.9, back: true, turn: 0.1, flip: 1, headTilt: 0.06, lean: 0.05, armF: { a: 0.6, b: 0.6 }, armB: { a: 0.4, b: 0.6 } }, L);
+  void t;
+}
+
+/** Mum leaning in beside Nell at the desk (side view), lit by the screen. */
+function mumBeside(f: F, cam: RCam, tabS: V2, o: Partial<Pose> = {}) {
+  const p = rToScreen(cam, v2(-130, -10));
+  drawPerson(f, MUM_HOME, { x: p.x, y: p.y, s: cam.z * 0.92, flip: 1, turn: 0.85, hipDrop: -30, legF: { a: 1.4, b: -1.4 }, legB: { a: 1.3, b: -1.4 }, lean: 0.28,
+    look: { x: 1, y: 0.4 }, nod: 0.25, browUp: 0.2, mouth: { smile: 0.3 }, armF: { a: 0.9, b: 0.9 }, armB: { a: 0.7, b: 1.0 }, ...o } as Pose, nellDeskLight(tabS, 0.9));
+}
+
 /** A kid's hand coming in from the bottom edge, index finger tapping. */
 function tapHand(c: C2D, x: number, y: number, tap: number, s = 1) {
   const sk = '#e2ae8e';
@@ -276,14 +292,13 @@ shot('D2', (f) => {
 // ---------------------------------------------------------------- D3 / D5: questions
 shot('D3', (f) => {
   const b = chatBeat(f, [], Q1, R1, { t0: 0.35, tSend: 2.2, tReply: 2.45, tDone: 2.98, pre: 4 }); // taps 0.35–2.2
-  tabletCU(f, b, { zoom: lerp(1.0, 1.04, f.tc / f.dur) });
-  const tapping = f.t < 2.2 ? (b.nTyped % 2) : 0;
-  if (f.t < 2.35) tapHand(f.ctx, 1500, 1010, tapping, 1.1);
+  tabletCU(f, b, { zoom: lerp(1.0, 1.04, f.tc / f.dur), oy: -230 });
+  readingTogether(f, f.t, prog(f.t, 2.2, 2.6, ease.inOutCubic));
 });
 shot('D5', (f) => {
   const b = chatBeat(f, [{ who: 'me', text: Q1 }, { who: 'reply', text: R1, blur: 7 }], Q2, R2, { t0: 0.25, tSend: 1.9, tReply: 2.05, tDone: 2.48, pre: 6 }); // taps 0.25–1.9
-  tabletCU(f, b, { zoom: lerp(1.03, 1.07, f.tc / f.dur), drift: lerp(10, -10, f.tc / f.dur) });
-  if (f.t < 2.0) tapHand(f.ctx, 1520, 1020, f.t < 1.9 ? b.nTyped % 2 : 0, 1.1);
+  tabletCU(f, b, { zoom: lerp(1.03, 1.07, f.tc / f.dur), drift: lerp(10, -10, f.tc / f.dur), oy: -250 });
+  readingTogether(f, f.t, 0.6 + 0.4 * prog(f.t, 1.9, 2.3, ease.inOutCubic));
 });
 
 // ---------------------------------------------------------------- D4: testing bulbs, plink
@@ -427,14 +442,16 @@ shot('D7', (f) => {
     rim: '#ffcf96', rimAmt: 0.6, rimW: 4, rimDir: -1.4, ambient: '#d8c0a4', ambientAmt: 0.4,
     spots: [{ x: 870, y: 300, r: 760, color: '#ffc98a', a: 0.28 }],
   };
-  const lookUp = track(t, [[0, 0], [thump + 0.05, 0], [thump + 0.25, 1, ease.outBack], [1.3, 1], [1.5, 0.15]]);
-  const toEach = track(t, [[0, 0], [1.35, 0], [1.6, 1, ease.outCubic]]);
-  const worry = track(t, [[0, 0], [thump + 0.15, 0.6], [1.6, 1]]);
-  const s = 1.75 * 0.9;
-  const startle = t > thump && t < thump + 0.25 ? -6 : 0;
-  // Mum (left, facing right toward Dad) and Dad (right, facing left)
-  drawPerson(f, MUM_HOME, { x: 640, y: 1010 + startle, s, flip: 1, turn: lerp(0.25, 0.75, toEach), headTilt: -0.25 * lookUp, nod: -1.0 * lookUp, look: { x: toEach * 1.2, y: -lookUp }, browUp: lookUp * 0.7, browIn: worry * 0.9, mouth: { smile: -0.4 * worry, open: lookUp * 0.15 }, armF: { a: lerp(0.15, 0.55, toEach), b: lerp(0.3, 2.45, toEach) }, armB: { a: -0.05, b: 0.25 }, blink: blink(t, [2.45]) }, L);
-  drawPerson(f, C.DAD, { x: 1150, y: 1010 + startle, s, flip: -1, turn: lerp(0.25, 0.75, toEach), headTilt: -0.25 * lookUp, nod: -1.0 * lookUp, look: { x: toEach * 1.2, y: -lookUp }, browUp: lookUp * 0.8, browIn: worry, mouth: { smile: -0.5 * worry, open: 0.1 + lookUp * 0.1 }, armF: { a: 0.35, b: 1.45 }, armB: { a: 0.05, b: 0.2 }, blink: blink(t, [1.0]), holdF: (x, hp) => mug(x, hp, startle !== 0) }, L);
+  // Dad alone at the foot of the stairs: the thump, a look up, a look at his mug, a slow worried look back up
+  const lookUp = track(t, [[0, 0], [thump + 0.05, 0], [thump + 0.22, 1, ease.outBack], [1.2, 1], [1.4, 0.1], [1.8, 0.1], [2.1, 1, ease.inOutCubic]]);
+  const atMug = track(t, [[0, 0], [1.25, 0], [1.45, 1], [1.8, 1], [2.0, 0]]);
+  const worry = track(t, [[0, 0], [thump + 0.15, 0.6], [2.1, 1.1]]);
+  const startle = t > thump && t < thump + 0.25 ? -8 : 0;
+  drawPerson(f, C.DAD, {
+    x: 1190, y: 1010 + startle, s: 1.75 * 0.95, flip: -1, turn: 0.35, headTilt: -0.25 * lookUp + 0.1 * atMug, nod: -1.0 * lookUp + 0.6 * atMug,
+    look: { x: 0.3 * atMug, y: -lookUp + 0.8 * atMug }, browUp: lookUp * 0.8 + 0.3 * atMug, browIn: worry, mouth: { smile: -0.5 * worry, open: 0.08 + lookUp * 0.12 },
+    armF: { a: 0.35, b: 1.45 }, armB: { a: 0.05, b: 0.2 }, blink: blink(t, [1.0]), holdF: (x, hp) => mug(x, hp, startle !== 0),
+  }, L);
   f.grade.vignette = 0.5; f.grade.bloom = 0.8; f.grade.gain = [1.02, 0.98, 0.94];
   if (t > thump && t < thump + 0.15) f.grade.exposure = 1.04;
 });
@@ -444,8 +461,8 @@ shot('D8', (f) => {
   const t = f.t;
   if (f.tc < 1.85) {
     const ty = typed(Q3, t, 0.2, typeDur(Q3, 1, 1) / 1.6); // taps 0.2–1.8
-    tabletCU(f, { msgs: [{ who: 'me', text: Q1 }, { who: 'reply', text: R1, blur: 7 }, { who: 'me', text: Q2 }, { who: 'reply', text: R2, blur: 7 }], typing: ty, caret: true }, { zoom: 1.05 });
-    tapHand(f.ctx, 1520, 1020, ty.length % 2, 1.1);
+    tabletCU(f, { msgs: [{ who: 'me', text: Q1 }, { who: 'reply', text: R1, blur: 7 }, { who: 'me', text: Q2 }, { who: 'reply', text: R2, blur: 7 }], typing: ty, caret: true }, { zoom: 1.05, oy: -260 });
+    readingTogether(f, t, 0.8);
   } else {
     const u = (f.tc - 1.85) / 1.15;
     const cam = { x: lerp(34, 46, u), y: -318, z: lerp(2.75, 2.88, u) };
@@ -453,7 +470,7 @@ shot('D8', (f) => {
     deskScene(f, cam, {
       browUp: up, mouth: { open: 0.1 + up * 0.35, smile: 0.25 }, blink: blink(t, [2.75]), headTilt: -0.08 * up,
       look: { x: 0.9, y: -0.6 * up }, nod: -0.3 * up, armF: { a: 1.15, b: 0.55 }, armB: { a: 0.95, b: 0.8 }, cheek: 0.6,
-    }, { msgs: [] }, { jar: 0.55, tangles: 3, coils: 2 });
+    }, { msgs: [] }, { jar: 0.55, tangles: 3, coils: 2, beforeNell: (tabS) => mumBeside(f, cam, tabS, { look: { x: 1, y: -0.2 * up }, browUp: 0.5 * up, mouth: { smile: 0.55 * up, open: 0.1 * up }, cheek: up }) });
   }
 });
 

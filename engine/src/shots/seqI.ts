@@ -68,7 +68,7 @@ import { blink, track as trk, antic } from '../core/anim';
 import { C2D, F, W, H } from '../core/stage';
 import { CharLight } from '../draw/shade';
 import { L_DARK_STREET } from './common';
-import { bulb, BULB_SEQ, glow, lightString } from '../draw/light';
+import { bulb, BULB_SEQ, glow, lightString, beam } from '../draw/light';
 import { blobEllipse, tube, vgrad, handRect } from '../draw/brush';
 import { litGroup } from '../draw/shade';
 import { V2 } from '../core/math';
@@ -191,17 +191,21 @@ shot('I3', (f) => {
   // his big bare hand closes on the bulb and does the twist; her mitten comes to rest on top of his hand
   const cover = prog(t, 0.5, 1.2, ease.outCubic);
   litGroup(f, { x: 0, y: 0, w: W, h: H }, L_HANDS_DARK, (x) => bigHand(x, lerp(bx - 300, bx - 24, cover), lerp(by + 300, by - 60, cover), 1.35, -0.55 + twist * 0.8, '#e6b496', '#2e384b', 1.0));
-  const arrive = prog(t, 1.0, 1.6, ease.outBack);
+  // her mitten holds a little torch steady on the bulb while his hand does the twist
+  const arrive = prog(t, 0.2, 0.9, ease.outCubic);
+  const tx = lerp(-200, 330, arrive), ty = lerp(1200, 900, arrive);
+  beam(f.glow, v2(tx + 120, ty - 95), Math.atan2(by - (ty - 95), bx - (tx + 120)), 900, 0.12, 'rgba(255,236,190,0.7)', 0.45 * arrive, 10);
   litGroup(f, { x: 0, y: 0, w: W, h: H }, L_HANDS_DARK, (x) => {
-    x.save(); x.translate(lerp(520, bx - 150, arrive), lerp(1250, by + 80, arrive)); x.rotate(-0.7 + twist * 0.5);
-    tube(x, [{ x: -300, y: 260 }, { x: -70, y: 70 }], 150, 130, '#c23f36');
-    x.fillStyle = '#a8342e'; x.beginPath(); blobEllipse(x, -70, 70, 80, 60, 4, 0.05, 9, -0.7); x.fill();
-    x.fillStyle = '#e3a53a'; x.beginPath(); blobEllipse(x, 0, 0, 100, 80, 7, 0.05, 12, -0.5); x.fill();
-    x.beginPath(); blobEllipse(x, -40, -72, 36, 28, 8, 0.06, 8, -1.2); x.fill();
-    x.strokeStyle = 'rgba(150,90,20,0.35)'; x.lineWidth = 4;
-    for (let k = 0; k < 5; k++) { x.beginPath(); x.moveTo(-60 + k * 20, 50); x.lineTo(-56 + k * 20, 80); x.stroke(); }
+    x.save(); x.translate(tx, ty); x.rotate(-0.62);
+    tube(x, [{ x: -320, y: 220 }, { x: -60, y: 40 }], 150, 130, '#c23f36');
+    x.fillStyle = '#a8342e'; x.beginPath(); blobEllipse(x, -60, 40, 80, 60, 4, 0.05, 9, -0.7); x.fill();
+    // torch body
+    x.fillStyle = '#2f5a8a'; x.beginPath(); x.roundRect(10, -40, 170, 60, 14); x.fill();
+    x.fillStyle = '#c9c4b8'; x.fillRect(176, -48, 26, 76);
+    x.fillStyle = '#e3a53a'; x.beginPath(); blobEllipse(x, 30, -6, 70, 62, 7, 0.05, 12, -0.3); x.fill();
     x.restore();
   });
+  glow(f.glow, tx + 160 * Math.cos(-0.62) + 40, ty + 160 * Math.sin(-0.62) - 40, 50, '#fff0c8', 0.7 * arrive);
   // held breath: the faintest flicker in the bulb on the last frames
   if (t > 2.38) glow(f.glow, bx, by + 40, 90, BULB_SEQ[0], 0.15);
   f.grade.vignette = 0.62; f.grade.saturation = 0.9;

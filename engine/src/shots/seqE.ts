@@ -10,7 +10,7 @@ import * as C from '../chars/cast';
 import { CharLight } from '../draw/shade';
 import { glow } from '../draw/light';
 import { blobEllipse } from '../draw/brush';
-import { tabletCU, deskScene, nellDeskLight, MUM_HOME, Q1, Q2, Q3, R1, R2, R3 } from './seqD';
+import { tabletCU, deskScene, nellDeskLight, MUM_HOME, readingTogether, Q1, Q2, Q3, R1, R2, R3 } from './seqD';
 import { santaPapers } from '../sets/props';
 import { rToScreen } from '../sets/bedroom';
 
@@ -22,15 +22,6 @@ const HISTORY: Msg[] = [
   { who: 'me', text: Q2 }, { who: 'reply', text: R2, blur: 7 },
   { who: 'me', text: Q3 }, { who: 'reply', text: R3, blur: 7 },
 ];
-
-/** Over-the-shoulder foreground: the backs of Nell's and Mum's heads side by side, rim-lit by the screen. */
-function readingTogether(f: F, t: number, mumLean = 0, mumNod = 0) {
-  const L: CharLight = { key: -1.57, shadow: '#1e1a30', shadowAmt: 0.7, shadowOff: 26, shadowSoft: 8, rim: '#ffd29a', rimAmt: 1.0, rimW: 8, rimDir: -1.45, ambient: '#3a3050', ambientAmt: 0.8, spots: [{ x: 960, y: 520, r: 900, color: '#ffc98e', a: 0.18 }] };
-  // Mum first (slightly behind), taller, leaning in over Nell's shoulder: bob + teal scarf from behind
-  drawPerson(f, MUM_HOME, { x: 820 - mumLean * 40, y: 1770, s: 2.6, back: true, turn: 0.1, flip: -1, headTilt: 0.12 + mumNod * 0.12, lean: 0.1 + mumLean * 0.12, armF: { a: 0.3, b: 0.4 }, armB: { a: 0.2, b: 0.4 } }, { ...L, rimDir: -1.7 });
-  drawPerson(f, C.NELL_HOME, { x: 400, y: 1660, s: 2.9, back: true, turn: 0.1, flip: 1, headTilt: 0.06, lean: 0.05, armF: { a: 0.6, b: 0.6 }, armB: { a: 0.4, b: 0.6 } }, L);
-  void t;
-}
 
 // E1: slow, deliberate typing. We read every letter. (cue sheet: taps 0.35–3.0)
 shot('E1', (f) => {

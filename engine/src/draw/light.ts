@@ -12,7 +12,7 @@ export const BULB = {
 export const BULB_SEQ = [BULB.red, BULB.green, BULB.amber, BULB.blue, BULB.white];
 // off-state glass colours (dull, cold)
 const OFF: Record<string, string> = {
-  [BULB.red]: '#5a2a33', [BULB.green]: '#25443a', [BULB.blue]: '#26304f', [BULB.amber]: '#5a4630', [BULB.white]: '#5d6070',
+  [BULB.red]: '#4a222b', [BULB.green]: '#1f3a32', [BULB.blue]: '#212a46', [BULB.amber]: '#4a3a28', [BULB.white]: '#3c3f4e',
 };
 
 // ---- glow sprite cache ----

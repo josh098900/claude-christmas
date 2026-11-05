@@ -74,3 +74,18 @@ Scores: reads 7, misdirect 4, switch/blaze 6, Grandad 6, Claude 8, handmade 6, a
 48. **Misdirect:** the wall is now one consistent idea, a Santa landing runway. In B3 the idea arrives with a glance up toward the chimney, not at Grandad.
 49. **Grandma in the photo** has adult proportions. She had read as "child-sized".
 50. **I5:** each house now pops on with a bloom burst on its glockenspiel note. **J1** spends less time on the top-down town grid, and the Earth drifts and rotates slowly instead of holding still. **A1** gains firs and bare winter trees in the back gardens, so it's less grid-like.
+
+## Phase 6, pass 3 (a third blind critic) and final fixes
+
+Scores: reads 7, misdirect 3, switch/blaze 5, Grandad 6, Claude 7, handmade 6, animation 5, blaze 5, sync 8, pacing 6, homages 7, brand 4. The critic reviewed the build before the zoom-scaled blaze fix (51).
+51. **Blaze close-ups:** the coloured washes now scale with camera zoom. They had stacked into a pink-white haze in I4's close-up and I6. Window panes stay dark and the bulbs stay saturated. From above (J1) the house now carries ten rows of lights, so it's unmistakably *the* house.
+52. **Dead bulbs are darker glass** (all five off-colours darkened), so a dead string never reads as lit. In H, the torches no longer whiten the dead roof net, No. 40 is the darkest thing in the frame, and Grandad's face is in the wide (fork).
+53. **Brand safety, third time:** Mum is now visibly with Nell for *every* tablet question (D3, D5, D8 and E). The montage's comic worry belongs to Dad alone in D7. Across the film, every exchange with the assistant happens with a parent present.
+54. **Grandad's hand does the twist alone.** Nell's mitten holds a small torch steady on the bulb. That's her contribution (light, not hands), so "he finishes the job himself" reads cleanly. This departs from the brief's "lets her be the one to twist it": three blind critics in a row read any shared twist as *hers*, and the rubric's arc line wins.
+55. **The street went dark on purpose:** in H1 a neighbour's lights visibly click off as Grandad passes (fork), so it reads as courtesy, not a power cut.
+56. **Readability fixes from the critic's confusions:**
+    - The ladder man now has dark hair and a dark moustache and brown sleeves. He'd read as Grandad, and his maroon sleeves at ladder height had read as Nell up a ladder.
+    - Grandad's skin is less grey in A3, where he'd read as "a ghost".
+    - The wedding-era photo is framed tighter, so young Grandma and Grandad read as adults.
+    - In B3 a blinking light crosses the sky behind Nell as the idea lands, so her plan reads as sky- and Santa-driven, which strengthens the misdirect.
+57. **Not taken:** a "small Claude mark in the title bar" (the brief forbids any logo or real UI; "Claude" appears only as plain type on the end card), and "Some lights need a whole street" (lovely, but it drops the line's quiet point about what a thinking partner can't do, and that point is the brand).

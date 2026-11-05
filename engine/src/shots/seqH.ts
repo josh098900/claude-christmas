@@ -43,6 +43,14 @@ export function blurSoFar(f: F, px: number) {
   st.release(2);
 }
 
+/** No. 40, dead: pull its facade and roof net down so it is the darkest thing in frame. */
+function darkenNo40(f: F, cam: Cam, k = 0.5) {
+  const a = toScreen(cam, v2(-202, -820)), b = toScreen(cam, v2(202, 0));
+  const c = f.ctx; c.save(); c.globalCompositeOperation = 'multiply';
+  c.fillStyle = `rgba(${Math.round(255 * (1 - k * 0.55))},${Math.round(255 * (1 - k * 0.5))},${Math.round(255 * (1 - k * 0.35))},1)`;
+  c.fillRect(a.x, a.y, b.x - a.x, b.y - a.y); c.restore();
+}
+
 const L_COLD = (spots: { x: number; y: number; r: number; color: string; a: number }[] = []): CharLight => ({ ...L_DARK_STREET, spots });
 
 // the waiting crowd in front of Grandad's house (world x, y, spec, flip)
@@ -129,15 +137,14 @@ function crowd(f: F, cam: Cam, L: CharLight, t: number, faceRight = true, skip?:
       const from = v2(R.handF.x + Math.cos(ang) * 22 * sc, R.handF.y + Math.sin(ang) * 22 * sc);
       const amt = clamp(o.aim!.amt);
       glow(f.glow, from.x, from.y, 14 * sc, '#fff4d8', 0.75);
-      beam(f.glow, from, ang, Math.hypot(tgt.x - from.x, tgt.y - from.y) + 60, 0.11, 'rgba(255,240,205,0.9)', 0.5, 4);
+      beam(f.glow, from, ang, Math.max(40, Math.hypot(tgt.x - from.x, tgt.y - from.y) - 70 * cam.z), 0.1, 'rgba(255,214,160,0.9)', 0.34, 4);
       if (amt > 0.2) {
-        // the beam lands on the dead roof net: a pool of torchlight that shows the unlit bulbs
+        // a small, dim, warm pool where the beam lands: it shows the dead glass without lighting it
         const pool = Math.min(1, (amt - 0.2) / 0.5);
         const c = f.ctx; c.save(); c.globalCompositeOperation = 'lighter';
-        const g = c.createRadialGradient(tgt.x, tgt.y, 4, tgt.x, tgt.y, 120 * cam.z);
-        g.addColorStop(0, `rgba(255,236,200,${0.33 * pool})`); g.addColorStop(1, 'rgba(255,236,200,0)');
-        c.fillStyle = g; c.fillRect(tgt.x - 130 * cam.z, tgt.y - 130 * cam.z, 260 * cam.z, 260 * cam.z); c.restore();
-        glow(f.glow, tgt.x, tgt.y, 70 * cam.z, '#fff0d0', 0.12 * pool);
+        const g = c.createRadialGradient(tgt.x, tgt.y, 2, tgt.x, tgt.y, 55 * cam.z);
+        g.addColorStop(0, `rgba(255,180,110,${0.09 * pool})`); g.addColorStop(1, 'rgba(255,180,110,0)');
+        c.fillStyle = g; c.fillRect(tgt.x - 60 * cam.z, tgt.y - 60 * cam.z, 120 * cam.z, 120 * cam.z); c.restore();
       }
     }
     if (e.torch && !aimer && (o.torchDrop ?? -1) >= 0) {
@@ -167,7 +174,25 @@ shot('H1', (f) => {
   // integrate position
   let x = 720; for (let u = 0; u < tc; u += 1 / 24) x -= speed(u) / 24;
   const cam: Cam = { x: x - 120, y: -150, z: 1.6 };
-  drawStreet(f, { mood: 'eve', cam, houses: TERRACE, ...DARK });
+  // the last house still lit (no. 42, just ahead of them) switches off on a beat: deliberate, not a power cut
+  const strOff = tc >= 0.95, winOff = tc >= 1.2;
+  drawStreet(f, { mood: 'eve', cam, houses: TERRACE, ...DARK,
+    lit: (h: House) => (h.i === 1 && !strOff ? 1 : 0), windows: (h: House) => (h.i === 1 && !winOff ? 1 : 0) });
+  // a neighbour's silhouette at the lit upstairs window, reaching for the switch
+  if (!winOff) {
+    const H1 = TERRACE.find((h) => h.i === 1)!;
+    const wx = H1.x + H1.w * 0.28, wy = -520 + 70;
+    const reach = prog(tc, 0.6, 1.15, ease.inOutSine);
+    const hp = toScreen(cam, v2(wx - 10 + reach * 18, wy + 120 - reach * 30)), bp = toScreen(cam, v2(wx - 30, wy + 140));
+    const c = f.ctx; c.save();
+    const clip0 = toScreen(cam, v2(wx - 46, wy)), clip1 = toScreen(cam, v2(wx + 46, wy + 140));
+    c.beginPath(); c.rect(clip0.x, clip0.y, clip1.x - clip0.x, clip1.y - clip0.y); c.clip();
+    c.fillStyle = 'rgba(40,24,30,0.85)';
+    c.beginPath(); blobEllipse(c, bp.x, bp.y - 30 * cam.z, 26 * cam.z, 34 * cam.z, 3, 0.05, 8); c.fill();
+    c.beginPath(); blobEllipse(c, bp.x, bp.y - 78 * cam.z, 16 * cam.z, 18 * cam.z, 4, 0.05, 8); c.fill();
+    tube(c, [v2(bp.x + 10 * cam.z, bp.y - 46 * cam.z), hp], 9 * cam.z, 7 * cam.z, 'rgba(40,24,30,0.85)');
+    c.restore();
+  }
   const L = L_COLD();
   crowd(f, cam, { ...L, ambientAmt: 0.92 }, t);
   const slow = prog(tc, 1.2, 3.2);
@@ -189,6 +214,7 @@ shot('H2', (f) => {
   const t = f.t, tc = f.tc;
   const cam: Cam = { x: lerp(40, 60, tc / f.dur), y: -255, z: lerp(1.1, 1.16, tc / f.dur) };
   drawStreet(f, { mood: 'eve', cam, houses: TERRACE, ...DARK });
+  darkenNo40(f, cam, 0.55);
   const L = L_COLD();
   crowd(f, cam, { ...L, ambientAmt: 0.85 }, t);
   // Nell steps forward at +1.2 with her stack of cards
@@ -369,6 +395,7 @@ shot('H5', (f) => {
     // WIDE, silence: no. 40 is still dark. Nobody moves; a torch is slowly lowered.
     const cam: Cam = { x: 50, y: -250, z: 1.13 + tc * 0.012 };
     drawStreet(f, { mood: 'eve', cam, houses: TERRACE, ...DARK });
+    darkenNo40(f, cam, 0.6);
     const L = L_COLD();
     crowd(f, cam, { ...L, ambientAmt: 0.86 }, t + 2.0, false, undefined, { aim: { amt: track(tc, [[0, 0.1], [0.25, 1, ease.outCubic], [0.7, 1], [1.15, 0, ease.inOutSine]]), names: ['OldLady', 'LadderMan', 'Teen2', 'YoungDad'] } });
     // Nell at the front by the switch box, head already bowing
@@ -379,10 +406,13 @@ shot('H5', (f) => {
     f.ctx.fillStyle = '#4d5560'; f.ctx.fillRect(bx.x - 14, bx.y - 12, 28, 14);
     f.ctx.fillStyle = '#ff6a4a'; f.ctx.beginPath(); f.ctx.arc(bx.x + 9, bx.y - 9, 2.4, 0, TAU); f.ctx.fill();
     glow(f.glow, bx.x + 9, bx.y - 9, 14, '#ff6a4a', 0.5);
-    // Grandad and Mum, backs to us, right foreground
-    const gp = v2(W * 0.86, H + 260), mp = v2(W * 1.0, H + 280);
-    drawPerson(f, C.MUM, { x: mp.x, y: mp.y, s: 1.35, flip: -1, turn: 0.2, back: true, armF: { a: 0.2, b: 0.4 } } as Pose, { ...L, ambientAmt: 0.95, rimAmt: 0.6 });
-    drawPerson(f, C.GRANDAD_OUT, { x: gp.x, y: gp.y, s: 1.3, flip: -1, turn: 0.2, back: true, armF: { a: 0.2, b: 0.4 } } as Pose, { ...L, ambientAmt: 0.95, rimAmt: 0.6 });
+    // Grandad and Mum at the right edge; we catch Grandad's face in profile, falling
+    const gfall = prog(tc, 0.1, 1.1, ease.inOutSine);
+    const gp = v2(W * 0.88, H + 300), mp = v2(W * 1.02, H + 300);
+    drawPerson(f, C.MUM, { x: mp.x, y: mp.y, s: 1.35, flip: -1, turn: 0.75, armF: { a: 0.2, b: 0.4 }, browIn: 0.6, mouth: { smile: -0.3 }, look: { x: 1, y: 0.2 } } as Pose, { ...L, ambientAmt: 0.85, rimAmt: 0.6 });
+    drawPerson(f, C.GRANDAD_OUT, { x: gp.x, y: gp.y, s: 1.3, flip: -1, turn: 0.8, armF: { a: 0.15, b: 0.4 },
+      browIn: lerp(0.2, 0.9, gfall), browUp: lerp(0.3, 0.0, gfall), nod: lerp(-0.1, 0.4, gfall), mouth: { smile: lerp(-0.1, -0.5, gfall) }, look: { x: 1, y: lerp(-0.4, 0.6, gfall) } } as Pose,
+      { ...L, ambientAmt: 0.8, rimAmt: 0.7, spots: [{ x: W * 0.95, y: 300, r: 700, color: '#ffcf8a', a: 0.12 }] });
     snowfall(f, 0.4, 0.1, 87);
     f.grade.vignette = 0.62; f.grade.bloom = 0.7; f.grade.exposure = 0.92; f.grade.saturation = 0.88;
     return;
