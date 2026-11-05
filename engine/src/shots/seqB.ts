@@ -23,13 +23,13 @@ const SIT = { hipDrop: 46, legF: { a: 1.35, b: -2.4 }, legB: { a: 1.2, b: -2.45 
 shot('B1', (f) => {
   const t = f.t;
   const u = prog(f.tc, 0, f.dur, ease.inOutSine);
-  const cam = { x: lerp(-420, -440, u), y: -230, z: 2.6 };
+  const cam = { x: lerp(-470, -480, u), y: -178, z: 2.75 };
   drawLivingRoom(f, cam, { outsideOn: 1 });
-  const p = rToScreen(cam, v2(-280, 60));
+  const p = rToScreen(cam, v2(-360, 70));
   const look = track(t, [[0, 0], [0.6, 1, ease.outCubic], [3, 1]]);
   drawPerson(f, C.NELL_HOME, {
-    x: p.x, y: p.y, s: cam.z, flip: -1, turn: 0.75, ...SIT, armF: { a: 0.6, b: 0.9 }, armB: { a: 0.4, b: 1.0 },
-    look: { x: 0.6, y: -look }, headTilt: -0.25 * look, browUp: 0.3 * look, browIn: 0.4 * look, blink: blink(t, [2.1]), mouth: { smile: 0 },
+    x: p.x, y: p.y, s: cam.z, flip: -1, turn: 0.92, ...SIT, armF: { a: 0.6, b: 0.9 }, armB: { a: 0.4, b: 1.0 },
+    look: { x: 1, y: -look }, headTilt: -0.38 * look, browUp: 0.35 * look, browIn: 0.5 * look, blink: blink(t, [2.1]), mouth: { smile: 0 }, lean: -0.08 * look,
   }, L_NELL_ROOM);
   f.grade.vignette = 0.58;
 });
@@ -60,7 +60,7 @@ shot('B3', (f) => {
   const set = track(t, [[0, 0], [1.1, 0], [1.5, 1, ease.outBack], [2.5, 1]]);
   const browIn = lerp(sad, -0.9, set);
   drawPerson(f, C.NELL_HOME, {
-    x: 900, y: 1080 + 900, s: 5.2, flip: 1, turn: 0.25, look: { x: 0.5 - set * 0.5, y: -0.2 }, browIn, browUp: 0.15 * (1 - set),
+    x: 960, y: 1610, s: 5.2, flip: 1, turn: 0.25, look: { x: 0.5 - set * 0.5, y: -0.2 }, browIn, browUp: 0.15 * (1 - set),
     mouth: { smile: lerp(-0.4, -0.15, set), w: lerp(1, 0.75, set) }, nod: lerp(0.15, -0.05, set), blink: blink(t, [0.9]), headTilt: lerp(0.06, -0.02, set),
   }, { ...L_NELL_ROOM, spots: [{ x: 1300, y: 300, r: 700, color: '#8fa8ff', a: 0.25 }] });
   f.grade.vignette = 0.6;

@@ -42,3 +42,9 @@ Every call I made without asking, in order, with the reason for each. (The brief
 27. **Total silence for H5.** Music cuts to digital silence at the dead click (122.75 s, H4 + 6 frames). Only wind remains until Grandad kneels.
 28. **Grandad's fingers play the motif:** one piano note per bulb in I2 (131.20 + k × 0.43 s), and the picture is keyed to these times.
 29. **Mastered to −14.0 LUFS integrated, −1.3 dBTP.**
+
+## Phase 5: production calls
+
+30. **The coda has no visible reply.** Both versions were rendered (`stills/lab/coda_noreply.png`, `stills/lab/coda_reply.png`). The reply ("You knocked on the doors. Happy Christmas, Nell.") is warm and gives her the credit, but it hands Claude the last line of the film. Without it, the last words are hers, the tablet just glows, and the camera pulls back to show who really did it: Nell asleep in Grandma's chair and Grandad beside her. Claude stays small.
+31. **Tagline: "Some problems need a whole street."** See `writers_room/taglines.md` for the 12 candidates and the test against the film. "Keep thinking." was the one to beat. It's the better campaign line but the worse ending for *this* story.
+32. **The poster is a 2:3 portrait crop of a 2× key-art render** (`lab:poster`): the blaze, Nell pointing at a single bright star, Grandad laughing, the crowd in silhouette, and the hand-lettered title in the sky.

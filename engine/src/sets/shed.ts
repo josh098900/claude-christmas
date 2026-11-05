@@ -6,6 +6,7 @@ import { handRect, handPoly, blobEllipse, vgrad, smoothOpen } from '../draw/brus
 import { glow, beam, motes, shaft } from '../draw/light';
 import { snowCap } from './street';
 import { labelledBox } from './props';
+import { tint, CharLight } from '../draw/shade';
 
 /** Shed interior, screen space. open = door 0..1. Returns the doorway rect. */
 export function shedInterior(f: F, c: C2D, o: { open: number; t: number }) {
@@ -72,17 +73,19 @@ export function shedInterior(f: F, c: C2D, o: { open: number; t: number }) {
 function shadeHexLocal(h: string, k: number): string {
   const n = parseInt(h.replace('#', ''), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
   if (k < 0) { r = r * (1 + k) + 20 * -k; g = g * (1 + k) + 22 * -k; b = b * (1 + k) + 40 * -k; } else { r += (255 - r) * k; g += (246 - g) * k; b += (228 - b) * k; }
-  return `rgb(${r | 0},${g | 0},${b | 0})`;
+  const hx = (v: number) => Math.max(0, Math.min(255, v | 0)).toString(16).padStart(2, '0');
+  return '#' + hx(r) + hx(g) + hx(b);
 }
 
 export function boxStack(f: F, c: C2D, x: number, y: number, s: number, o: { dust?: number; topShift?: number; lit?: number } = {}) {
-  const T = (h: string) => h;
+  const lit = o.lit ?? 1;
+  const T = (h: string) => tint(h, { ambient: '#3c4478', ambientAmt: 0.85 * (1 - lit) + 0.2 } as CharLight);
   c.save(); c.translate(x, y); c.scale(s, s);
   c.fillStyle = 'rgba(4,5,12,0.5)'; c.beginPath(); c.ellipse(170, 4, 260, 26, 0, 0, TAU); c.fill();
   const box3d = (bx: number, by: number, bw: number, bh: number, col: string) => {
     // right side and top faces so stacked boxes separate
-    c.fillStyle = shadeHexLocal(col, -0.35); c.beginPath(); c.moveTo(bx + bw, by); c.lineTo(bx + bw + 46, by - 26); c.lineTo(bx + bw + 46, by + bh - 26); c.lineTo(bx + bw, by + bh); c.closePath(); c.fill();
-    c.fillStyle = shadeHexLocal(col, 0.12); c.beginPath(); c.moveTo(bx, by); c.lineTo(bx + 46, by - 26); c.lineTo(bx + bw + 46, by - 26); c.lineTo(bx + bw, by); c.closePath(); c.fill();
+    c.fillStyle = T(shadeHexLocal(col, -0.35)); c.beginPath(); c.moveTo(bx + bw, by); c.lineTo(bx + bw + 46, by - 26); c.lineTo(bx + bw + 46, by + bh - 26); c.lineTo(bx + bw, by + bh); c.closePath(); c.fill();
+    c.fillStyle = T(shadeHexLocal(col, 0.12)); c.beginPath(); c.moveTo(bx, by); c.lineTo(bx + 46, by - 26); c.lineTo(bx + bw + 46, by - 26); c.lineTo(bx + bw, by); c.closePath(); c.fill();
     c.fillStyle = 'rgba(5,6,14,0.45)'; c.fillRect(bx, by + bh - 6, bw, 6);
   };
   const ts = o.topShift ?? 0;
@@ -112,7 +115,7 @@ export function backGarden(f: F, c: C2D, o: { t: number; windowLit: number }) {
   c.fillStyle = '#2a2028'; c.beginPath(); handRect(c, -470, -260, 90, 220, 7, 1); c.fill();
   c.fillStyle = '#1e2436'; c.fillRect(340, -560, 9, 520);
   // the lit window: Grandad in his chair, his back to us
-  const wx = -70, wy = -320, ww = 170, wh = 150;
+  const wx = -70, wy = -270, ww = 170, wh = 150;
   c.fillStyle = '#d9d0bd'; c.fillRect(wx - 10, wy - 10, ww + 20, wh + 20);
   const lit = o.windowLit;
   const g = c.createLinearGradient(wx, wy, wx, wy + wh);

@@ -46,7 +46,7 @@ shot('C1', (f) => {
     holdF: reach > 0.5 ? undefined : (x, hp, ang) => torchInHand(x, hp, ang - 0.15 + 0.25 * (1 - sweep), 1.82),
   }, L, { alpha: prog(t, 0.42, 0.62, ease.linear) });
   // the boxes, dusty; the top one slides toward her
-  boxStack(f, c, 880, 980, 0.86, { dust: 0.6, topShift: slide });
+  boxStack(f, c, 880, 980, 0.86, { dust: 0.6, topShift: slide, lit: torchOn * (0.4 + 0.6 * sweep) });
   // torch beam cutting through the dust onto the boxes
   if (torchOn > 0) {
     const from = r.handF;
@@ -148,7 +148,7 @@ shot('C3', (f) => {
   const steps = Math.floor((t - STEP0) / PER) + 1;
   const along = clamp((t - STEP0 + PER) / (PER * 7.4), 0, 1.2);
   const nx = lerp(-260, 290, along);
-  const cam = { x: lerp(-70, 70, prog(tc, 0, f.dur, ease.inOutSine)), y: -150, z: 3.0 };
+  const cam = { x: lerp(-70, 70, prog(tc, 0, f.dur, ease.inOutSine)), y: -125, z: 3.1 };
   for (const x of [c, f.glow]) { x.save(); x.translate(W / 2, H / 2); x.scale(cam.z, cam.z); x.translate(-cam.x, -cam.y); }
   backGarden(f, c, { t: tc, windowLit: 1 });
   // tracks: sledge runners from the shed, and her footprints

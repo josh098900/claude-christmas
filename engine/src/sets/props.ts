@@ -97,16 +97,20 @@ export function labelledBox(f: F, c: C2D, x: number, y: number, w: number, h: nu
     c.beginPath(); c.moveTo(ux, uy); c.quadraticCurveTo(ux + o.underline * 0.5, uy + 4, ux + o.underline, uy - 2); c.stroke();
   }
   const d = o.dust ?? 0;
-  if (d > 0) dustOver(c, x, y, w, h, d, seed);
+  if (d > 0) {
+    const m = /rgba?\((\d+),(\d+),(\d+)/.exec(T('#ffffff'));
+    const mul: [number, number, number] = m ? [+m[1] / 255, +m[2] / 255, +m[3] / 255] : [1, 1, 1];
+    dustOver(c, x, y, w, h, d, seed, mul);
+  }
 }
 
 /** Mottled dust film over a rectangle. */
-export function dustOver(c: C2D, x: number, y: number, w: number, h: number, a: number, seed: number) {
+export function dustOver(c: C2D, x: number, y: number, w: number, h: number, a: number, seed: number, mul: [number, number, number] = [1, 1, 1]) {
   const r = new RNG(seed * 31 + 7);
   c.save(); c.beginPath(); c.rect(x, y, w, h); c.clip();
-  c.fillStyle = `rgba(150,140,128,${0.55 * a})`; c.fillRect(x, y, w, h);
+  c.fillStyle = `rgba(${150 * mul[0] | 0},${140 * mul[1] | 0},${128 * mul[2] | 0},${0.55 * a})`; c.fillRect(x, y, w, h);
   for (let i = 0; i < 60; i++) {
-    c.fillStyle = `rgba(${170 + r.int(-20, 20)},${160 + r.int(-20, 20)},${148 + r.int(-20, 20)},${0.25 * a})`;
+    c.fillStyle = `rgba(${(170 + r.int(-20, 20)) * mul[0] | 0},${(160 + r.int(-20, 20)) * mul[1] | 0},${(148 + r.int(-20, 20)) * mul[2] | 0},${0.25 * a})`;
     c.beginPath(); c.arc(x + r.next() * w, y + r.next() * h, 4 + r.next() * Math.min(w, h) * 0.18, 0, TAU); c.fill();
   }
   c.restore();

@@ -193,7 +193,7 @@ function tangleTop(f: F, c: C2D, cx: number, cy: number, R: number, seed: number
     a += noise1(i * 0.13, seed) * 0.55 + r.range(-0.2, 0.2);
     const dx = p.x - cx, dy = (p.y - cy) * 1.3;
     if (Math.hypot(dx, dy) > R) a = Math.atan2(cy - p.y, cx - p.x) + r.range(-0.6, 0.6);
-    p = v2(p.x + Math.cos(a) * 20, p.y + Math.sin(a) * 20);
+    p = v2(p.x + Math.cos(a) * 17, p.y + Math.sin(a) * 17);
     pts.push(p);
   }
   return pts;
@@ -208,10 +208,10 @@ shot('D2', (f) => {
   c.strokeStyle = 'rgba(120,80,60,0.18)'; c.lineWidth = 3;
   for (let i = 0; i < 26; i++) { c.beginPath(); const y0 = -100 + i * 52; c.moveTo(-200, y0); for (let x = -200; x < W + 200; x += 80) c.lineTo(x, y0 + noise1(x * 0.004 + i, 5) * 18); c.stroke(); }
   // tablet (screen up), lower right, warm
-  c.save(); c.translate(1500, 800); c.rotate(-0.35);
+  c.save(); c.translate(1650, 860); c.rotate(-0.35);
   drawTablet(f, c, -230, -165, 460, 330, { msgs: [{ who: 'me', text: Q1 }, { who: 'reply', text: R1, blur: 7 }], font: 40 }, { glowAmt: 0 });
   c.restore();
-  glow(f.glow, 1500, 800, 520, '#ffc98e', 0.28);
+  glow(f.glow, 1600, 840, 520, '#ffc98e', 0.28);
   // jar (top view) and tester
   c.fillStyle = 'rgba(150,170,220,0.25)'; c.beginPath(); c.arc(1540, 250, 110, 0, TAU); c.fill();
   c.save(); c.beginPath(); c.arc(1540, 250, 98, 0, TAU); c.clip();
@@ -232,10 +232,10 @@ shot('D2', (f) => {
   c.fillStyle = lg; c.fillRect(200, 0, 1300, 1100);
   c.restore();
   // the knot
-  const pts = tangleTop(f, c, 860, 520, 420, 77, 300);
+  const pts = tangleTop(f, c, 880, 500, 400, 77, 440);
   // hands: left holds the knot, right pulls a loop free
-  const pull = track(t, [[0, 0], [0.6, 0.15], [1.1, 0.1], [1.7, 0.55, ease.inOutCubic], [2.3, 0.45], [3, 0.8, ease.outCubic]]);
-  const rWrist = v2(990 + pull * 150, 560 + pull * 80), rFrom = v2(1220 + pull * 110, 1180);
+  const pull = track(t, [[0, 0], [0.5, 0.25, ease.outBack], [0.9, 0.12], [1.6, 0.75, ease.inOutCubic], [2.1, 0.55], [2.9, 1.25, ease.outCubic]]);
+  const rWrist = v2(990 + pull * 210, 560 + pull * 120), rFrom = v2(1220 + pull * 150, 1180);
   const HS = 125;
   const tip = topHandTip(rFrom, rWrist, HS);
   // pulled loop: from the nearest points in the knot to the fingertip and back
@@ -248,6 +248,7 @@ shot('D2', (f) => {
   c.strokeStyle = '#1b3527'; c.lineWidth = 6; c.lineJoin = 'round';
   c.beginPath(); smoothOpen(c, pts, 1); c.stroke();
   c.beginPath(); smoothOpen(c, loop, 1); c.stroke();
+  c.save(); c.strokeStyle = 'rgba(160,210,170,0.55)'; c.lineWidth = 2.5; c.beginPath(); smoothOpen(c, loop.map((p) => v2(p.x - 2, p.y - 2)), 1); c.stroke(); c.restore();
   c.strokeStyle = 'rgba(120,170,140,0.35)'; c.lineWidth = 2;
   c.beginPath(); smoothOpen(c, pts.map((p) => v2(p.x - 1.5, p.y - 1.5)), 1); c.stroke();
   for (let i = 3; i < pts.length; i += 5) {

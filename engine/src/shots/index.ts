@@ -1,5 +1,6 @@
 // Import every sequence so shots register themselves.
 import '../labs/lineup';
+import '../labs/poster';
 import './seqA';
 import './seqI';
 import './seqD';

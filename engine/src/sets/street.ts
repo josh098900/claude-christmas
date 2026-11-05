@@ -292,7 +292,8 @@ function houseLights(f: F, h: House, on: number, density: number, o: StreetOpts)
   const seed = h.seed;
   const size = 7;
   const dense = density > 1.2;
-  const GA = dense ? 0.38 : 0.5, CORE = dense ? 0.08 : 0.4;
+  const zm = clamp(1.6 / o.cam.z, 0.42, 1);  // close-ups: less glow per bulb so the strings don't merge into white
+  const GA = (dense ? 0.38 : 0.5) * zm, CORE = (dense ? 0.08 : 0.4) * zm;
   const GR = dense ? size * 3.2 : undefined;
   const LS = (opts: Parameters<typeof lightString>[1]) => lightString(f, { glowA: GA, core: CORE, glowR: GR, ...opts });
   // gutter swags
