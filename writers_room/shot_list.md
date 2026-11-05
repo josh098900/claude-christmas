@@ -39,27 +39,27 @@
 |---|---|---|---|---|---|---|
 | D1 | 0:39:00 | 2.5s | Door, MS | Sign: KEEP OUT. ESPECIALLY SANTA. Door shuts, light under it | Misdirect begins | Door shut; caper strings start |
 | D2 | 0:41:12 | 3.0s | Top-down desk | Knotted strings everywhere, small hands untangling by torch and tablet glow | Overwhelm, grit | Rustle; caper |
-| D3 | 0:44:12 | 3.0s | Tablet CU | why does 1 bulb make them ALL go off / blurred warm reply | Learning | Soft key taps |
+| D3 | 0:44:12 | 3.0s | Tablet CU | why does 1 bulb make them ALL go off / blurred warm reply; Mum reading with her | Learning | Soft key taps |
 | D4 | 0:47:12 | 2.5s | Desk CU | Bulb tester; dead bulbs plink into the jar | Method | Plinks on the beat |
-| D5 | 0:50:00 | 2.5s | Tablet CU | how to find the broken bulb in xmas lights / blurred reply | Learning | Taps |
+| D5 | 0:50:00 | 2.5s | Tablet CU | how to find the broken bulb in xmas lights / blurred reply; Mum beside her | Learning | Taps |
 | D6 | 0:52:12 | 3.5s | Pan across wall | Diagrams joined with red string, roof + chimney + X; tally 12 … 340 … 1,206 | It's a trap? | Caper builds |
-| D7 | 0:56:00 | 2.5s | Hallway MS | Mum and Dad look up at the ceiling (thump), then at each other | Comic worry | Thump; caper rest |
-| D8 | 0:58:12 | 3.0s | Tablet then CU Nell | how many lights do you need to be seen from space; Nell's eyebrows fully up | Ambition | Taps; motif on celesta, unresolved |
+| D7 | 0:56:00 | 2.5s | Hallway MS | Dad alone in the hallway looks up at the ceiling (thump), then down at his mug, worried | Comic worry | Thump; caper rest |
+| D8 | 0:58:12 | 3.0s | Tablet then CU Nell | how many lights do you need to be seen from space; Nell's eyebrows fully up, Mum beside her | Ambition | Taps; motif on celesta, unresolved |
 | D9 | 1:01:12 | 3.0s | Locked-off time-lapse | Nights pass: moon arcs, jar fills, untangled strings pile up, Advent doors open | Obsession | Caper climax, stops on the gap |
 
 ### E. The Turn ★
 
 | Shot | In | Dur | Camera | Action | Emotion | Sound / music |
 |---|---|---|---|---|---|---|
-| E1 | 1:04:12 | 3.5s | Tablet CU | i need them on the roof but im not allowed up ladders | Stuck | Slow taps, near silence |
+| E1 | 1:04:12 | 3.5s | Tablet CU | i need them on the roof but im not allowed up ladders (Mum and Nell reading together) | Stuck | Slow taps, near silence |
 | E2 | 1:08:00 | 4.0s | Tablet CU, readable | Good rule. This bit needs more people. Who lives on the street? | The turn | Piano motif, gentle, the gap is a question |
-| E3 | 1:12:00 | 4.0s | Pull back from wall | Every string leads to a drawing of Grandad's house ablaze with stick-Grandma pointing up; Nell grabs her hat | Reveal: it was never a trap | Strings swell |
+| E3 | 1:12:00 | 4.0s | Pull back from wall | Every string leads to a drawing of Grandad's house ablaze; Mum smiles and nods; Nell grabs her hat | Reveal: it was never a trap | Strings swell |
 
 ### F. Knocking on doors
 
 | Shot | In | Dur | Camera | Action | Emotion | Sound / music |
 |---|---|---|---|---|---|---|
-| F1 | 1:16:00 | 2.5s | Street, tracking | Nell marches past Grandad's dark house, drawing under her arm | Purpose | March pizzicato |
+| F1 | 1:16:00 | 2.5s | Street, tracking | Mum at the gate watches Nell march past Grandad's dark house, drawing under her arm | Purpose | March pizzicato |
 | F2 | 1:18:12 | 2.5s | Doorstep MS | Old lady + dog look across at the dark house; nod; tail wag | Yes | Knock; motif fragment |
 | F3 | 1:21:00 | 2.0s | Shop counter MS | Shopkeeper nods, thumps a box of bulbs on the counter | Yes | Shop bell; thump |
 | F4 | 1:23:00 | 2.0s | Wall MS | Two teenagers look at each other; fist bump with Nell | Yes | Bump |
@@ -87,18 +87,18 @@
 | H3c | 1:59:00 | 2.0s | MS Nell | Card: IT SHOULD BE SEEN FROM SPACE | Tender | Celesta |
 | H3d | 2:01:00 | 1.5s | MS Nell | Card: SO… | Here goes | Celesta, breath |
 | H4 | 2:02:12 | 2.0s | Insert | Mitten flips the big switch. CLICK. Nothing | Shock | Dead click; music cut |
-| H5 | 2:04:12 | 3.5s | CU Nell, hold | Silence. Faces in the dark. Nell's face falls all the way | Worst moment | Wind only |
+| H5 | 2:04:12 | 3.5s | CU Nell, hold | Wide: torches swing up to the dead roof and drop; then CU Nell's face falls all the way | Worst moment | Wind only |
 
 ### I. Grandad finishes it ★
 
 | Shot | In | Dur | Camera | Action | Emotion | Sound / music |
 |---|---|---|---|---|---|---|
 | I1 | 2:08:00 | 3.0s | MS two-shot | Grandad kneels beside her, slowly; takes the string | He's here | Knees creak; piano enters |
-| I2 | 2:11:00 | 3.0s | ECU hands | Big fingers walk the string bulb by bulb to the door; stop; wiggle | Forty years | Each bulb a piano note of the motif |
-| I3 | 2:14:00 | 2.5s | CU hands | He puts her small hand on the bulb; she twists | Together | The gap. Breath |
-| I4 | 2:16:12 | 4.0s | Wide low angle | THE HOUSE BLAZES; faces lit | Release | THE MISSING NOTE LANDS + full bloom |
+| I2 | 2:11:00 | 3.0s | ECU hands | Big fingers walk the string bulb by bulb to the door; the loose one: the string blinks on | Forty years | Each bulb a piano note of the motif |
+| I3 | 2:14:00 | 2.5s | CU hands | His bare hand twists the loose bulb home; her mitten holds the torch steady | Together | The gap. Breath |
+| I4 | 2:16:12 | 4.0s | Wide low angle | THE HOUSE BLAZES; then Grandad's face, lit by it | Release | THE MISSING NOTE LANDS + full bloom |
 | I5 | 2:20:12 | 3.0s | Street wide | Houses come back on one by one down the street like a fuse | Everyone | Glock runs with each house |
-| I6 | 2:23:12 | 4.0s | MS two-shot | Nell points at the sky like Grandma; Grandad sees it, laughs, pulls her in; bell tinkles | He's back | Bell; strings |
+| I6 | 2:23:12 | 4.0s | MS two-shot | Nell points at the sky like Grandma; the bell tinkles; Grandad sees it, laughs, pulls her in | He's back | Bell; strings |
 
 ### J. Seen from space ★
 
@@ -110,10 +110,10 @@
 
 | Shot | In | Dur | Camera | Action | Emotion | Sound / music |
 |---|---|---|---|---|---|---|
-| K1 | 2:37:12 | 5.5s | Interior MS | The armchair: Nell asleep under Grandma's cardigan, tablet: it worked. the whole street came. Grandad beside her; window ablaze | Home | Clock; motif complete on celesta |
+| K1 | 2:37:12 | 5.5s | Interior MS | The armchair: Nell asleep under Grandma's cardigan, tablet: it worked. everyone helped. Grandad beside her drinks his tea | Home | Clock; motif complete on celesta |
 
 ### L. End card
 
 | Shot | In | Dur | Camera | Action | Emotion | Sound / music |
 |---|---|---|---|---|---|---|
-| L1 | 2:43:00 | 5.0s | End card | Tagline + Claude; fan-made disclaimer | Warmth | Final chord rings out |
+| L1 | 2:43:00 | 5.0s | End card | Some problems need a whole street. / Claude / fan-made disclaimer | Warmth | Final chord rings out |
