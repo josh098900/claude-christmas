@@ -48,8 +48,8 @@ function grandadFace(f: F, t: number) {
   const cam = { x: GRAN_X + 64 + t * 2, y: -96 - t * 2, z: lerp(6.4, 6.8, t / 1.75) };
   doorStreet(f, cam, 1, {});
   const tw = (k: number) => 0.8 + 0.2 * Math.sin(f.tc * 2.2 + k);
-  const L: CharLight = { ...L_BLAZE_FRONT, key: -0.9, shadowAmt: 0.4, rimAmt: 0.9, rimW: 6, rimDir: -2.6, rim: '#ffb0c8',
-    spots: [{ x: W * 0.78, y: H * 0.15, r: 1100, color: '#ffb060', a: 0.45 * tw(0) }, { x: W * 0.95, y: H * 0.6, r: 700, color: '#ff5a50', a: 0.22 * tw(1) },
+  const L: CharLight = { ...L_BLAZE_FRONT, key: -0.9, shadowAmt: 0.6, rimAmt: 1.0, rimW: 7, rimDir: -2.6, rim: '#ff9ab8', ambient: '#e8b890', ambientAmt: 0.35,
+    spots: [{ x: W * 0.78, y: H * 0.15, r: 1100, color: '#ffb060', a: 0.26 * tw(0) }, { x: W * 0.95, y: H * 0.6, r: 700, color: '#ff5a50', a: 0.24 * tw(1) },
             { x: W * 0.6, y: -100, r: 800, color: '#5f8cff', a: 0.16 * tw(2) }, { x: W * 0.9, y: H * 0.35, r: 600, color: '#3fd67a', a: 0.12 * tw(3) }] };
   const k = trk(tq, [[0, 0], [1.6, 1, ease.inOutSine]]);
   personInStreet(f, cam, C.GRANDAD_OUT, GRAN_X + 30, 40, {
@@ -60,7 +60,7 @@ function grandadFace(f: F, t: number) {
   }, L);
   snowfall(f, 0.45, 0.2, 21, '#ffd6a0');
   const g = f.grade;
-  g.saturation = 1.18; g.bloom = 0.9; g.bloomThreshold = 0.72; g.vignette = 0.5; g.gain = [1.05, 1.0, 0.94];
+  g.saturation = 1.25; g.bloom = 0.55; g.bloomThreshold = 0.82; g.vignette = 0.55; g.exposure = 0.9; g.gain = [1.05, 1.0, 0.94];
 }
 
 // ------------------------------------------------------------------ the door two-shot staging
@@ -225,7 +225,7 @@ shot('I5', (f) => {
     const dt = f.t - t0;
     return dt < 0.09 ? 0.35 : 0.72; // a stutter as they catch; never as bright as his
   };
-  drawStreet(f, { mood: 'eve', cam, houses: TERRACE, lit, windows: (h) => (h.grandad ? 0 : Math.min(1, lit(h) * 1.3)), blaze: 1, blazeOn: 1, lampsOn: 1, bellFrost: 0 });
+  drawStreet(f, { mood: 'eve', cam, houses: TERRACE, lit, windows: (h) => (h.grandad ? 0 : Math.min(1, lit(h) * 0.7)), blaze: 1, blazeOn: 1, lampsOn: 0.6, bellFrost: 0 });
   // each house pops on with its glock note: a brief bloom burst at the house
   for (const h of TERRACE) {
     if (h.grandad) continue;

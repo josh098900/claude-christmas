@@ -89,3 +89,14 @@ Scores: reads 7, misdirect 3, switch/blaze 5, Grandad 6, Claude 7, handmade 6, a
     - The wedding-era photo is framed tighter, so young Grandma and Grandad read as adults.
     - In B3 a blinking light crosses the sky behind Nell as the idea lands, so her plan reads as sky- and Santa-driven, which strengthens the misdirect.
 57. **Not taken:** a "small Claude mark in the title bar" (the brief forbids any logo or real UI; "Claude" appears only as plain type on the end card), and "Some lights need a whole street" (lovely, but it drops the line's quiet point about what a thinking partner can't do, and that point is the brand).
+
+## Final verification (a fourth blind critic, on the 1080p master)
+
+Scores: reads 7 · misdirect 4 · switch/blaze 7 · **Grandad 8** · **Claude 9** · handmade 6 · animation 5 · blaze 6 · **sync 9** · pacing 7 · **homages 8** · brand 6.
+58. **Last-minute fixes from that review**, re-rendered at 1080p and re-mastered:
+    - **D9:** Mum no longer "walks in". She was already with Nell for every question, and the entrance read as a continuity slip.
+    - **I4:** Grandad's close-up in the blaze has a warmer key, a stronger coloured rim and less exposure, since it had read "flat and overexposed".
+    - **I5:** the neighbours' windows and lamps are a stop down, so No. 40 dominates as the street relights.
+59. **Not fixed (logged honestly).**
+    - **Misdirect.** Every critic guessed her plan from Act 1. The brief's own Act 1 (the photo, Grandad, Grandma's labelled boxes) telegraphs it. A real fix is structural: hide the label and the photo until the reveal. I chose to keep the brief's Act 1 beats.
+    - **Animation appeal and "procedural" crowds.** These need a hand-keyed pass, not a parameter tweak.

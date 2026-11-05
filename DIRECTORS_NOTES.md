@@ -41,6 +41,25 @@ Each pass, a fresh subagent who had never seen the script got only frames sample
 - **"The dead switch looks half-working."** On the click the string gives one weak flicker and then dies. The dead glass is darker, and the torches stop short of the roof.
 - **Tagline.** It went from "Some problems need a whole street." to "Think it through. Then knock on doors." (critic 1 caught an echo), then back again. Critic 2 noted that "knock on doors", after a child door-knocking, has a stranger-danger and canvasser ring. The coda now reads "it worked. everyone helped." so there's no echo.
 
+### Final scores (a fourth blind critic, on the 1080p master, before the three last fixes)
+
+| Rubric line | Score |
+|---|---|
+| 1 Reads without words | 7 |
+| 2 Misdirect | 4 |
+| 3 Dead switch hurts / blaze releases | 7 |
+| 4 Grandad's arc, finishes it himself | **8** |
+| 5 Claude is a thinking partner who sends her to people | **9** |
+| 6 Handmade, no slop | 6 |
+| 7 Animation appeal | 5 |
+| 8 Blaze is the best-lit frame | 6 |
+| 9 Missing note on the blaze | **9** |
+| 10 Pacing | 7 |
+| 11 Homages without IP | **8** |
+| 12 Brand team would run it | 6 |
+
+By the brief's own standard (nothing below 8), **this film is not finished**. The story spine, Claude's role, the score and the sync are where they should be. The misdirect, the animation and the final degree of craft are not. The two sections below are the honest triage I would hand to a team.
+
 ### Where it honestly still falls short
 
 - **The misdirect never fully fooled anyone.** The brief's Act 1 has her look at the photo and Grandad, then fetch Grandma's labelled lights, so every critic guessed the plan early. The Santa material plays as a red herring, not a true twist. The scene that actually reframes the film is the cue cards: "GRANDMA ALWAYS SAID / IT SHOULD BE SEEN FROM SPACE". A real fix would restructure Act 1 so we don't know whose lights they are.

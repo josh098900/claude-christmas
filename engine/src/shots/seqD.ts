@@ -497,7 +497,7 @@ shot('D9', (f) => {
   const moon = v2(WIN.x + 30 + within * (WIN.w - 60), WIN.y + 60 - Math.sin(within * Math.PI) * 30);
   const flick = 0.75 + 0.25 * hash1(k * 7.7);
   const mumNight = k === nights - 1;
-  const mumIn = mumNight ? prog(t, (NT * (nights - 1)) / nights, NT + 0.15, ease.outCubic) : 0;
+  const mumIn = mumNight ? 1 : 0; // she's already with Nell (no entrance: she has been there for every question)
   const pose = mumNight ? { ...NIGHT_POSES[k], look: { x: 0.9, y: -0.8 * mumIn }, browUp: 0.4 * mumIn, browIn: -0.3, mouth: { smile: 0.5 * mumIn } } : NIGHT_POSES[k];
   deskScene(f, cam, pose, { msgs: [] }, {
     jar: 0.3 + 0.6 * (k / (nights - 1)), tangles: Math.max(0, 3 - Math.floor(k / 3)), coils: Math.min(6, Math.floor(k * 0.8)), glowAmt: flick, moon, shaftAmt: 0.7, mug: mumNight && t > NT,
