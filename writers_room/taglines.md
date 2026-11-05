@@ -26,8 +26,10 @@ The end card holds the tagline and **Claude** in clean type, plus the fan-made d
 
 ## Decision
 
-**"Think it through. Then knock on doors."**
+**"Some problems need a whole street."**
 
-My first choice was "Some problems need a whole street." It's the lovelier line. The blind critic in pass 1 pointed out that it lands three seconds after the tablet reads "it worked. the whole street came.", so it reads as an echo, not a payoff. "Think it through. Then knock on doors." names both halves of the film, the desk and then the doorsteps, and exactly what Claude did in them. Claude helped her think it through, and people did the rest. It is also the most honest brand line of the set.
+1. In pass 1 I switched to "Think it through. Then knock on doors." The first blind critic had noted that "a whole street" echoed the tablet's "the whole street came" three seconds earlier.
+2. The second blind critic preferred "Some problems need a whole street." It's warm and true to the film, and modest about Claude, with the wordmark doing the selling. They also warned that "knock on doors", after a child has gone door-knocking, carries a stranger-danger and canvasser tone.
+3. I kept the warmer line and removed the echo instead: the coda tablet now reads "it worked. everyone helped."
 
-"Keep thinking." remains Anthropic's real line, and the film is happy to sit under it on a campaign page.
+"Keep thinking." remains Anthropic's real line, and the film would sit happily under it on a campaign page.

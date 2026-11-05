@@ -142,11 +142,11 @@ We rise along her pointing arm. Rooftops, then the street ablaze, then the town,
 
 INT. GRANDAD'S FRONT ROOM, LATER. The armchair is no longer empty. Nell is asleep in it under Grandma's cardigan, with the tablet on her lap:
 
-> it worked. the whole street came.
+> it worked. everyone helped.
 
 Grandad sits beside her. The window behind them is ablaze with colour. The clock ticks, and the motif plays complete, softly, once.
 
 ### 2:43 · END CARD
 
-Night blue. *Think it through. Then knock on doors.* and **Claude** in clean type.
+Night blue. *Some problems need a whole street.* and **Claude** in clean type.
 *Fan-made. Not affiliated with or endorsed by Anthropic.*
